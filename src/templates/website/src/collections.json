@@ -1,0 +1,1788 @@
+[
+  {
+    "collection": "block_cardgroup",
+    "meta": {
+      "collection": "block_cardgroup",
+      "icon": "view_carousel",
+      "note": null,
+      "display_template": "{{headline}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Card Group",
+          "singular": "Card Group",
+          "plural": "Card Groups"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 13,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_cardgroup",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_cardgroup_cards",
+    "meta": {
+      "collection": "block_cardgroup_cards",
+      "icon": null,
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "block_cardgroup",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_cardgroup_cards",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_cardgroup_posts",
+    "meta": {
+      "collection": "block_cardgroup_posts",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_cardgroup",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_cardgroup_posts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_columns",
+    "meta": {
+      "collection": "block_columns",
+      "icon": "vertical_split",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Columns",
+          "singular": "Columns",
+          "plural": "Columns"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 4,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_columns",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_columns_rows",
+    "meta": {
+      "collection": "block_columns_rows",
+      "icon": null,
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_columns",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_columns_rows",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_cta",
+    "meta": {
+      "collection": "block_cta",
+      "icon": "skip_next",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Call To Action",
+          "singular": "Call To Action",
+          "plural": "Call To Action"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 9,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_cta",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_faqs",
+    "meta": {
+      "collection": "block_faqs",
+      "icon": "question_mark",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "FAQs",
+          "singular": "FAQ",
+          "plural": "FAQs"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_faqs",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_form",
+    "meta": {
+      "collection": "block_form",
+      "icon": "text_format",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Form",
+          "singular": "Form",
+          "plural": "Forms"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 5,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_form",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_gallery",
+    "meta": {
+      "collection": "block_gallery",
+      "icon": "grid_view",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Gallery",
+          "singular": "Gallery",
+          "plural": "Gallery"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 12,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_gallery",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_gallery_files",
+    "meta": {
+      "collection": "block_gallery_files",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_gallery",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_gallery_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_hero",
+    "meta": {
+      "collection": "block_hero",
+      "icon": "aspect_ratio",
+      "note": null,
+      "display_template": "{{headline}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Hero",
+          "singular": "Hero",
+          "plural": "Hero"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_hero",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_html",
+    "meta": {
+      "collection": "block_html",
+      "icon": "html",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Raw HTML",
+          "singular": "Raw HTML",
+          "plural": "Raw HTML"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 15,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_html",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_logocloud",
+    "meta": {
+      "collection": "block_logocloud",
+      "icon": "broken_image",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Logo Cloud",
+          "singular": "Logo Cloud",
+          "plural": "Logo Cloud"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 7,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_logocloud",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_logocloud_files",
+    "meta": {
+      "collection": "block_logocloud_files",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_logocloud",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_logocloud_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_quote",
+    "meta": {
+      "collection": "block_quote",
+      "icon": "format_quote",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Quote",
+          "singular": "Quote",
+          "plural": "Quotes"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 3,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_quote",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_richtext",
+    "meta": {
+      "collection": "block_richtext",
+      "icon": "format_color_text",
+      "note": null,
+      "display_template": "{{headline}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Rich Text",
+          "singular": "Rich Text",
+          "plural": "Rich Text"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 10,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_richtext",
+      "comment": null
+    }
+  },
+  {
+    "collection": "blocks",
+    "meta": {
+      "collection": "blocks",
+      "icon": "square",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 7,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": null
+  },
+  {
+    "collection": "block_steps",
+    "meta": {
+      "collection": "block_steps",
+      "icon": "checklist",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Steps",
+          "singular": "Steps",
+          "plural": "Steps"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 11,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_steps",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_steps_items",
+    "meta": {
+      "collection": "block_steps_items",
+      "icon": null,
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_steps",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_steps_items",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_team",
+    "meta": {
+      "collection": "block_team",
+      "icon": "face",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Team Block",
+          "singular": "Team",
+          "plural": "Team"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 8,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_team",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_testimonials",
+    "meta": {
+      "collection": "block_testimonials",
+      "icon": "star",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Testimonial Group",
+          "singular": "Testimonials",
+          "plural": "Testimonials"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 6,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_testimonials",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_testimonials_items",
+    "meta": {
+      "collection": "block_testimonials_items",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "block_testimonials",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_testimonials_items",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_video",
+    "meta": {
+      "collection": "block_video",
+      "icon": "video_library",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Video",
+          "singular": "Video",
+          "plural": "Videos"
+        }
+      ],
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 14,
+      "group": "blocks",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_video",
+      "comment": null
+    }
+  },
+  {
+    "collection": "blog_settings",
+    "meta": {
+      "collection": "blog_settings",
+      "icon": "signpost",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": true,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "page_settings",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "blog_settings",
+      "comment": null
+    }
+  },
+  {
+    "collection": "categories",
+    "meta": {
+      "collection": "categories",
+      "icon": "category",
+      "note": null,
+      "display_template": "{{color}} {{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 4,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "categories",
+      "comment": null
+    }
+  },
+  {
+    "collection": "config",
+    "meta": {
+      "collection": "config",
+      "icon": "settings_applications",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 3,
+      "group": null,
+      "collapse": "open"
+    },
+    "schema": null
+  },
+  {
+    "collection": "content",
+    "meta": {
+      "collection": "content",
+      "icon": "folder_special",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": null,
+      "collapse": "open"
+    },
+    "schema": null
+  },
+  {
+    "collection": "data",
+    "meta": {
+      "collection": "data",
+      "icon": "data_exploration",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#18222F",
+      "item_duplication_fields": null,
+      "sort": 4,
+      "group": null,
+      "collapse": "open"
+    },
+    "schema": null
+  },
+  {
+    "collection": "events",
+    "meta": {
+      "collection": "events",
+      "icon": "network_ping",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#18222F",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "data",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "events",
+      "comment": null
+    }
+  },
+  {
+    "collection": "forms",
+    "meta": {
+      "collection": "forms",
+      "icon": "text_format",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 3,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "forms",
+      "comment": null
+    }
+  },
+  {
+    "collection": "globals",
+    "meta": {
+      "collection": "globals",
+      "icon": "south_america",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": true,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 4,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "globals",
+      "comment": null
+    }
+  },
+  {
+    "collection": "inbox",
+    "meta": {
+      "collection": "inbox",
+      "icon": "inbox",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "new",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#A2B5CD",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": null,
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "inbox",
+      "comment": null
+    }
+  },
+  {
+    "collection": "metrics",
+    "meta": {
+      "collection": "metrics",
+      "icon": "123",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#18222F",
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "data",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "metrics",
+      "comment": null
+    }
+  },
+  {
+    "collection": "navigation",
+    "meta": {
+      "collection": "navigation",
+      "icon": "menu_open",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "navigation",
+      "comment": null
+    }
+  },
+  {
+    "collection": "navigation_items",
+    "meta": {
+      "collection": "navigation_items",
+      "icon": "navigate_next",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": [
+        "title",
+        "type",
+        "label",
+        "page",
+        "image",
+        "url",
+        "open_in_new_tab",
+        "has_children",
+        "children",
+        "navigation"
+      ],
+      "sort": 1,
+      "group": "navigation",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "navigation_items",
+      "comment": null
+    }
+  },
+  {
+    "collection": "pages",
+    "meta": {
+      "collection": "pages",
+      "icon": "web_asset",
+      "note": "Many-to-Any page builder example",
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "pages",
+      "comment": null
+    }
+  },
+  {
+    "collection": "pages_blocks",
+    "meta": {
+      "collection": "pages_blocks",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "pages",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "pages_blocks",
+      "comment": null
+    }
+  },
+  {
+    "collection": "page_settings",
+    "meta": {
+      "collection": "page_settings",
+      "icon": "display_settings",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": null
+  },
+  {
+    "collection": "posts",
+    "meta": {
+      "collection": "posts",
+      "icon": "article",
+      "note": "Simple blog posts example",
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "posts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "projects",
+    "meta": {
+      "collection": "projects",
+      "icon": "cases",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 3,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "projects",
+      "comment": null
+    }
+  },
+  {
+    "collection": "projects_files",
+    "meta": {
+      "collection": "projects_files",
+      "icon": "import_export",
+      "note": null,
+      "display_template": null,
+      "hidden": true,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 1,
+      "group": "projects",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "projects_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "projects_settings",
+    "meta": {
+      "collection": "projects_settings",
+      "icon": "settings_input_component",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": true,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "item_duplication_fields": null,
+      "sort": 2,
+      "group": "page_settings",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "projects_settings",
+      "comment": null
+    }
+  },
+  {
+    "collection": "redirects",
+    "meta": {
+      "collection": "redirects",
+      "icon": "redo",
+      "note": null,
+      "display_template": "{{url_old}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 6,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "redirects",
+      "comment": null
+    }
+  },
+  {
+    "collection": "seo",
+    "meta": {
+      "collection": "seo",
+      "icon": "saved_search",
+      "note": null,
+      "display_template": "{{og_image}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 5,
+      "group": "config",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "seo",
+      "comment": null
+    }
+  },
+  {
+    "collection": "team",
+    "meta": {
+      "collection": "team",
+      "icon": "people_outline",
+      "note": null,
+      "display_template": null,
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 5,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "team",
+      "comment": null
+    }
+  },
+  {
+    "collection": "testimonials",
+    "meta": {
+      "collection": "testimonials",
+      "icon": "star",
+      "note": null,
+      "display_template": "{{title}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": "status",
+      "archive_app_filter": true,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#FF99DD",
+      "item_duplication_fields": null,
+      "sort": 6,
+      "group": "content",
+      "collapse": "open"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "testimonials",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_activity",
+    "meta": {
+      "system": true,
+      "collection": "directus_activity",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_activity",
+      "translations": null,
+      "display_template": null,
+      "accountability": null
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_activity",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_collections",
+    "meta": {
+      "system": true,
+      "collection": "directus_collections",
+      "hidden": false,
+      "singleton": false,
+      "icon": "list_alt",
+      "note": "$t:directus_collection.directus_collections",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_collections",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_fields",
+    "meta": {
+      "system": true,
+      "collection": "directus_fields",
+      "hidden": false,
+      "singleton": false,
+      "icon": "input",
+      "note": "$t:directus_collection.directus_fields",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_fields",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_files",
+    "meta": {
+      "system": true,
+      "collection": "directus_files",
+      "hidden": false,
+      "singleton": false,
+      "icon": "folder",
+      "note": "$t:directus_collection.directus_files",
+      "translations": null,
+      "display_template": "{{ $thumbnail }} {{ title }}",
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_folders",
+    "meta": {
+      "system": true,
+      "collection": "directus_folders",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_folders",
+      "translations": null,
+      "display_template": "{{ name }}",
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_folders",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_migrations",
+    "meta": {
+      "system": true,
+      "collection": "directus_migrations",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_migrations",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_migrations",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_permissions",
+    "meta": {
+      "system": true,
+      "collection": "directus_permissions",
+      "hidden": false,
+      "singleton": false,
+      "icon": "admin_panel_settings",
+      "note": "$t:directus_collection.directus_permissions",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_permissions",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_presets",
+    "meta": {
+      "system": true,
+      "collection": "directus_presets",
+      "hidden": false,
+      "singleton": false,
+      "icon": "bookmark",
+      "note": "$t:directus_collection.directus_presets",
+      "translations": null,
+      "display_template": null,
+      "accountability": null
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_presets",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_relations",
+    "meta": {
+      "system": true,
+      "collection": "directus_relations",
+      "hidden": false,
+      "singleton": false,
+      "icon": "merge_type",
+      "note": "$t:directus_collection.directus_relations",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_relations",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_revisions",
+    "meta": {
+      "system": true,
+      "collection": "directus_revisions",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_revisions",
+      "translations": null,
+      "display_template": null,
+      "accountability": null
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_revisions",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_roles",
+    "meta": {
+      "system": true,
+      "collection": "directus_roles",
+      "hidden": false,
+      "singleton": false,
+      "icon": "supervised_user_circle",
+      "note": "$t:directus_collection.directus_roles",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_roles",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_sessions",
+    "meta": {
+      "system": true,
+      "collection": "directus_sessions",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_sessions",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_sessions",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_settings",
+    "meta": {
+      "system": true,
+      "collection": "directus_settings",
+      "hidden": false,
+      "singleton": true,
+      "icon": null,
+      "note": "$t:directus_collection.directus_settings",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_settings",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_users",
+    "meta": {
+      "system": true,
+      "collection": "directus_users",
+      "hidden": false,
+      "singleton": false,
+      "icon": "people_alt",
+      "note": "$t:directus_collection.directus_users",
+      "translations": null,
+      "display_template": "{{ first_name }} {{ last_name }}",
+      "accountability": "all",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_users",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_webhooks",
+    "meta": {
+      "system": true,
+      "collection": "directus_webhooks",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_webhooks",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_webhooks",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_dashboards",
+    "meta": {
+      "system": true,
+      "collection": "directus_dashboards",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_dashboards",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_dashboards",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_panels",
+    "meta": {
+      "system": true,
+      "collection": "directus_panels",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_panels",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_panels",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_notifications",
+    "meta": {
+      "system": true,
+      "collection": "directus_notifications",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_notifications",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_notifications",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_shares",
+    "meta": {
+      "system": true,
+      "collection": "directus_shares",
+      "hidden": false,
+      "singleton": false,
+      "icon": "share",
+      "note": "$t:directus_collection.directus_shares",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_shares",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_flows",
+    "meta": {
+      "system": true,
+      "collection": "directus_flows",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_flows",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_flows",
+      "comment": null
+    }
+  },
+  {
+    "collection": "directus_operations",
+    "meta": {
+      "system": true,
+      "collection": "directus_operations",
+      "hidden": false,
+      "singleton": false,
+      "icon": null,
+      "note": "$t:directus_collection.directus_operations",
+      "translations": null,
+      "display_template": null,
+      "accountability": "all"
+    },
+    "schema": {
+      "schema": "public",
+      "name": "directus_operations",
+      "comment": null
+    }
+  }
+]

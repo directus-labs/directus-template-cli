@@ -1,0 +1,26 @@
+[
+  {
+    "id": "06fec8cb-ba15-4a6a-8779-06882a2decfe",
+    "group_type": "posts",
+    "title": "Cardgroup",
+    "headline": "<p>Got <em>some cards</em> for you&nbsp;</p>",
+    "posts": [
+      4,
+      5,
+      6
+    ],
+    "cards": []
+  },
+  {
+    "id": "52661ac6-f134-4fbf-9084-17cf3fc4e256",
+    "group_type": "posts",
+    "title": null,
+    "headline": null,
+    "posts": [
+      1,
+      2,
+      3
+    ],
+    "cards": []
+  }
+]

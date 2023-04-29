@@ -1,0 +1,92 @@
+[
+  {
+    "id": "5da3d356-d818-434f-b225-db35c418bbb6",
+    "status": "published",
+    "sort": null,
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339",
+    "date_created": "2023-03-16T01:50:49.262Z",
+    "user_updated": "9fdd1ca5-982e-422d-bced-640e3a98a339",
+    "date_updated": "2023-03-16T02:53:14.598Z",
+    "title": "Newsletter",
+    "key": "newsletter",
+    "schema": [
+      {
+        "name": "email",
+        "type": "text",
+        "label": "What is your email address?",
+        "help": "We hate spam just as much as you do!",
+        "validation": "required|email",
+        "width": "100"
+      }
+    ],
+    "submit_label": "Subscribe",
+    "on_success": null,
+    "redirect_url": null,
+    "success_message": null
+  },
+  {
+    "id": "36493b64-2bad-4c58-9d70-785ccb12ee26",
+    "status": "published",
+    "sort": null,
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339",
+    "date_created": "2023-02-26T15:02:36.662Z",
+    "user_updated": "9fdd1ca5-982e-422d-bced-640e3a98a339",
+    "date_updated": "2023-04-06T13:12:26.366Z",
+    "title": "Contact Us",
+    "key": "contact-us",
+    "schema": [
+      {
+        "name": "first_name",
+        "type": "text",
+        "label": "First Name",
+        "placeholder": "John",
+        "help": null,
+        "width": "50"
+      },
+      {
+        "name": "last_name",
+        "type": "text",
+        "label": "Last Name",
+        "width": "50"
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "label": "Email",
+        "placeholder": "john@example.com",
+        "validation": "required",
+        "width": "50"
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone Number",
+        "width": "50"
+      },
+      {
+        "name": "company",
+        "type": "text",
+        "label": "Company",
+        "help": "What's the name of your company / organization?",
+        "width": "100"
+      },
+      {
+        "name": "message",
+        "type": "textarea",
+        "label": "Message",
+        "placeholder": "How can we help?",
+        "width": "100"
+      },
+      {
+        "name": "consent",
+        "type": "checkbox",
+        "label": "I agree with terms of service",
+        "width": "100"
+      }
+    ],
+    "submit_label": "Get Started",
+    "on_success": "redirect",
+    "redirect_url": null,
+    "success_message": null
+  }
+]

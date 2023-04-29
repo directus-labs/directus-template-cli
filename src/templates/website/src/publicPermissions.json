@@ -1,0 +1,511 @@
+[
+  {
+    "id": 1,
+    "role": null,
+    "collection": "pages",
+    "action": "read",
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 3,
+    "role": null,
+    "collection": "posts",
+    "action": "read",
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 59,
+    "role": null,
+    "collection": "pages_blocks",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 60,
+    "role": null,
+    "collection": "block_cardgroup",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 61,
+    "role": null,
+    "collection": "block_cardgroup_posts",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 63,
+    "role": null,
+    "collection": "block_hero",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 64,
+    "role": null,
+    "collection": "block_richtext",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 65,
+    "role": null,
+    "collection": "categories",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 66,
+    "role": null,
+    "collection": "globals",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 75,
+    "role": null,
+    "collection": "block_faqs",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 76,
+    "role": null,
+    "collection": "block_testimonials",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 77,
+    "role": null,
+    "collection": "block_testimonials_items",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 78,
+    "role": null,
+    "collection": "testimonials",
+    "action": "read",
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 79,
+    "role": null,
+    "collection": "team",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 80,
+    "role": null,
+    "collection": "projects",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 81,
+    "role": null,
+    "collection": "block_cta",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 82,
+    "role": null,
+    "collection": "forms",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 83,
+    "role": null,
+    "collection": "directus_users",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "first_name",
+      "last_name",
+      "avatar",
+      "title"
+    ]
+  },
+  {
+    "id": 84,
+    "role": null,
+    "collection": "navigation",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 85,
+    "role": null,
+    "collection": "navigation_items",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 86,
+    "role": null,
+    "collection": "block_form",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 87,
+    "role": null,
+    "collection": "block_logocloud",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 88,
+    "role": null,
+    "collection": "block_quote",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 89,
+    "role": null,
+    "collection": "block_team",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 90,
+    "role": null,
+    "collection": "block_logocloud_files",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 96,
+    "role": null,
+    "collection": "seo",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 97,
+    "role": null,
+    "collection": "block_gallery",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 98,
+    "role": null,
+    "collection": "block_gallery_files",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 99,
+    "role": null,
+    "collection": "block_columns",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 100,
+    "role": null,
+    "collection": "block_columns_rows",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 101,
+    "role": null,
+    "collection": "block_html",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 102,
+    "role": null,
+    "collection": "block_steps",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 103,
+    "role": null,
+    "collection": "block_steps_items",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 104,
+    "role": null,
+    "collection": "block_video",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 105,
+    "role": null,
+    "collection": "redirects",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 108,
+    "role": null,
+    "collection": "projects_files",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 116,
+    "role": null,
+    "collection": "directus_files",
+    "action": "read",
+    "permissions": {
+      "_and": [
+        {
+          "folder": {
+            "name": {
+              "_neq": "private"
+            }
+          }
+        }
+      ]
+    },
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "id",
+      "title",
+      "filename_download",
+      "description",
+      "$thumbnail"
+    ]
+  },
+  {
+    "id": 117,
+    "role": null,
+    "collection": "block_cardgroup_cards",
+    "action": "read",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  },
+  {
+    "id": 118,
+    "role": null,
+    "collection": "inbox",
+    "action": "create",
+    "permissions": {},
+    "validation": {},
+    "presets": null,
+    "fields": [
+      "*"
+    ]
+  }
+]

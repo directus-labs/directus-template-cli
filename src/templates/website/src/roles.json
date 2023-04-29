@@ -1,0 +1,70 @@
+[
+  {
+    "id": "00e3e00d-4fc5-4d01-8bf4-858ba513fc5a",
+    "name": "Content Manager",
+    "icon": "manage_accounts",
+    "description": null,
+    "ip_access": null,
+    "enforce_tfa": false,
+    "admin_access": false,
+    "app_access": true,
+    "users": []
+  },
+  {
+    "id": "9ecc2969-8b38-4088-9dc1-78334a206445",
+    "name": "Website API",
+    "icon": "android",
+    "description": null,
+    "ip_access": null,
+    "enforce_tfa": false,
+    "admin_access": false,
+    "app_access": false,
+    "users": []
+  },
+  {
+    "id": "c20ac2e5-79dd-43ff-8bb7-15214012d71a",
+    "name": "Administrator",
+    "icon": "verified",
+    "description": "$t:admin_description",
+    "ip_access": null,
+    "enforce_tfa": false,
+    "admin_access": true,
+    "app_access": true,
+    "users": [
+      "5e440649-50fe-4b7a-aab3-2bc617f3162d",
+      "722f987b-d0e3-430a-8f4e-74afdabc9c52",
+      "9300d433-0f5c-425d-9cad-b085c9ffcfda",
+      "9ee543dc-4aa5-4399-bf4a-65544d580a10",
+      "9fdd1ca5-982e-422d-bced-640e3a98a339",
+      "aebb695f-5dcc-4dba-9e03-b847e333fb02",
+      "b3182bed-fa0a-45cf-9678-0cc54b7a8fb3",
+      "b8fcf59f-9339-457d-bd05-bddddf0e58e7",
+      "de28a601-cb51-4f52-8c10-340b3b82c659",
+      "eb4ac0d3-73e9-457c-bbc1-0556b171cf7e"
+    ]
+  },
+  {
+    "id": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
+    "name": "Client",
+    "icon": "person_pin",
+    "description": "Role for clients accessing their projects via the frontend.",
+    "ip_access": null,
+    "enforce_tfa": false,
+    "admin_access": false,
+    "app_access": false,
+    "users": []
+  },
+  {
+    "id": "f8d883cc-d4e5-47b2-926e-64e2f947c34c",
+    "name": "Guest Author",
+    "icon": "cruelty_free",
+    "description": "This role is for outside contributors. They can only edit their own content.",
+    "ip_access": null,
+    "enforce_tfa": false,
+    "admin_access": false,
+    "app_access": true,
+    "users": [
+      "1a3e5ba4-c118-4607-9918-77d36b74a9a3"
+    ]
+  }
+]

@@ -1,0 +1,145 @@
+[
+  {
+    "id": "1fa9065d-39a0-479a-a8ae-9ccd31429c98",
+    "content": "This guide will teach you everything you need to know about those wascally wabbits.",
+    "buttons": [
+      {
+        "label": "Learn More",
+        "href": "learn-more",
+        "variant": "default"
+      }
+    ],
+    "image": "12e02b82-b4a4-4aaf-8ca4-e73c20a41c26",
+    "headline": null
+  },
+  {
+    "id": "5bb58cbd-4258-43c5-a610-c107382295a4",
+    "content": null,
+    "buttons": null,
+    "image": null,
+    "headline": null
+  },
+  {
+    "id": "5f452316-f1a2-4c90-aeac-cc09cd171d95",
+    "content": "This guide will teach you everything you need to know about those wascally wabbits.",
+    "buttons": [
+      {
+        "label": "Learn More",
+        "href": "learn-more-about-rabbits",
+        "variant": "primary"
+      }
+    ],
+    "image": "7775c53a-6c2c-453d-8c22-8b5445121d10",
+    "headline": null
+  },
+  {
+    "id": "6aa654f5-b55f-4436-a35c-1f989f26268a",
+    "content": "We are a team of experienced developers and designers who build beautiful, performant, and secure web and mobile applications.",
+    "buttons": [
+      {
+        "label": "Learn More",
+        "href": "/contact-us",
+        "variant": "primary"
+      },
+      {
+        "label": "Get Started",
+        "href": "/contact-us",
+        "variant": "outline"
+      }
+    ],
+    "image": "6464e61f-455a-4b47-b623-bb12e5251dfe",
+    "headline": "<p>Web apps that <em>wow your users!!</em></p>"
+  },
+  {
+    "id": "7336f23e-0165-44fd-a051-15cddbfb5a6e",
+    "content": "Ullamco mollit id minim veniam occaecat eiusmod consectetur et. Tempor ullamco quis veniam amet. Et exercitation aliqua eiusmod ipsum in anim amet. Sint ea duis ut. Quis aliquip culpa qui non ex nostrud dolore. Consectetur non proident do. Sunt nisi adipisicing pariatur consectetur cupidatat occaecat aute laboris amet.",
+    "buttons": [
+      {
+        "label": "Learn More about Directus",
+        "href": "contact-us",
+        "variant": "primary"
+      }
+    ],
+    "image": "1f19dd72-a433-481d-9b51-e3cc8e4f33d3",
+    "headline": null
+  },
+  {
+    "id": "7ae4167e-d6a6-4907-8965-93d23fa7332d",
+    "content": "Rabbits are everyone's best friends",
+    "buttons": [
+      {
+        "label": "Learn more",
+        "href": "learn-more",
+        "variant": "default"
+      }
+    ],
+    "image": "7775c53a-6c2c-453d-8c22-8b5445121d10",
+    "headline": null
+  },
+  {
+    "id": "840cb442-6c59-4461-a3ca-467223c5f098",
+    "content": "Here's the hero content",
+    "buttons": [
+      {
+        "label": "Learn More",
+        "href": "try-directus",
+        "variant": "primary"
+      }
+    ],
+    "image": null,
+    "headline": null
+  },
+  {
+    "id": "8ece685c-e903-443b-b29d-b36491709743",
+    "content": "We help you leverage the transformative power of superior software development!",
+    "buttons": [
+      {
+        "label": "Let's Talk",
+        "href": "/contact-us",
+        "variant": "primary"
+      }
+    ],
+    "image": "27f55be1-7ef5-47c4-87ba-ab9a060ab270",
+    "headline": "<p>Custom <em>web development and design</em> services</p>"
+  },
+  {
+    "id": "a0dd7808-4d84-4c0b-99ba-360100cb15a8",
+    "content": "Here's some descriptive text below the headline",
+    "buttons": [
+      {
+        "label": "Learn More",
+        "href": "/learn-more",
+        "variant": "primary"
+      }
+    ],
+    "image": "1f19dd72-a433-481d-9b51-e3cc8e4f33d3",
+    "headline": null
+  },
+  {
+    "id": "a4f1fa5e-dd6d-4031-92de-70b7bb903f88",
+    "content": null,
+    "buttons": null,
+    "image": null,
+    "headline": null
+  },
+  {
+    "id": "afc88ea9-5c84-4109-be11-856cea2dcd1f",
+    "content": null,
+    "buttons": null,
+    "image": "27f55be1-7ef5-47c4-87ba-ab9a060ab270",
+    "headline": null
+  },
+  {
+    "id": "f5e6f088-b11d-4959-affc-31bc86d7079c",
+    "content": "Ullamco mollit id minim veniam occaecat eiusmod consectetur et. Tempor ullamco quis veniam amet. Et exercitation aliqua eiusmod ipsum in anim amet. Sint ea duis ut. Quis aliquip culpa qui non ex nostrud dolore. Consectetur non proident do. Sunt nisi adipisicing pariatur consectetur cupidatat occaecat aute laboris amet.",
+    "buttons": [
+      {
+        "label": "Learn More about Directus",
+        "href": "contact-us",
+        "variant": "primary"
+      }
+    ],
+    "image": "1f19dd72-a433-481d-9b51-e3cc8e4f33d3",
+    "headline": null
+  }
+]

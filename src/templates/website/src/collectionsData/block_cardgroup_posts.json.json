@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "block_cardgroup_id": "52661ac6-f134-4fbf-9084-17cf3fc4e256",
+    "posts_id": "ba559a1e-5b0c-4932-ab97-b1ab4ca69955"
+  },
+  {
+    "id": 2,
+    "block_cardgroup_id": "52661ac6-f134-4fbf-9084-17cf3fc4e256",
+    "posts_id": "ddf1003f-6b9a-460c-83fd-d985d6defbd6"
+  },
+  {
+    "id": 3,
+    "block_cardgroup_id": "52661ac6-f134-4fbf-9084-17cf3fc4e256",
+    "posts_id": "f7845a69-edcb-4163-a2a9-fb82b64475c5"
+  },
+  {
+    "id": 4,
+    "block_cardgroup_id": "06fec8cb-ba15-4a6a-8779-06882a2decfe",
+    "posts_id": "ba559a1e-5b0c-4932-ab97-b1ab4ca69955"
+  },
+  {
+    "id": 5,
+    "block_cardgroup_id": "06fec8cb-ba15-4a6a-8779-06882a2decfe",
+    "posts_id": "ddf1003f-6b9a-460c-83fd-d985d6defbd6"
+  },
+  {
+    "id": 6,
+    "block_cardgroup_id": "06fec8cb-ba15-4a6a-8779-06882a2decfe",
+    "posts_id": "f7845a69-edcb-4163-a2a9-fb82b64475c5"
+  }
+]

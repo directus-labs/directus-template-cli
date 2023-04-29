@@ -1,0 +1,15 @@
+[
+  {
+    "id": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "headline": "<p>This is an <em>amazing</em> gallery</p>",
+    "title": "Gallery",
+    "gallery_items": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  }
+]

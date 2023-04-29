@@ -1,0 +1,8 @@
+{
+  "id": "109cf29c-3f73-418a-9a76-bfc0b6a27cf6",
+  "featured_post": "ddf1003f-6b9a-460c-83fd-d985d6defbd6",
+  "posts_per_page": 10,
+  "title": "Our Blog",
+  "headline": "<header class=\"pb-6 border-b-2 border-gray-300 dark:border-gray-700\" data-v-inspector=\"pages/posts/index.vue:43:5\">\n<div class=\"text-3xl font-serif font-bold leading-snug tracking-tight color-em dark:text-white\" data-v-inspector=\"components/typography/Headline.vue:18:3\">\n<p>Articles on&nbsp;<em>development</em>, marketing, and more.</p>\n</div>\n</header>",
+  "seo": "cc55e149-c07c-4a98-9445-764f4d572e87"
+}

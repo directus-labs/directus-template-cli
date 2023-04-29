@@ -1,0 +1,66 @@
+{
+  "id": 1,
+  "project_name": "Directus",
+  "project_url": null,
+  "project_color": null,
+  "project_logo": null,
+  "public_foreground": null,
+  "public_background": null,
+  "public_note": null,
+  "auth_login_attempts": 25,
+  "auth_password_policy": "/^.{8,}$/",
+  "storage_asset_transform": "all",
+  "storage_asset_presets": null,
+  "custom_css": "",
+  "storage_default_folder": null,
+  "basemaps": null,
+  "mapbox_key": null,
+  "module_bar": [
+    {
+      "type": "module",
+      "id": "content",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "users",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "files",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "insights",
+      "enabled": true
+    },
+    {
+      "type": "link",
+      "id": "docs",
+      "name": "$t:documentation",
+      "url": "https://docs.directus.io",
+      "icon": "help_outline",
+      "enabled": true
+    },
+    {
+      "type": "link",
+      "id": "NOT2CT36rB28fFi5fgP-b",
+      "url": "http://localhost:3000",
+      "icon": "output",
+      "enabled": true,
+      "name": "Visit Website"
+    },
+    {
+      "type": "module",
+      "id": "settings",
+      "enabled": true,
+      "locked": true
+    }
+  ],
+  "project_descriptor": null,
+  "translation_strings": [],
+  "default_language": "en-US",
+  "custom_aspect_ratios": null
+}

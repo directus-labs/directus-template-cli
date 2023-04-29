@@ -1,0 +1,45 @@
+[
+  {
+    "id": "8759da00-c0a7-447d-924c-e106c8e4703a",
+    "title": "Frequently Asked Questions",
+    "headline": "<p>What can we <em>help </em>you with?</p>",
+    "faqs": [
+      {
+        "title": "How does this work?",
+        "answer": "Lorem ipsum dipsum"
+      }
+    ]
+  },
+  {
+    "id": "cf6a9e3d-87c4-4f18-abb3-78594b9c7ca4",
+    "title": "Frequently Asked Questions",
+    "headline": "<p>How can we&nbsp;<em>help</em> you?</p>",
+    "faqs": [
+      {
+        "title": "How much does the average project cost?",
+        "answer": "Lorem ipsum blah blah"
+      },
+      {
+        "title": "How long does it take?",
+        "answer": "Lorem ipsum blah blah"
+      }
+    ]
+  },
+  {
+    "id": "ec44961c-fcda-4ce7-ad9a-ec63413bffd1",
+    "title": "Frequently Asked Questions",
+    "headline": "<p>FAQs</p>",
+    "faqs": [
+      {
+        "title": "How does M2A work?",
+        "answer": "Let me show you."
+      }
+    ]
+  },
+  {
+    "id": "f30cd38b-78d4-4981-bec5-72210d0afdc2",
+    "title": "New Custom",
+    "headline": "<p>Blocks</p>",
+    "faqs": null
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "id": "ab89c489-faea-4310-8b59-7ddb3caf279a",
+  "title": "Agency OS",
+  "description": "A freaking awesome Nuxt + Directus template that will help you level up.",
+  "og_image": null,
+  "twitter_image": null,
+  "social_links": [
+    {
+      "service": "github",
+      "url": "https://github.com/directus"
+    },
+    {
+      "service": "linkedin",
+      "url": "https://www.linkedin.com/company/directus-io"
+    },
+    {
+      "service": "youtube",
+      "url": "https://www.youtube.com/c/DirectusVideos"
+    },
+    {
+      "url": "https://directus.chat/",
+      "service": "discord"
+    },
+    {
+      "service": "twitter",
+      "url": "https://twitter.com/directus"
+    }
+  ],
+  "postal_code": "98052",
+  "street_address": "123 Main St",
+  "address_region": "WA",
+  "address_locality": "Seattle",
+  "email": "info@example.com",
+  "phone": "(425) 123-4567",
+  "address_country": "US",
+  "url": "https://agency-os.vercel.app",
+  "build_hook_url": "https://api.netlify.com/build_hooks/6410cc4f3210881c58bf4223",
+  "routes": [
+    {
+      "collection": "pages",
+      "route": "/{{ slug }}"
+    },
+    {
+      "collection": "posts",
+      "route": "/posts/{{ slug }}"
+    },
+    {
+      "collection": "categories",
+      "route": "/posts/categories/{{ slug }}"
+    },
+    {
+      "collection": "projects",
+      "route": "/projects/{{ slug }}"
+    }
+  ],
+  "tagline": "The modern dev agency template"
+}

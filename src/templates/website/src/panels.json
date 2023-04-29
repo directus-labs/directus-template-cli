@@ -1,0 +1,433 @@
+[
+  {
+    "id": "1479ba5f-eebf-4f3f-b9bb-fbe6c409b376",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": null,
+    "icon": null,
+    "color": null,
+    "show_header": false,
+    "note": null,
+    "type": "label",
+    "position_x": 1,
+    "position_y": 3,
+    "width": 30,
+    "height": 6,
+    "options": {
+      "text": "Content Workflow",
+      "color": "#18222F"
+    },
+    "date_created": "2023-04-06T12:18:21.978Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "18bb7102-3b89-4ebf-9c40-75f1f3ac950e",
+    "dashboard": "0612ec0b-4db9-45c9-a824-c1e817aca21c",
+    "name": "Date To",
+    "icon": "date_range",
+    "color": "#A2B5CD",
+    "show_header": true,
+    "note": null,
+    "type": "variable",
+    "position_x": 16,
+    "position_y": 8,
+    "width": 15,
+    "height": 6,
+    "options": {
+      "field": "date_to",
+      "type": "dateTime",
+      "inter": "datetime",
+      "defaultValue": "2023-01-01T00:00:00",
+      "options": {
+        "use24": false
+      }
+    },
+    "date_created": "2023-04-06T12:51:38.592Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "2565b21e-cfed-417a-a21b-f5520be8707f",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "",
+    "icon": null,
+    "color": null,
+    "show_header": false,
+    "note": null,
+    "type": "label",
+    "position_x": 1,
+    "position_y": 41,
+    "width": 30,
+    "height": 6,
+    "options": {
+      "text": "Alerts",
+      "color": "#E35169"
+    },
+    "date_created": "2023-04-06T12:25:47.805Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "3987050b-48e4-41a6-9a31-c8fc388160a4",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Posts In Review",
+    "icon": "preview",
+    "color": "#FFA439",
+    "show_header": true,
+    "note": null,
+    "type": "list",
+    "position_x": 1,
+    "position_y": 30,
+    "width": 30,
+    "height": 9,
+    "options": {
+      "collection": "posts",
+      "displayTemplate": "{{title}} -  {{author.avatar}} {{author.first_name}} {{author.last_name}}",
+      "filter": {
+        "_and": [
+          {
+            "status": {
+              "_eq": "in_review"
+            }
+          }
+        ]
+      },
+      "limit": 10,
+      "linkToItem": true
+    },
+    "date_created": "2023-04-06T12:44:33.777Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "5caba4e3-8aa0-470e-b5cd-d062a70d0a8c",
+    "dashboard": "0612ec0b-4db9-45c9-a824-c1e817aca21c",
+    "name": "Date From",
+    "icon": "date_range",
+    "color": "#A2B5CD",
+    "show_header": true,
+    "note": null,
+    "type": "variable",
+    "position_x": 1,
+    "position_y": 8,
+    "width": 15,
+    "height": 6,
+    "options": {
+      "field": "date_from",
+      "type": "dateTime",
+      "inter": "datetime",
+      "defaultValue": "2023-01-01T00:00:00",
+      "options": {
+        "use24": false
+      }
+    },
+    "date_created": "2023-04-06T12:51:38.569Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "5d0adedb-c78e-44c2-b43a-f50b2526dd32",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Date To",
+    "icon": "date_range",
+    "color": "#A2B5CD",
+    "show_header": true,
+    "note": null,
+    "type": "variable",
+    "position_x": 16,
+    "position_y": 9,
+    "width": 15,
+    "height": 6,
+    "options": {
+      "field": "date_to",
+      "type": "dateTime",
+      "inter": "datetime",
+      "defaultValue": "{{$NOW}}",
+      "options": {
+        "use24": false
+      }
+    },
+    "date_created": "2023-04-06T12:22:46.584Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "6210699c-365d-4715-9d3f-1cd91bf86145",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "In Review",
+    "icon": null,
+    "color": "#FFC23B",
+    "show_header": true,
+    "note": null,
+    "type": "metric",
+    "position_x": 11,
+    "position_y": 24,
+    "width": 10,
+    "height": 6,
+    "options": {
+      "collection": "posts",
+      "field": "id",
+      "function": "count",
+      "filter": {
+        "_and": [
+          {
+            "status": {
+              "_eq": "in_review"
+            }
+          }
+        ]
+      },
+      "conditionalFormatting": [
+        {
+          "operator": ">=",
+          "value": 0,
+          "color": "#FFC23B"
+        }
+      ]
+    },
+    "date_created": "2023-04-06T12:18:22.028Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "69b49682-9dd8-49e0-bed1-7151beb4be96",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Posts Missing Thumbnail",
+    "icon": "warning",
+    "color": "#E35169",
+    "show_header": true,
+    "note": "These posts are missing a thumbnail image.",
+    "type": "list",
+    "position_x": 16,
+    "position_y": 65,
+    "width": 15,
+    "height": 18,
+    "options": {
+      "collection": "posts",
+      "linkToItem": true,
+      "filter": {
+        "_and": [
+          {
+            "image": {
+              "id": {
+                "_null": true
+              }
+            }
+          }
+        ]
+      },
+      "sortField": null,
+      "displayTemplate": "{{title}}",
+      "limit": -1
+    },
+    "date_created": "2023-04-06T12:40:22.222Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "926a7632-c7f3-4da7-bc61-c6d4fb4fe900",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Published Over Time",
+    "icon": null,
+    "color": "#FF99DD",
+    "show_header": true,
+    "note": null,
+    "type": "time-series",
+    "position_x": 1,
+    "position_y": 15,
+    "width": 30,
+    "height": 9,
+    "options": {
+      "collection": "posts",
+      "function": "count",
+      "dateField": "date_published",
+      "range": "3 months",
+      "precision": "day",
+      "valueField": "id",
+      "color": "#FF99DD"
+    },
+    "date_created": "2023-04-06T12:20:17.049Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "bab08465-6abb-43ac-9ce0-c2b65b8a12b5",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Pages Missing SEO Data",
+    "icon": "warning",
+    "color": "#E35169",
+    "show_header": true,
+    "note": "These pages are missing SEO Title or Meta Description",
+    "type": "list",
+    "position_x": 1,
+    "position_y": 47,
+    "width": 15,
+    "height": 18,
+    "options": {
+      "collection": "pages",
+      "linkToItem": true,
+      "filter": {
+        "_and": [
+          {
+            "_or": [
+              {
+                "seo": {
+                  "title": {
+                    "_empty": true
+                  }
+                }
+              },
+              {
+                "seo": {
+                  "meta_description": {
+                    "_empty": true
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "sortField": "title",
+      "displayTemplate": "{{title}}",
+      "limit": -1
+    },
+    "date_created": "2023-04-06T12:27:38.037Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "c7963278-b862-4ded-954e-019ebf88271a",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Posts Missing SEO Data",
+    "icon": "warning",
+    "color": "#E35169",
+    "show_header": true,
+    "note": "These posts are missing SEO Title or Meta Description",
+    "type": "list",
+    "position_x": 16,
+    "position_y": 47,
+    "width": 15,
+    "height": 18,
+    "options": {
+      "collection": "posts",
+      "linkToItem": true,
+      "filter": {
+        "_and": [
+          {
+            "_or": [
+              {
+                "seo": {
+                  "title": {
+                    "_empty": true
+                  }
+                }
+              },
+              {
+                "seo": {
+                  "meta_description": {
+                    "_empty": true
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "sortField": null,
+      "displayTemplate": "{{title}}",
+      "limit": -1
+    },
+    "date_created": "2023-04-06T12:28:43.767Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "c92b79b3-2bc5-4be7-b83e-95c588463d3c",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Date From",
+    "icon": "date_range",
+    "color": "#A2B5CD",
+    "show_header": true,
+    "note": null,
+    "type": "variable",
+    "position_x": 1,
+    "position_y": 9,
+    "width": 15,
+    "height": 6,
+    "options": {
+      "field": "date_from",
+      "type": "dateTime",
+      "inter": "datetime",
+      "defaultValue": "2023-01-01T12:00:00",
+      "options": {
+        "use24": false
+      }
+    },
+    "date_created": "2023-04-06T12:22:46.558Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "e85f38ea-8eb7-4b28-a877-39dda66140c6",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Draft",
+    "icon": null,
+    "color": "#A2B5CD",
+    "show_header": true,
+    "note": null,
+    "type": "metric",
+    "position_x": 1,
+    "position_y": 24,
+    "width": 10,
+    "height": 6,
+    "options": {
+      "collection": "posts",
+      "field": "id",
+      "function": "count",
+      "filter": {
+        "_and": [
+          {
+            "status": {
+              "_eq": "draft"
+            }
+          }
+        ]
+      },
+      "conditionalFormatting": [
+        {
+          "operator": ">=",
+          "value": 0,
+          "color": "#A2B5CD"
+        }
+      ]
+    },
+    "date_created": "2023-04-06T12:18:22.067Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  },
+  {
+    "id": "e99840a1-d366-40ae-94ce-84f963191322",
+    "dashboard": "013b1a80-b551-475a-bbd8-119f1e1e9134",
+    "name": "Published",
+    "icon": null,
+    "color": "#2ECDA7",
+    "show_header": true,
+    "note": null,
+    "type": "metric",
+    "position_x": 21,
+    "position_y": 24,
+    "width": 10,
+    "height": 6,
+    "options": {
+      "collection": "posts",
+      "field": "id",
+      "function": "count",
+      "filter": {
+        "_and": [
+          {
+            "status": {
+              "_eq": "published"
+            }
+          }
+        ]
+      },
+      "conditionalFormatting": [
+        {
+          "operator": ">=",
+          "value": 0,
+          "color": "#2ECDA7"
+        }
+      ]
+    },
+    "date_created": "2023-04-06T12:18:22.000Z",
+    "user_created": "9fdd1ca5-982e-422d-bced-640e3a98a339"
+  }
+]
