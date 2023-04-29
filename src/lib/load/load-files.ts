@@ -1,11 +1,12 @@
-import {api} from '../api'
-import assets from '../source/files.json'
 import FormData from 'form-data'
+import {api} from '../api'
+import readFile from '../utils/read-file'
 
 import fs from 'node:fs'
 import path from 'node:path'
 
-export default async () => {
+export default async (dir: string) => {
+  const assets = await readFile('files', dir)
   for (const asset of assets) {
     const fileName = asset.filename_disk
     const assetPath = path.resolve(

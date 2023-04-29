@@ -1,7 +1,7 @@
 {
   "name": "directus-template-util",
   "version": "0.0.0",
-  "description": "oclif example Hello World CLI",
+  "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "bin": {
     "directus-template-util": "./bin/run"
