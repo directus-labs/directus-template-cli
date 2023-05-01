@@ -1,4 +1,5 @@
-oclif-hello-world
+⚠️ WARNING: DO NOT USE ⚠️
+Very Very Alpha State
 =================
 
 oclif example Hello World CLI
@@ -153,7 +154,7 @@ ALIASES
   $ directus-template-util plugins add
 
 EXAMPLES
-  $ directus-template-util plugins:install myplugin 
+  $ directus-template-util plugins:install myplugin
 
   $ directus-template-util plugins:install https://github.com/someuser/someplugin
 
@@ -216,7 +217,7 @@ ALIASES
   $ directus-template-util plugins add
 
 EXAMPLES
-  $ directus-template-util plugins:install myplugin 
+  $ directus-template-util plugins:install myplugin
 
   $ directus-template-util plugins:install https://github.com/someuser/someplugin
 
