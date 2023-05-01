@@ -91,5 +91,9 @@ export default class ApplyCommand extends Command {
     ux.action.start(`Applying template - ${chosenTemplate.template.templateName}`)
     await apply(chosenTemplate.template.directoryPath, this)
     ux.action.stop()
+
+    this.log(separator)
+    this.log('Template applied successfully.')
+    this.exit
   }
 }

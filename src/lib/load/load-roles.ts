@@ -5,6 +5,7 @@ export default async function loadRoles(roles: any) {
     delete role.users
     return role
   })
+
   const adminRole = cleanedUpRoles.find(role => role.name === 'Administrator')
 
   // Admin role isn't touched.

@@ -16,7 +16,7 @@ export default async function loadOperations(ops: any) {
         resolve: op.resolve,
         reject: op.reject,
       }
-      console.log(`updateing ${op.id} with`, pl)
+      // console.log(`Updating ${op.id} with`, pl)
       await api.patch(`operations/${op.id}`, pl)
     }
   } catch (error) {

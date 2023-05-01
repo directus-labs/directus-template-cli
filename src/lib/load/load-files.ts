@@ -34,7 +34,7 @@ export default async (assets: any, dir: string) => {
       //   description: asset.description,
       //   folder: asset.folder,
       // })
-      console.log(`Uploaded ${asset.id}`)
+      // console.log(`Uploaded ${asset.id}`)
     } catch (error) {
       console.log(error.response.data.errors)
     }

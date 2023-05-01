@@ -45,7 +45,7 @@ const loadSkeletonRecords = async (userCollections: any, dir:string) => {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.log(error.response.data.errors)
     }
   }
 }
@@ -63,11 +63,13 @@ const loadFullData = async (userCollections: any, dir:string) => {
 
       if (!collection.meta.singleton) {
         for (const row of sourceData) {
+          delete row.user_created
+          delete row.user_updated
           const {data} = await api.patch(`items/${name}/${row.id}`, row)
         }
       }
     } catch (error) {
-      console.log(`Error updating ${name}`, error)
+      console.log(`Error updating ${name}`, error.response.data.errors)
     }
   }
 }
@@ -83,6 +85,8 @@ const loadSingletons = async (userCollections: any, dir:string) => {
       )
       try {
         const sourceData = (await import(url)).default
+        delete sourceData.user_created
+        delete sourceData.user_updated
         const {data} = await api.patch(`items/${name}`, sourceData)
       } catch (error) {
         console.log(

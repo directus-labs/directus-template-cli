@@ -37,11 +37,11 @@ export default async function apply(dir: string, cli: any) {
   cli.log('Loaded Operations')
   await loadData(readFile('collections', source), source)
   cli.log('Loaded Data')
-  // await loadToDestination('presets', readFile('presets', source))
   await loadPresets(readFile('presets', source))
   cli.log('Loaded Presets')
   await loadSettings(readFile('settings', source))
   cli.log('Loaded Settings')
   await loadPublicPermissions(readFile('public-permissions', source))
   cli.log('Loaded Public Permissions')
+  return {}
 }
