@@ -17,79 +17,55 @@ oclif example Hello World CLI
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g directus-template-util
-$ directus-template-util COMMAND
+$ npm install -g directus-template-cli
+$ directus-template-cli COMMAND
 running command...
-$ directus-template-util (--version)
-directus-template-util/0.0.0 darwin-x64 node-v18.12.1
-$ directus-template-util --help [COMMAND]
+$ directus-template-cli (--version)
+directus-template-cli/0.1.0 darwin-x64 node-v18.12.1
+$ directus-template-cli --help [COMMAND]
 USAGE
-  $ directus-template-util COMMAND
+  $ directus-template-cli COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`directus-template-util hello PERSON`](#directus-template-util-hello-person)
-* [`directus-template-util hello world`](#directus-template-util-hello-world)
-* [`directus-template-util help [COMMANDS]`](#directus-template-util-help-commands)
-* [`directus-template-util plugins`](#directus-template-util-plugins)
-* [`directus-template-util plugins:install PLUGIN...`](#directus-template-util-pluginsinstall-plugin)
-* [`directus-template-util plugins:inspect PLUGIN...`](#directus-template-util-pluginsinspect-plugin)
-* [`directus-template-util plugins:install PLUGIN...`](#directus-template-util-pluginsinstall-plugin-1)
-* [`directus-template-util plugins:link PLUGIN`](#directus-template-util-pluginslink-plugin)
-* [`directus-template-util plugins:uninstall PLUGIN...`](#directus-template-util-pluginsuninstall-plugin)
-* [`directus-template-util plugins:uninstall PLUGIN...`](#directus-template-util-pluginsuninstall-plugin-1)
-* [`directus-template-util plugins:uninstall PLUGIN...`](#directus-template-util-pluginsuninstall-plugin-2)
-* [`directus-template-util plugins update`](#directus-template-util-plugins-update)
+* [`directus-template-cli apply`](#directus-template-cli-apply)
+* [`directus-template-cli help [COMMANDS]`](#directus-template-cli-help-commands)
+* [`directus-template-cli plugins`](#directus-template-cli-plugins)
+* [`directus-template-cli plugins:install PLUGIN...`](#directus-template-cli-pluginsinstall-plugin)
+* [`directus-template-cli plugins:inspect PLUGIN...`](#directus-template-cli-pluginsinspect-plugin)
+* [`directus-template-cli plugins:install PLUGIN...`](#directus-template-cli-pluginsinstall-plugin-1)
+* [`directus-template-cli plugins:link PLUGIN`](#directus-template-cli-pluginslink-plugin)
+* [`directus-template-cli plugins:uninstall PLUGIN...`](#directus-template-cli-pluginsuninstall-plugin)
+* [`directus-template-cli plugins:uninstall PLUGIN...`](#directus-template-cli-pluginsuninstall-plugin-1)
+* [`directus-template-cli plugins:uninstall PLUGIN...`](#directus-template-cli-pluginsuninstall-plugin-2)
+* [`directus-template-cli plugins update`](#directus-template-cli-plugins-update)
 
-## `directus-template-util hello PERSON`
+## `directus-template-cli apply`
 
-Say hello
+Apply a template to a blank Directus instance.
 
 ```
 USAGE
-  $ directus-template-util hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
+  $ directus-template-cli apply
 
 DESCRIPTION
-  Say hello
+  Apply a template to a blank Directus instance.
 
 EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
+  $ directus-template-cli apply
 ```
 
-_See code: [dist/commands/hello/index.ts](https://github.com/bryantgillespie/directus-template-util/blob/v0.0.0/dist/commands/hello/index.ts)_
+_See code: [dist/commands/apply.ts](https://github.com/bryantgillespie/directus-template-cli/blob/v0.1.0/dist/commands/apply.ts)_
 
-## `directus-template-util hello world`
+## `directus-template-cli help [COMMANDS]`
 
-Say hello world
+Display help for directus-template-cli.
 
 ```
 USAGE
-  $ directus-template-util hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ directus-template-util hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-## `directus-template-util help [COMMANDS]`
-
-Display help for directus-template-util.
-
-```
-USAGE
-  $ directus-template-util help [COMMANDS] [-n]
+  $ directus-template-cli help [COMMANDS] [-n]
 
 ARGUMENTS
   COMMANDS  Command to show help for.
@@ -98,18 +74,18 @@ FLAGS
   -n, --nested-commands  Include all nested commands in the output.
 
 DESCRIPTION
-  Display help for directus-template-util.
+  Display help for directus-template-cli.
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
 
-## `directus-template-util plugins`
+## `directus-template-cli plugins`
 
 List installed plugins.
 
 ```
 USAGE
-  $ directus-template-util plugins [--core]
+  $ directus-template-cli plugins [--core]
 
 FLAGS
   --core  Show core plugins.
@@ -118,18 +94,18 @@ DESCRIPTION
   List installed plugins.
 
 EXAMPLES
-  $ directus-template-util plugins
+  $ directus-template-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.6/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/index.ts)_
 
-## `directus-template-util plugins:install PLUGIN...`
+## `directus-template-cli plugins:install PLUGIN...`
 
 Installs a plugin into the CLI.
 
 ```
 USAGE
-  $ directus-template-util plugins:install PLUGIN...
+  $ directus-template-cli plugins:install PLUGIN...
 
 ARGUMENTS
   PLUGIN  Plugin to install.
@@ -151,23 +127,23 @@ DESCRIPTION
 
 
 ALIASES
-  $ directus-template-util plugins add
+  $ directus-template-cli plugins add
 
 EXAMPLES
-  $ directus-template-util plugins:install myplugin
+  $ directus-template-cli plugins:install myplugin 
 
-  $ directus-template-util plugins:install https://github.com/someuser/someplugin
+  $ directus-template-cli plugins:install https://github.com/someuser/someplugin
 
-  $ directus-template-util plugins:install someuser/someplugin
+  $ directus-template-cli plugins:install someuser/someplugin
 ```
 
-## `directus-template-util plugins:inspect PLUGIN...`
+## `directus-template-cli plugins:inspect PLUGIN...`
 
 Displays installation properties of a plugin.
 
 ```
 USAGE
-  $ directus-template-util plugins:inspect PLUGIN...
+  $ directus-template-cli plugins:inspect PLUGIN...
 
 ARGUMENTS
   PLUGIN  [default: .] Plugin to inspect.
@@ -183,16 +159,16 @@ DESCRIPTION
   Displays installation properties of a plugin.
 
 EXAMPLES
-  $ directus-template-util plugins:inspect myplugin
+  $ directus-template-cli plugins:inspect myplugin
 ```
 
-## `directus-template-util plugins:install PLUGIN...`
+## `directus-template-cli plugins:install PLUGIN...`
 
 Installs a plugin into the CLI.
 
 ```
 USAGE
-  $ directus-template-util plugins:install PLUGIN...
+  $ directus-template-cli plugins:install PLUGIN...
 
 ARGUMENTS
   PLUGIN  Plugin to install.
@@ -214,23 +190,23 @@ DESCRIPTION
 
 
 ALIASES
-  $ directus-template-util plugins add
+  $ directus-template-cli plugins add
 
 EXAMPLES
-  $ directus-template-util plugins:install myplugin
+  $ directus-template-cli plugins:install myplugin 
 
-  $ directus-template-util plugins:install https://github.com/someuser/someplugin
+  $ directus-template-cli plugins:install https://github.com/someuser/someplugin
 
-  $ directus-template-util plugins:install someuser/someplugin
+  $ directus-template-cli plugins:install someuser/someplugin
 ```
 
-## `directus-template-util plugins:link PLUGIN`
+## `directus-template-cli plugins:link PLUGIN`
 
 Links a plugin into the CLI for development.
 
 ```
 USAGE
-  $ directus-template-util plugins:link PLUGIN
+  $ directus-template-cli plugins:link PLUGIN
 
 ARGUMENTS
   PATH  [default: .] path to plugin
@@ -248,16 +224,16 @@ DESCRIPTION
 
 
 EXAMPLES
-  $ directus-template-util plugins:link myplugin
+  $ directus-template-cli plugins:link myplugin
 ```
 
-## `directus-template-util plugins:uninstall PLUGIN...`
+## `directus-template-cli plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ directus-template-util plugins:uninstall PLUGIN...
+  $ directus-template-cli plugins:uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -270,17 +246,17 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ directus-template-util plugins unlink
-  $ directus-template-util plugins remove
+  $ directus-template-cli plugins unlink
+  $ directus-template-cli plugins remove
 ```
 
-## `directus-template-util plugins:uninstall PLUGIN...`
+## `directus-template-cli plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ directus-template-util plugins:uninstall PLUGIN...
+  $ directus-template-cli plugins:uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -293,17 +269,17 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ directus-template-util plugins unlink
-  $ directus-template-util plugins remove
+  $ directus-template-cli plugins unlink
+  $ directus-template-cli plugins remove
 ```
 
-## `directus-template-util plugins:uninstall PLUGIN...`
+## `directus-template-cli plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ directus-template-util plugins:uninstall PLUGIN...
+  $ directus-template-cli plugins:uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -316,17 +292,17 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ directus-template-util plugins unlink
-  $ directus-template-util plugins remove
+  $ directus-template-cli plugins unlink
+  $ directus-template-cli plugins remove
 ```
 
-## `directus-template-util plugins update`
+## `directus-template-cli plugins update`
 
 Update installed plugins.
 
 ```
 USAGE
-  $ directus-template-util plugins update [-h] [-v]
+  $ directus-template-cli plugins update [-h] [-v]
 
 FLAGS
   -h, --help     Show CLI help.
