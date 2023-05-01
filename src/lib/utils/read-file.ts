@@ -4,3 +4,9 @@ export default function readFile(file: string, dir:string): any[] {
   const obj = JSON.parse(f)
   return obj
 }
+
+export function readJsonFile(path: string): any[] {
+  const f = fs.readFileSync(`${path}.json`, 'utf8')
+  const obj = JSON.parse(f)
+  return obj
+}

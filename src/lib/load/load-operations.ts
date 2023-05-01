@@ -1,9 +1,8 @@
-import {readFile} from '../utils/readFile'
-import deleteItems from '../legacy/deleteItems'
+
+import deleteItems from '../utils/delete-items'
 import {api} from '../api'
-export default loadOperations = async () => {
+export default async function loadOperations(ops: any) {
   await deleteItems('operations')
-  const ops = readFile('operations')
   const opsIds = ops.map(i => {
     const del = {...i}
     delete del.resolve

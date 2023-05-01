@@ -1,27 +1,26 @@
 import {api} from '../api'
-import collections from '../source/collections.json'
 import path from 'node:path'
 
-const userCollections = collections
-.filter(item => !item.collection.startsWith('directus_', 0))
-.filter(item => item.schema != null) // Filter our any "folders"
-
-export default async () => {
-  await loadSkeletonRecords() // Empty Records with IDs only
-  await loadFullData() // Updates all skeleton records with their other values
-  await loadSingletons()
+export default async function loadData(collections: any, dir:string) {
+  const userCollections = collections
+  .filter(item => !item.collection.startsWith('directus_', 0))
+  .filter(item => item.schema !== null) // Filter our any "folders"
+  await loadSkeletonRecords(userCollections, dir) // Empty Records with IDs only
+  await loadFullData(userCollections, dir) // Updates all skeleton records with their other values
+  await loadSingletons(userCollections, dir)
 }
 
 // Handle mandatory fields properly
 // Upload record id.
 // SQL reset indexes once everything is loaded. - This is required for
 // Project Settings - ?
-const loadSkeletonRecords = async () => {
+const loadSkeletonRecords = async (userCollections: any, dir:string) => {
   for (const collection of userCollections) {
     const name = collection.collection
     const url = path.resolve(
-      __dirname,
-      `../source/collectionsData/${name}.json`,
+      dir,
+      'content',
+      `${name}.json`,
     )
     try {
       const sourceData = (await import(url)).default
@@ -51,12 +50,13 @@ const loadSkeletonRecords = async () => {
   }
 }
 
-const loadFullData = async () => {
+const loadFullData = async (userCollections: any, dir:string) => {
   for (const collection of userCollections) {
     const name = collection.collection
     const url = path.resolve(
-      __dirname,
-      `../source/collectionsData/${name}.json`,
+      dir,
+      'content',
+      `${name}.json`,
     )
     try {
       const sourceData = (await import(url)).default
@@ -72,13 +72,14 @@ const loadFullData = async () => {
   }
 }
 
-const loadSingletons = async () => {
+const loadSingletons = async (userCollections: any, dir:string) => {
   for (const collection of userCollections) {
     if (collection.meta.singleton) {
       const name = collection.collection
       const url = path.resolve(
-        __dirname,
-        `../source/collectionsData/${name}.json`,
+        dir,
+        'content',
+        `${name}.json`,
       )
       try {
         const sourceData = (await import(url)).default

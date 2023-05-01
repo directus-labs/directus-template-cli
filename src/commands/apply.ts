@@ -89,7 +89,7 @@ export default class ApplyCommand extends Command {
 
     // Run load script
     ux.action.start(`Applying template - ${chosenTemplate.template.templateName}`)
-    await apply(chosenTemplate.template.directoryPath)
+    await apply(chosenTemplate.template.directoryPath, this)
     ux.action.stop()
   }
 }

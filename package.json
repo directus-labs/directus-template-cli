@@ -12,6 +12,7 @@
   "repository": "bryantgillespie/directus-template-util",
   "files": [
     "/bin",
+    "/templates",
     "/dist",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
