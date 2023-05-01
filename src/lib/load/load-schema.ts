@@ -12,7 +12,7 @@ export default async (dir: string) => {
 
   try {
     await api.post('schema/apply', data.data)
-    console.log('Schema Loaded')
+    // console.log('Schema Loaded')
   } catch (error) {
     console.log('Error Applying schema', error.response.data.errors)
   }
