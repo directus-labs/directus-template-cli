@@ -10,7 +10,7 @@ import apply from '../lib/load/'
 const separator = '------------------'
 
 async function getTemplate() {
-  const templates = await readTemplates('./src/templates/')
+  const templates = await readTemplates('../../templates/')
   const templateChoices = templates.map((template: any) => {
     return {name: template.templateName, value: template}
   })
