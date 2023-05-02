@@ -6,10 +6,10 @@
   "bin": {
     "directus-template-util": "./bin/run"
   },
-  "homepage": "https://github.com/bryantgillespie/directus-template-cli",
+  "homepage": "https://github.com/directus-community/directus-template-cli",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "bryantgillespie/directus-template-cli",
+  "repository": "directus-community/directus-template-cli",
   "files": [
     "/bin",
     "/templates",
@@ -70,7 +70,7 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "bugs": "https://github.com/bryantgillespie/directus-template-cli/issues",
+  "bugs": "https://github.com/directus-community/directus-template-cli/issues",
   "keywords": [
     "oclif"
   ],
