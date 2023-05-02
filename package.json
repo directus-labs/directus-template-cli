@@ -20,7 +20,7 @@
   "dependencies": {
     "@oclif/core": "^2",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.4.6",
+    "@oclif/plugin-plugins": "^2.4.7",
     "inquirer": "^8.2.5",
     "axios": "^1.3.4",
     "dotenv": "^16.0.3",
