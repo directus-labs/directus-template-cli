@@ -3,6 +3,7 @@ import {ux} from '@oclif/core'
 import * as inquirer from 'inquirer'
 import readTemplates from '../lib/utils/read-templates'
 import validateUrl from '../lib/utils/validate-url'
+import {cwd} from 'node:process'
 
 import {api} from '../lib/api'
 import apply from '../lib/load/'
@@ -10,7 +11,8 @@ import apply from '../lib/load/'
 const separator = '------------------'
 
 async function getTemplate() {
-  const templates = await readTemplates('../../templates/')
+  const rootDir = cwd() + '/templates'
+  const templates = await readTemplates(rootDir)
   const templateChoices = templates.map((template: any) => {
     return {name: template.templateName, value: template}
   })
