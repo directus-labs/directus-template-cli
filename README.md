@@ -21,7 +21,7 @@ $ npm install -g directus-template-cli
 $ directus-template-cli COMMAND
 running command...
 $ directus-template-cli (--version)
-directus-template-cli/0.1.0 darwin-x64 node-v18.12.1
+directus-template-cli/0.1.1 darwin-x64 node-v18.12.1
 $ directus-template-cli --help [COMMAND]
 USAGE
   $ directus-template-cli COMMAND
@@ -57,7 +57,7 @@ EXAMPLES
   $ directus-template-cli apply
 ```
 
-_See code: [dist/commands/apply.ts](https://github.com/bryantgillespie/directus-template-cli/blob/v0.1.0/dist/commands/apply.ts)_
+_See code: [dist/commands/apply.ts](https://github.com/bryantgillespie/directus-template-cli/blob/v0.1.1/dist/commands/apply.ts)_
 
 ## `directus-template-cli help [COMMANDS]`
 
