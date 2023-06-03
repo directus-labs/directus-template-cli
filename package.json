@@ -23,7 +23,7 @@
     "@oclif/plugin-plugins": "^2.4.6",
     "inquirer": "^8.2.5",
     "axios": "^1.3.4",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.1.3",
     "formdata-node": "^5.0.0",
     "generate-password": "^1.7.0"
   },
