@@ -31,8 +31,8 @@ dependencies:
 
 devDependencies:
   '@oclif/test':
-    specifier: ^2.3.16
-    version: 2.3.22(@types/node@16.18.34)(typescript@4.9.5)
+    specifier: ^2.3.23
+    version: 2.3.23(@types/node@16.18.34)(typescript@4.9.5)
   '@types/chai':
     specifier: ^4
     version: 4.3.5
@@ -758,12 +758,12 @@ packages:
       - typescript
     dev: true
 
-  /@oclif/test@2.3.22(@types/node@16.18.34)(typescript@4.9.5):
-    resolution: {integrity: sha512-0wLW8YnLS9Gvipgu64ZtzPmi7HfyJkPziU/tfW8T/4lQyalDvL8MS05+1UPR6V6hXu86Ehg0CbWJDeU4TB+e1Q==}
+  /@oclif/test@2.3.23(@types/node@16.18.34)(typescript@4.9.5):
+    resolution: {integrity: sha512-SEbVaE6KxA6+pwDdgcogy2CLu+GdR0p5yAbIFN0LeakeQvdjaUGdaz0vX/VN7+QaKr08jmjhHO5VpF2iaRuVZg==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@oclif/core': 2.8.5(@types/node@16.18.34)(typescript@4.9.5)
-      fancy-test: 2.0.25
+      fancy-test: 2.0.27
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -2430,8 +2430,8 @@ packages:
       iconv-lite: 0.4.24
       tmp: 0.0.33
 
-  /fancy-test@2.0.25:
-    resolution: {integrity: sha512-4OKW+SC62aP3Y19YlCWxjKJD0iW4kjLqUvdd9OaW1lM7Co/FX3PTi2NHguzsj2vmPs/6mMITKu0saYAr2uZA4g==}
+  /fancy-test@2.0.27:
+    resolution: {integrity: sha512-NUhkIpeHc4ebvkGLhQmlwpd9hd/ytOXTEmX2dFJ0e5VL61Ds7/RUHUmdSRY27VWil+uAuWSU8q6mUymrkxHC8Q==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@types/chai': 4.3.5
