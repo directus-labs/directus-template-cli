@@ -32,7 +32,7 @@
     "@oclif/test": "^2.3.16",
     "@types/chai": "^4",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^16.18.24",
+    "@types/node": "^16.18.38",
     "chai": "^4",
     "eslint": "^7.32.0",
     "eslint-config-oclif": "^4",
