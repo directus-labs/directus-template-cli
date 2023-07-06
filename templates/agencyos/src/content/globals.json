@@ -1,0 +1,64 @@
+{
+  "address_country": "US",
+  "address_locality": "Seattle",
+  "address_region": "WA",
+  "build_hook_url": "https://api.netlify.com/build_hooks/6410cc4f3210881c58bf4223",
+  "description": "A freaking awesome Nuxt + Directus template that will help you level up.",
+  "email": "info@example.com",
+  "id": "ab89c489-faea-4310-8b59-7ddb3caf279a",
+  "og_image": "50aa7259-f9ae-4aa5-aea0-f5f698ce3f4f",
+  "phone": "(425) 123-4567",
+  "postal_code": "98052",
+  "routes": [
+    {
+      "collection": "pages",
+      "route": "/{{ slug }}"
+    },
+    {
+      "collection": "posts",
+      "route": "/posts/{{ slug }}"
+    },
+    {
+      "collection": "categories",
+      "route": "/posts/categories/{{ slug }}"
+    },
+    {
+      "collection": "projects",
+      "route": "/projects/{{ slug }}"
+    },
+    {
+      "collection": "help_articles",
+      "route": "/help/articles/{{ slug }}"
+    },
+    {
+      "collection": "help_collections",
+      "route": "/help/collections/{{ slug }}"
+    }
+  ],
+  "social_links": [
+    {
+      "service": "github",
+      "url": "https://github.com/directus-community/agency-os"
+    },
+    {
+      "service": "linkedin",
+      "url": "https://www.linkedin.com/company/directus-io"
+    },
+    {
+      "service": "youtube",
+      "url": "https://www.youtube.com/c/DirectusVideos"
+    },
+    {
+      "url": "https://directus.chat/",
+      "service": "discord"
+    },
+    {
+      "service": "twitter",
+      "url": "https://twitter.com/directus"
+    }
+  ],
+  "street_address": "123 Main St",
+  "tagline": "The modern dev agency template",
+  "title": "Agency OS",
+  "url": "https://www.agencyos.dev"
+}

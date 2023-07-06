@@ -1,0 +1,134 @@
+[
+  {
+    "id": "0f8ea882-219d-4823-bb80-bc725d280c3a",
+    "name": "Deploy Site",
+    "icon": "send",
+    "color": "#18222F",
+    "description": "Start a new build for the website.",
+    "status": "active",
+    "trigger": "manual",
+    "accountability": "all",
+    "options": {
+      "collections": [
+        "globals"
+      ]
+    },
+    "operation": "5575a3f6-761b-4ee1-8dd5-a147c417b036",
+    "date_created": "2023-06-14T10:24:32",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "operations": [
+      "40fd454c-a438-47bb-9bc5-399d1fffd562",
+      "5575a3f6-761b-4ee1-8dd5-a147c417b036",
+      "70242292-da15-47fc-8ec8-edc40d192410",
+      "a207e95a-65b9-488e-ac1f-3fbabb01446c"
+    ]
+  },
+  {
+    "id": "9347fb19-b41f-4cf7-9da2-0b95d556df79",
+    "name": "Generate Social Image",
+    "icon": "image_search",
+    "color": "#FF99DD",
+    "description": "Generate a social image dynamically for an item in a collection.",
+    "status": "active",
+    "trigger": "manual",
+    "accountability": "all",
+    "options": {
+      "collections": [
+        "posts",
+        "pages",
+        "projects",
+        "categories"
+      ]
+    },
+    "operation": "841c6842-97c9-475f-aa38-f7b4f6ab71dc",
+    "date_created": "2023-06-14T10:24:32",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "operations": [
+      "841c6842-97c9-475f-aa38-f7b4f6ab71dc",
+      "bd1bc17d-729b-4849-8c51-f677aaaeaf93"
+    ]
+  },
+  {
+    "id": "ac372072-30ff-4806-91cc-a6ade72e6636",
+    "name": "Create SEO Item",
+    "icon": "saved_search",
+    "color": "#FF99DD",
+    "description": "This flow creates a matching item in the seo collection whenever an item in a trigger collection is created.",
+    "status": "active",
+    "trigger": "event",
+    "accountability": "all",
+    "options": {
+      "type": "action",
+      "scope": [
+        "items.create"
+      ],
+      "collections": [
+        "pages",
+        "posts",
+        "projects",
+        "categories"
+      ]
+    },
+    "operation": "a7a66ae8-47ad-4d7a-97d3-e27f8c52241b",
+    "date_created": "2023-06-14T10:24:32",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "operations": [
+      "a7a66ae8-47ad-4d7a-97d3-e27f8c52241b"
+    ]
+  },
+  {
+    "id": "b94189fe-0d20-4611-88a1-dd7b5d419b35",
+    "name": "Slugify",
+    "icon": "bolt",
+    "color": null,
+    "description": "Generate slugs for 'pages', 'posts,",
+    "status": "active",
+    "trigger": "event",
+    "accountability": "all",
+    "options": {
+      "type": "action",
+      "scope": [
+        "items.create"
+      ],
+      "collections": [
+        "pages",
+        "posts",
+        "projects",
+        "categories"
+      ]
+    },
+    "operation": "1d167b20-13af-4f0b-afe1-a4c4d8971654",
+    "date_created": "2023-06-14T10:24:32",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "operations": [
+      "1d167b20-13af-4f0b-afe1-a4c4d8971654",
+      "adcc6c22-a63a-46dc-8f1c-cb0b997a3106"
+    ]
+  },
+  {
+    "id": "c29208b0-4187-4af0-83a3-1bea7e30e12c",
+    "name": "Post Approval",
+    "icon": "mark_email_read",
+    "color": "#FF99DD",
+    "description": "Send email when posts are ready for review.",
+    "status": "active",
+    "trigger": "event",
+    "accountability": "all",
+    "options": {
+      "type": "action",
+      "scope": [
+        "items.update"
+      ],
+      "collections": [
+        "posts"
+      ]
+    },
+    "operation": "aa70c7bb-cb61-417f-9110-468d79b4849b",
+    "date_created": "2023-06-14T10:24:32",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "operations": [
+      "aa70c7bb-cb61-417f-9110-468d79b4849b",
+      "d1bfebad-1335-4a63-b9cb-f2e705244738"
+    ]
+  }
+]

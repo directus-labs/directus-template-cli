@@ -1,0 +1,56 @@
+[
+  {
+    "block_logocloud_id": "f22bcb92-6793-4518-b9e7-3d789ed894df",
+    "file": "35a67f1b-d401-4300-a503-b8e583186f2a",
+    "id": 1,
+    "sort": 1
+  },
+  {
+    "block_logocloud_id": null,
+    "file": null,
+    "id": 2,
+    "sort": 2
+  },
+  {
+    "block_logocloud_id": "f22bcb92-6793-4518-b9e7-3d789ed894df",
+    "file": "0dfe66dd-ceba-4dca-8907-03b2dda49443",
+    "id": 3,
+    "sort": 4
+  },
+  {
+    "block_logocloud_id": null,
+    "file": "a104c031-6ad2-4148-ace6-052e28cfda0b",
+    "id": 4,
+    "sort": 5
+  },
+  {
+    "block_logocloud_id": null,
+    "file": null,
+    "id": 5,
+    "sort": 5
+  },
+  {
+    "block_logocloud_id": null,
+    "file": null,
+    "id": 6,
+    "sort": 6
+  },
+  {
+    "block_logocloud_id": null,
+    "file": "d0130348-9ead-49d0-b8e7-871cd43921a0",
+    "id": 7,
+    "sort": 7
+  },
+  {
+    "block_logocloud_id": "f22bcb92-6793-4518-b9e7-3d789ed894df",
+    "file": "6a1ca349-d7ab-4f43-9284-c61671e145f2",
+    "id": 8,
+    "sort": 3
+  },
+  {
+    "block_logocloud_id": "f22bcb92-6793-4518-b9e7-3d789ed894df",
+    "file": "08242513-ca8f-471f-b69b-82703a19d1e5",
+    "id": 9,
+    "sort": 2
+  }
+]
