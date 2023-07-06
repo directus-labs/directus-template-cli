@@ -1,0 +1,77 @@
+{
+  "id": 1,
+  "project_name": "Agency OS",
+  "project_url": null,
+  "project_color": null,
+  "project_logo": null,
+  "public_foreground": null,
+  "public_background": null,
+  "public_note": null,
+  "auth_login_attempts": 25,
+  "auth_password_policy": "/^.{8,}$/",
+  "storage_asset_transform": "all",
+  "storage_asset_presets": [
+    {
+      "key": "800w",
+      "fit": "inside",
+      "width": 800,
+      "quality": 90,
+      "withoutEnlargement": true,
+      "format": "webp",
+      "transforms": [],
+      "height": null
+    },
+    {
+      "key": "1200w",
+      "fit": "inside",
+      "width": 1200,
+      "quality": 90,
+      "withoutEnlargement": true,
+      "format": "webp",
+      "transforms": []
+    }
+  ],
+  "custom_css": "",
+  "storage_default_folder": null,
+  "basemaps": null,
+  "mapbox_key": null,
+  "module_bar": [
+    {
+      "type": "module",
+      "id": "content",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "users",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "files",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "insights",
+      "enabled": true
+    },
+    {
+      "type": "link",
+      "id": "docs",
+      "name": "Directus Docs",
+      "url": "https://docs.directus.io",
+      "icon": "help_outline",
+      "enabled": true
+    },
+    {
+      "type": "module",
+      "id": "settings",
+      "enabled": true,
+      "locked": true
+    }
+  ],
+  "project_descriptor": null,
+  "default_language": "en-US",
+  "custom_aspect_ratios": null
+}

@@ -1,0 +1,214 @@
+[
+  {
+    "id": "1d167b20-13af-4f0b-afe1-a4c4d8971654",
+    "name": "Slug Me",
+    "key": "slug_me",
+    "type": "exec",
+    "position_x": 19,
+    "position_y": 1,
+    "options": {
+      "code": "module.exports = async function (data) {\n\t// Index data to get the string you want to slugify\n\t// Assign it to the \"text\" var below.\n\tconst text = data.$trigger.payload.title;\n\n\tconst slug = text\n\t\t.toLowerCase()\n\t\t.trim()\n\t\t.replace(/[^\\w\\s-]/g, '')\n\t\t.replace(/[\\s_-]+/g, '-')\n\t\t.replace(/^-+|-+$/g, '');\n\n\treturn slug;\n};\n"
+    },
+    "resolve": "adcc6c22-a63a-46dc-8f1c-cb0b997a3106",
+    "reject": null,
+    "flow": "b94189fe-0d20-4611-88a1-dd7b5d419b35",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "40fd454c-a438-47bb-9bc5-399d1fffd562",
+    "name": "Check Build Hook",
+    "key": "check_build_hook",
+    "type": "exec",
+    "position_x": 37,
+    "position_y": 1,
+    "options": {
+      "code": "module.exports = async function(data) {\n\tconst build_hook_url = data.read_globals[0].build_hook_url\n    if (!build_hook_url) throw new Error('Missing build hook url')\n    return build_hook_url\n}"
+    },
+    "resolve": "a207e95a-65b9-488e-ac1f-3fbabb01446c",
+    "reject": "70242292-da15-47fc-8ec8-edc40d192410",
+    "flow": "0f8ea882-219d-4823-bb80-bc725d280c3a",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "5575a3f6-761b-4ee1-8dd5-a147c417b036",
+    "name": "Read Globals",
+    "key": "read_globals",
+    "type": "item-read",
+    "position_x": 19,
+    "position_y": 1,
+    "options": {
+      "collection": "globals"
+    },
+    "resolve": "40fd454c-a438-47bb-9bc5-399d1fffd562",
+    "reject": null,
+    "flow": "0f8ea882-219d-4823-bb80-bc725d280c3a",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "70242292-da15-47fc-8ec8-edc40d192410",
+    "name": "Log Error",
+    "key": "log_error",
+    "type": "log",
+    "position_x": 55,
+    "position_y": 17,
+    "options": {
+      "message": "Missing build hook URL"
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "0f8ea882-219d-4823-bb80-bc725d280c3a",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "841c6842-97c9-475f-aa38-f7b4f6ab71dc",
+    "name": "Get Item",
+    "key": "get_item",
+    "type": "item-read",
+    "position_x": 19,
+    "position_y": 1,
+    "options": {
+      "collection": "{{$trigger.body.collection}}",
+      "key": "{{$trigger.body.keys}}",
+      "permissions": "$full"
+    },
+    "resolve": "bd1bc17d-729b-4849-8c51-f677aaaeaf93",
+    "reject": null,
+    "flow": "9347fb19-b41f-4cf7-9da2-0b95d556df79",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "a207e95a-65b9-488e-ac1f-3fbabb01446c",
+    "name": "Call Build Hook",
+    "key": "call_build_hook",
+    "type": "request",
+    "position_x": 55,
+    "position_y": 1,
+    "options": {
+      "method": "POST",
+      "url": "{{check_build_hook}}"
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "0f8ea882-219d-4823-bb80-bc725d280c3a",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "a7a66ae8-47ad-4d7a-97d3-e27f8c52241b",
+    "name": "Update Trigger Item",
+    "key": "update_trigger_item",
+    "type": "item-update",
+    "position_x": 20,
+    "position_y": 1,
+    "options": {
+      "collection": "{{$trigger.collection}}",
+      "key": [
+        "{{$trigger.key}}"
+      ],
+      "payload": {
+        "seo": {
+          "title": "{{$trigger.payload.title}}",
+          "meta_description": "{{$trigger.payload.summary}}"
+        }
+      }
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "ac372072-30ff-4806-91cc-a6ade72e6636",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "aa70c7bb-cb61-417f-9110-468d79b4849b",
+    "name": "Check Status",
+    "key": "check_status",
+    "type": "condition",
+    "position_x": 19,
+    "position_y": 1,
+    "options": {
+      "filter": {
+        "$trigger": {
+          "payload": {
+            "status": {
+              "_eq": "in_review"
+            }
+          }
+        }
+      }
+    },
+    "resolve": "d1bfebad-1335-4a63-b9cb-f2e705244738",
+    "reject": null,
+    "flow": "c29208b0-4187-4af0-83a3-1bea7e30e12c",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "adcc6c22-a63a-46dc-8f1c-cb0b997a3106",
+    "name": "Update Slug",
+    "key": "update_slug",
+    "type": "item-update",
+    "position_x": 37,
+    "position_y": 1,
+    "options": {
+      "collection": "{{$trigger.collection}}",
+      "key": "{{$trigger.key}}",
+      "payload": {
+        "slug": "{{ slug_me }}"
+      }
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "b94189fe-0d20-4611-88a1-dd7b5d419b35",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "bd1bc17d-729b-4849-8c51-f677aaaeaf93",
+    "name": "Generate Image",
+    "key": "generate_image",
+    "type": "request",
+    "position_x": 37,
+    "position_y": 1,
+    "options": {
+      "url": "http://localhost:3000/api/image",
+      "headers": [
+        {
+          "header": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "method": "POST",
+      "body": "{\n\"id\": \"{{get_item.id}}\",\n\"slug\": \"{{get_item.slug}}\",\n\"collection\": \"{{get_item.collection}}\",\n\"seo\": \"{{get_item.seo}}\",\n\"url\": \"http://localhost:3000/_media/{{get_item.collection}}/{{get_item.slug}}\"\n}"
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "9347fb19-b41f-4cf7-9da2-0b95d556df79",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  },
+  {
+    "id": "d1bfebad-1335-4a63-b9cb-f2e705244738",
+    "name": "Send Email",
+    "key": "send_email",
+    "type": "mail",
+    "position_x": 37,
+    "position_y": 1,
+    "options": {
+      "to": [
+        "bryant@directus.io"
+      ],
+      "subject": "New post is ready to review",
+      "body": "Hello Team,\n\nThe following article has been submitted for your review. Please log in, and either approve this content or provide feedback for necessary improvements.\n\nhttps://nuxt-starter.directus.app/admin/posts/{{$trigger.keys[0]}}\n\nBest,\n\n//"
+    },
+    "resolve": null,
+    "reject": null,
+    "flow": "c29208b0-4187-4af0-83a3-1bea7e30e12c",
+    "date_created": "2023-06-14T10:24:33",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d"
+  }
+]

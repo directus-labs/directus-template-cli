@@ -1,0 +1,30 @@
+[
+  {
+    "date_created": "2023-02-26T22:52:32.034Z",
+    "date_updated": "2023-06-14T10:25:02.937Z",
+    "id": "footer",
+    "status": "published",
+    "title": "Footer Navigation",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "user_updated": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "items": [
+      "dc0870f8-e316-48b0-b34d-ca5c4394344c",
+      "55a139ed-f4fa-4227-b5dd-7bf234451da8"
+    ]
+  },
+  {
+    "date_created": "2023-02-26T21:51:47.211Z",
+    "date_updated": "2023-07-06T05:24:14.235Z",
+    "id": "main",
+    "status": "published",
+    "title": "Main Navigation",
+    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "user_updated": "18910817-e86f-4193-a194-1fb62a8c626d",
+    "items": [
+      "98fecf94-471c-4439-8289-ff5692853729",
+      "edb1caf2-ae32-49a3-a3d1-2cf0096a5f07",
+      "b3e04cd1-c082-4811-8c93-323ab6fcde86",
+      "fea5cb3b-0a34-4150-90cd-9b41e27ccdb4"
+    ]
+  }
+]

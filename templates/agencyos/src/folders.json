@@ -1,0 +1,52 @@
+[
+  {
+    "id": "179227d0-058e-4087-929c-0f99b23e379b",
+    "name": "posts",
+    "parent": null
+  },
+  {
+    "id": "315fb3aa-1092-4317-ae23-ecba6d2a373e",
+    "name": "illustrations",
+    "parent": null
+  },
+  {
+    "id": "38637388-36d5-46df-b8a0-ca6ffd6525ef",
+    "name": "social images",
+    "parent": null
+  },
+  {
+    "id": "527a526e-5344-49b1-87c9-42c47ff8e775",
+    "name": "projects",
+    "parent": null
+  },
+  {
+    "id": "8cddc78f-7c57-4b11-bb8b-5ffa9130f04a",
+    "name": "logos",
+    "parent": null
+  },
+  {
+    "id": "a6b2ccad-383c-4ba4-9975-61ef2a4087ec",
+    "name": "team",
+    "parent": null
+  },
+  {
+    "id": "d0f67ad6-abbb-45d6-8d3e-b499a4c74d80",
+    "name": "private",
+    "parent": null
+  },
+  {
+    "id": "d15ae303-4717-48f4-b8da-b9fa6d711f86",
+    "name": "branding",
+    "parent": null
+  },
+  {
+    "id": "ed033970-538d-4034-9a70-332e90104178",
+    "name": "pages",
+    "parent": null
+  },
+  {
+    "id": "f123c546-cde3-41f8-9375-1321a65d6564",
+    "name": "testimonials",
+    "parent": null
+  }
+]

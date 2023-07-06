@@ -1,0 +1,38 @@
+[
+  {
+    "block_gallery": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "directus_files_id": "7a5b47f6-d648-48f9-bf93-4bfafda48940",
+    "id": 1,
+    "sort": 1
+  },
+  {
+    "block_gallery": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "directus_files_id": "18bf5269-9986-48c7-b607-01b77283df3b",
+    "id": 2,
+    "sort": 2
+  },
+  {
+    "block_gallery": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "directus_files_id": "c983bd13-da09-4c90-8e65-ae6a92093df8",
+    "id": 3,
+    "sort": 3
+  },
+  {
+    "block_gallery": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "directus_files_id": "9778a2b4-27de-4035-af5a-f58897578787",
+    "id": 4,
+    "sort": 4
+  },
+  {
+    "block_gallery": "61a1866b-5bff-473a-a6e3-106cd6b37412",
+    "directus_files_id": "004e37f7-765e-4339-8d44-987729e47898",
+    "id": 5,
+    "sort": 5
+  },
+  {
+    "block_gallery": null,
+    "directus_files_id": null,
+    "id": 6,
+    "sort": 6
+  }
+]
