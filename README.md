@@ -14,6 +14,17 @@ Note: This is a pre-release. It is recommended for use on POC or demo projects o
 $ npx directus-template-cli apply
 ```
 
+### Tips for use with Docker
+
+If you are running a local Docker instance, you need to run this script from the Docker shell. 
+After step 3. enter the Docker command line:
+```
+$ docker exec -it <directus-instance> sh
+```
+
+Also, if your Directus setup has a port mapping configured (e.g. `- 8066:8055`), make sure to 
+use the _internal_ URL to Directus, which usually is `http://0.0.0.0:8055`. 
+
 ## License
 
 This template is licensed under the [MIT License](https://opensource.org/licenses/MIT).
