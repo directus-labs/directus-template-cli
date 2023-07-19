@@ -2,7 +2,9 @@
 
 A CLI tool to apply Directus "templates" to a blank Directus instance.
 
-Note: This is a pre-release. It is recommended for use on POC or demo projects only.
+**Notes:**
+- This is a pre-release. It is recommended for use on POC or demo projects only.
+- ⚠️ Known issues with using MySQL currently, please use PostgreSQL or SQLite for database provider.
 
 ## Usage
 
