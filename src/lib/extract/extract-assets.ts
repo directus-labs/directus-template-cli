@@ -3,7 +3,7 @@ import path from "node:path";
 import { api } from "../api";
 
 export async function getAssetList() {
-  const { data }: { data } = await api.get("/files", {
+  const { data }: { data: any } = await api.get("/files", {
     params: {
       limit: "-1",
     },
@@ -11,26 +11,19 @@ export async function getAssetList() {
   return data.data;
 }
 
-export async function downloadFile(file: any) {
+export async function downloadFile(file: any, dir: string) {
   const response = await api.get(`assets/${file.id}`, {
     responseType: "stream",
   });
 
-  // Create assets folder if it doesnt exist
-  const fullPath = path.join(__dirname, "..", "..", "source", "assets");
+  // Create assets folder if it doesn't exist
+  const fullPath = path.join(dir, "assets");
   if (path && !fs.existsSync(fullPath)) {
-    fs.mkdirSync(fullPath);
+    fs.mkdirSync(fullPath, { recursive: true });
   }
 
-  const WritePath = path.resolve(
-    __dirname,
-    "..",
-    "..",
-    "source",
-    "assets",
-    file.filename_disk
-  );
-  const writer = fs.createWriteStream(WritePath);
+  const writePath = path.resolve(dir, "assets", file.filename_disk);
+  const writer = fs.createWriteStream(writePath);
 
   (response.data as NodeJS.ReadableStream).pipe(writer);
 
@@ -43,13 +36,13 @@ export async function downloadFile(file: any) {
   });
 }
 
-export async function downloadAllFiles() {
+export async function downloadAllFiles(dir: string) {
   const fileList = await getAssetList();
   for (const file of fileList) {
     try {
-      await downloadFile(file);
+      await downloadFile(file, dir);
     } catch (error) {
-      console.log(`error downloading ${file.filename_disk}`, error);
+      console.log(`Error downloading ${file.filename_disk}`, error);
     }
   }
 }
