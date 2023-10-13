@@ -11,10 +11,10 @@ export async function getCollections() {
   return collections;
 }
 
-export async function getDataFromCollection(collection: string) {
+export async function getDataFromCollection(collection: string, dir: string) {
   try {
     const { data }: { data } = await api.get(`items/${collection}`); // ADD limit = -1
-    writeToFile(`content/${collection}`, data.data);
+    writeToFile(`${collection}`, data.data, `${dir}/content/`);
   } catch {
     console.log(`error getting items from ${collection}`);
     // Errors are thrown for 'folder' collections
@@ -24,6 +24,6 @@ export async function getDataFromCollection(collection: string) {
 export async function extractContent(dir: string) {
   const collections = await getCollections();
   for (const collection of collections) {
-    await getDataFromCollection(collection);
+    await getDataFromCollection(collection, dir);
   }
 }

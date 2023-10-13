@@ -1,22 +1,27 @@
-import path from 'node:path'
-import fs from 'node:fs'
+import path from "node:path";
+import fs from "node:fs";
 
-const dir = path.join(__dirname, '..', 'source')
-export default async (fileName: string, data: any) => {
-  const folders = fileName.split('/')
-  const endFileName = folders.pop()
-  const folderPath = folders.join('/')
+export default async (fileName: string, data: any, dir: string) => {
+  const folders = fileName.split("/");
+  const endFileName = folders.pop();
+  const folderPath = folders.join("/");
 
-  const fullPath = path.join(dir, folderPath)
+  // Generate the full path where you want to write the file
+  const fullPath = path.join(dir, folderPath);
 
-  if (path && !fs.existsSync(fullPath)) {
-    fs.mkdirSync(fullPath)
+  // Check if the directory exists. Create if it doesn't.
+  if (!fs.existsSync(fullPath)) {
+    fs.mkdirSync(fullPath, { recursive: true });
   }
+
+  // Construct the full file path
+  const fullFilePath = path.join(fullPath, `${endFileName}.json`);
 
   try {
-    await fs.promises.writeFile(`${dir}/${fileName}.json`, JSON.stringify(data, null, 2))
-    console.log(`Wrote ${fileName}`)
+    // Write the file
+    await fs.promises.writeFile(fullFilePath, JSON.stringify(data, null, 2));
+    console.log(`Wrote ${fullFilePath}`);
   } catch (error) {
-    console.log('error writing to file', error)
+    console.log("Error writing to file", error);
   }
-}
+};
