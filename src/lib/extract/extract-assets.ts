@@ -29,7 +29,7 @@ export async function downloadFile(file: any, dir: string) {
 
   return new Promise((resolve, reject) => {
     writer.on("finish", () => {
-      console.log(`Wrote ${file.filename_disk}`);
+      // console.log(`Wrote ${file.filename_disk}`);
       resolve(null);
     });
     writer.on("error", reject);
