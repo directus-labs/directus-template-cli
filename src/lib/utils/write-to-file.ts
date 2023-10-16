@@ -20,8 +20,8 @@ export default async (fileName: string, data: any, dir: string) => {
   try {
     // Write the file
     await fs.promises.writeFile(fullFilePath, JSON.stringify(data, null, 2));
-    console.log(`Wrote ${fullFilePath}`);
+    // console.log(`Wrote ${fullFilePath}`);
   } catch (error) {
-    console.log("Error writing to file", error);
+    console.log("Error writing to file", error.data.errors);
   }
 };

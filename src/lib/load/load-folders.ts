@@ -17,8 +17,6 @@ export default async function loadFolders(dir: string) {
       const { id, ...rest } = folder;
       await api.patch(`/folders/${id}`, rest);
     });
-
-    console.log("Folder creation", data);
   } catch (error) {
     console.log("Error loading Folders", error.response.data.errors);
   }
