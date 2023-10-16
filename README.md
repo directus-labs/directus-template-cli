@@ -7,6 +7,7 @@ A CLI tool to make applying or extracting Directus "templates" a little easier..
 - This is a pre-release. It is recommended for use on POC or demo projects only.
 - ⚠️ Known issues with using MySQL currently, please use ONLY PostgreSQL or SQLite for your database provider.
 - Templates are applied / extracted on an all or nothing basis – meaning that all the schema, content, and system settings are extracted or applied. We'd love to support more granular operations in the future. (PRs welcome 🙏)
+- If you are extracting or applying from a remote source, the script can take quite a while depedning on the "size" of your instance (how many collections, how many items in each collection, number and size of assets, etc). The script applies a strict rate limit of 10 requests per second using bottleneck.
 
 ## Usage
 

@@ -4,12 +4,16 @@ import path from "node:path";
 import { downloadAllFiles } from "./extract-assets";
 import extractSchema from "./extract-schema";
 import extractFromEndpoint from "./extract-from-endpoint";
-import extractPublicPermissions from "./public-permissions";
+import {
+  extractPublicPermissions,
+  extractPermissions,
+} from "./extract-permissions";
 import { extractContent } from "./extract-content";
 import extractFolders from "./extract-folders";
 import extractUsers from "./extract-users";
 import extractRoles from "./extract-roles";
 import extractFiles from "./extract-files";
+import extractPresets from "./extract-presets";
 
 const endpoints = [
   // "folders",
@@ -18,12 +22,12 @@ const endpoints = [
   // "roles",
   // "files",
   "operations",
-  "permissions",
+  // "permissions",
   "collections",
   "flows",
   "dashboards",
   "panels",
-  "presets",
+  // "presets",
   "settings",
 ];
 
@@ -37,12 +41,14 @@ export default async function extract(dir: string, cli: any) {
     fs.mkdirSync(destination, { recursive: true });
   }
 
-  // Extract the schema
   await extractSchema(destination);
   await extractFolders(destination);
   await extractUsers(destination);
   await extractRoles(destination);
   await extractFiles(destination);
+  await extractPresets(destination);
+  await extractPermissions(destination);
+  await extractPermissions(destination);
 
   // Iterate through the endpoints
   for (const endpoint of endpoints) {
