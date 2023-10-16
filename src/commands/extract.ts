@@ -1,8 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import { ux } from "@oclif/core";
 import * as inquirer from "inquirer";
-import readTemplates from "../lib/utils/read-templates";
-import validateUrl from "../lib/utils/validate-url";
 import { cwd } from "node:process";
 import fs from "node:fs";
 import path from "node:path";

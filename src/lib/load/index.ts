@@ -11,7 +11,10 @@ import loadOperations from "./load-operations";
 import loadData from "./load-data";
 import loadPresets from "./load-presets";
 import loadSettings from "./load-settings";
-import loadPublicPermissions from "./load-public-permissions";
+import {
+  loadPublicPermissions,
+  loadPermissions,
+} from "./load-public-permissions";
 
 export default async function apply(dir: string, cli: any) {
   // Get the source directory for the actual files
@@ -45,5 +48,7 @@ export default async function apply(dir: string, cli: any) {
   cli.log("Loaded Settings");
   await loadPublicPermissions(readFile("public-permissions", source));
   cli.log("Loaded Public Permissions");
+  await loadPermissions(readFile("permissions", source));
+  cli.log("Loaded Permissions");
   return {};
 }
