@@ -13,11 +13,7 @@ async function removeallPublicPermissions() {
   });
 }
 
-export async function loadPublicPermissions(roles: any) {
-  await removeallPublicPermissions();
-  await loadToDestination("permissions", roles);
-}
-
 export async function loadPermissions(roles: any) {
+  await removeallPublicPermissions();
   await loadToDestination("permissions", roles);
 }
