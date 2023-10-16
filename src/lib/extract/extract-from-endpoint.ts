@@ -15,6 +15,6 @@ export default async function extractFromEndpoint(path: string, dir: string) {
     // Use the dynamic dir parameter
     await writeToFile(`${path}`, data.data, dir);
   } catch (error) {
-    console.log(`Error querying endpoint ${path}:`, error);
+    console.log(`Error querying endpoint ${path}:`, error.response.data.errors);
   }
 }
