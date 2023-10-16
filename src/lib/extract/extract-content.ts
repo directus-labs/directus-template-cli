@@ -13,7 +13,11 @@ export async function getCollections() {
 
 export async function getDataFromCollection(collection: string, dir: string) {
   try {
-    const { data }: { data } = await api.get(`items/${collection}`); // ADD limit = -1
+    const { data }: { data } = await api.get(`items/${collection}`, {
+      params: {
+        limit: -1,
+      },
+    });
     writeToFile(`${collection}`, data.data, `${dir}/content/`);
   } catch {
     console.log(`error getting items from ${collection}`);

@@ -64,7 +64,6 @@ export default class ExtractCommand extends Command {
     api.setAuthToken(directusToken);
 
     this.log(separator);
-
     // Run the extract script
     ux.action.start(
       `Extracting template - from ${directusUrl} to ${directory}`
