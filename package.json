@@ -26,7 +26,8 @@
     "dotenv": "^16.0.3",
     "formdata-node": "^5.0.0",
     "generate-password": "^1.7.0",
-    "inquirer": "^8.2.5"
+    "inquirer": "^8.2.5",
+    "slugify": "^1.6.6"
   },
   "devDependencies": {
     "@oclif/test": "^2.3.16",
