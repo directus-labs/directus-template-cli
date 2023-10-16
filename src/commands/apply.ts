@@ -92,17 +92,17 @@ export default class ApplyCommand extends Command {
     this.log(separator);
 
     // Check if Directus instance is empty, if not, throw error
-    // const { data }: { data: any } = await api.get("/collections");
-    // // Look for collections that don't start with directus_
-    // const collections = data.data.filter((collection: any) => {
-    //   return !collection.collection.startsWith("directus_");
-    // });
+    const { data }: { data: any } = await api.get("/collections");
+    // Look for collections that don't start with directus_
+    const collections = data.data.filter((collection: any) => {
+      return !collection.collection.startsWith("directus_");
+    });
 
-    // if (collections.length > 0) {
-    //   ux.error(
-    //     "Directus instance is not empty. Please use a blank instance. Copying a template into an existing instance is not supported at this time."
-    //   );
-    // }
+    if (collections.length > 0) {
+      ux.error(
+        "Directus instance is not empty. Please use a blank instance. Copying a template into an existing instance is not supported at this time."
+      );
+    }
 
     // Run load script
     ux.action.start(
