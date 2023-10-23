@@ -1,40 +1,19 @@
 {
-  "address_country": "US",
-  "address_locality": "Seattle",
-  "address_region": "WA",
-  "build_hook_url": "https://api.netlify.com/build_hooks/6410cc4f3210881c58bf4223",
-  "description": "A freaking awesome Nuxt + Directus template that will help you level up.",
-  "email": "info@example.com",
+  "logo_on_light_bg": null,
+  "logo_on_dark_bg": null,
+  "og_image": "c0253924-38cd-4ca0-9989-9c0a57ec076a",
   "id": "ab89c489-faea-4310-8b59-7ddb3caf279a",
-  "og_image": "50aa7259-f9ae-4aa5-aea0-f5f698ce3f4f",
-  "phone": "(425) 123-4567",
-  "postal_code": "98052",
-  "routes": [
-    {
-      "collection": "pages",
-      "route": "/{{ slug }}"
-    },
-    {
-      "collection": "posts",
-      "route": "/posts/{{ slug }}"
-    },
-    {
-      "collection": "categories",
-      "route": "/posts/categories/{{ slug }}"
-    },
-    {
-      "collection": "projects",
-      "route": "/projects/{{ slug }}"
-    },
-    {
-      "collection": "help_articles",
-      "route": "/help/articles/{{ slug }}"
-    },
-    {
-      "collection": "help_collections",
-      "route": "/help/collections/{{ slug }}"
-    }
-  ],
+  "url": "https://www.agencyos.dev",
+  "title": "Agency OS",
+  "tagline": "The hackable agency operating system",
+  "street_address": "123 Main St",
+  "postal_code": "55555",
+  "phone": "(555) 123-4567",
+  "email": "info@example.com",
+  "build_hook_url": "https://api.netlify.com/build_hooks/6410cc4f3210881c58bf4223",
+  "address_region": "NY",
+  "address_locality": "New York",
+  "address_country": "US",
   "social_links": [
     {
       "service": "github",
@@ -57,8 +36,17 @@
       "url": "https://twitter.com/directus"
     }
   ],
-  "street_address": "123 Main St",
-  "tagline": "The modern dev agency template",
-  "title": "Agency OS",
-  "url": "https://www.agencyos.dev"
+  "theme": {
+    "primary": "violet",
+    "gray": "slate",
+    "borderRadius": "xl",
+    "fonts": {
+      "families": {
+        "display": "Poppins",
+        "body": "Inter",
+        "code": "Fira Code"
+      }
+    }
+  },
+  "description": "A freaking awesome Nuxt + Directus app that will help you power up your agency."
 }

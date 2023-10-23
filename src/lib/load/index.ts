@@ -32,13 +32,15 @@ export default async function apply(dir: string, cli: any) {
   cli.log("Loaded Dashboards");
   await loadToDestination("panels", readFile("panels", source)); // Comes after dashboards
   cli.log("Loaded Panels");
+  await loadData(readFile("collections", source), source);
+  cli.log("Loaded Data");
 
+  // Loading Flows and Operations after data so we don't trigger the flows on the data we're loading
   await loadFlows(readFile("flows", source));
   cli.log("Loaded Flows");
   await loadOperations(readFile("operations", source)); // Comes after flows
   cli.log("Loaded Operations");
-  await loadData(readFile("collections", source), source);
-  cli.log("Loaded Data");
+
   await loadPresets(readFile("presets", source));
   cli.log("Loaded Presets");
   await loadSettings(readFile("settings", source));

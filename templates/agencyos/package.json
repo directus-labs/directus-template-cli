@@ -1,8 +1,8 @@
 {
   "name": "directus-template-agencyos",
-  "templateName": "Agency OS",
-  "version": "1.0.0",
-  "description": "Headless CMS - Website template for Directus",
+  "templateName": "AgencyOS",
+  "version": "2.0.0",
+  "description": "",
   "author": "Bryant Gillespie",
   "license": "MIT",
   "files": [
