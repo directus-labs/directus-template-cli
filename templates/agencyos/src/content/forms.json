@@ -1,36 +1,16 @@
 [
   {
-    "date_created": "2023-03-16T01:50:49.262Z",
-    "date_updated": "2023-06-14T10:25:02.637Z",
-    "id": "5da3d356-d818-434f-b225-db35c418bbb6",
-    "key": "newsletter",
-    "on_success": null,
-    "redirect_url": null,
-    "schema": [
-      {
-        "name": "email",
-        "type": "text",
-        "label": "What is your email address?",
-        "help": "We hate spam just as much as you do!",
-        "validation": "required|email",
-        "width": "100"
-      }
-    ],
-    "sort": null,
-    "status": "published",
-    "submit_label": "Subscribe",
-    "success_message": null,
-    "title": "Newsletter",
-    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
-    "user_updated": "18910817-e86f-4193-a194-1fb62a8c626d"
-  },
-  {
-    "date_created": "2023-02-26T15:02:36.662Z",
-    "date_updated": "2023-06-14T10:25:02.734Z",
+    "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
+    "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "id": "36493b64-2bad-4c58-9d70-785ccb12ee26",
-    "key": "contact-us",
-    "on_success": "redirect",
+    "date_updated": "2023-09-15T13:04:48.625Z",
+    "date_created": "2023-02-26T15:02:36.662Z",
+    "title": "Contact Us",
+    "submit_label": "Get Started",
+    "status": "published",
     "redirect_url": null,
+    "on_success": "redirect",
+    "key": "contact-us",
     "schema": [
       {
         "name": "first_name",
@@ -81,12 +61,69 @@
         "width": "100"
       }
     ],
-    "sort": null,
-    "status": "published",
-    "submit_label": "Get Started",
     "success_message": null,
-    "title": "Contact Us",
-    "user_created": "18910817-e86f-4193-a194-1fb62a8c626d",
-    "user_updated": "18910817-e86f-4193-a194-1fb62a8c626d"
+    "sort": null
+  },
+  {
+    "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
+    "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
+    "id": "5da3d356-d818-434f-b225-db35c418bbb6",
+    "date_updated": "2023-10-20T03:20:50.314Z",
+    "date_created": "2023-03-16T01:50:49.262Z",
+    "title": "Newsletter",
+    "submit_label": "Subscribe",
+    "status": "published",
+    "redirect_url": null,
+    "on_success": "message",
+    "key": "newsletter",
+    "schema": [
+      {
+        "name": "email",
+        "type": "text",
+        "label": "What is your email address?",
+        "help": "We hate spam just as much as you do!",
+        "validation": "required|email",
+        "width": "100"
+      }
+    ],
+    "success_message": "<p>Thanks for subscribing to our newsletter! Please check your inbox for confirmation.</p>",
+    "sort": null
+  },
+  {
+    "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
+    "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
+    "id": "940a86aa-0500-4ddb-8ab1-dccfd08295a5",
+    "date_updated": "2023-10-20T17:47:10.031Z",
+    "date_created": "2023-09-19T01:10:50.143Z",
+    "title": "Project Onboarding",
+    "submit_label": "Submit Answers",
+    "status": "draft",
+    "redirect_url": null,
+    "on_success": "message",
+    "key": "onboarding",
+    "schema": [
+      {
+        "name": "why",
+        "type": "textarea",
+        "label": "Why do this project now?",
+        "width": "100",
+        "conditions": [
+          {
+            "field": "test_condition",
+            "action": "show",
+            "condition": "is_filled",
+            "value": null
+          }
+        ]
+      },
+      {
+        "name": "files",
+        "type": "file",
+        "label": "Upload Your Logo",
+        "width": "67"
+      }
+    ],
+    "success_message": "<p>Thanks for completing the onboarding form. You're amazing!</p>",
+    "sort": null
   }
 ]

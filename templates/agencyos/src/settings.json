@@ -1,15 +1,17 @@
 {
-  "id": 1,
-  "project_name": "Agency OS",
-  "project_url": null,
-  "project_color": null,
   "project_logo": null,
-  "public_foreground": null,
+  "storage_default_folder": null,
   "public_background": null,
-  "public_note": null,
-  "auth_login_attempts": 25,
-  "auth_password_policy": "/^.{8,}$/",
+  "public_foreground": null,
   "storage_asset_transform": "all",
+  "auth_password_policy": "/^.{8,}$/",
+  "project_color": null,
+  "project_url": null,
+  "project_name": "Agency OS",
+  "default_language": "en-US",
+  "project_descriptor": null,
+  "mapbox_key": null,
+  "custom_aspect_ratios": null,
   "storage_asset_presets": [
     {
       "key": "800w",
@@ -31,10 +33,7 @@
       "transforms": []
     }
   ],
-  "custom_css": "",
-  "storage_default_folder": null,
   "basemaps": null,
-  "mapbox_key": null,
   "module_bar": [
     {
       "type": "module",
@@ -71,7 +70,8 @@
       "locked": true
     }
   ],
-  "project_descriptor": null,
-  "default_language": "en-US",
-  "custom_aspect_ratios": null
+  "custom_css": "",
+  "public_note": null,
+  "id": 1,
+  "auth_login_attempts": 25
 }

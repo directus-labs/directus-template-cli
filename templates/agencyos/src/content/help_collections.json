@@ -1,42 +1,20 @@
 [
   {
     "id": "8d7cb6e3-bae7-48f6-9af3-4b510167289c",
-    "sort": 1,
-    "icon": "not_started",
     "title": "Getting Started",
-    "description": "How to get started with Agency OS",
     "slug": "getting-started",
-    "articles": [
-      "d8272574-2007-4f9b-8ede-15f3f17c613f",
-      "b2f9b8ea-a0a0-4cad-b9e2-b244019b475e"
-    ]
+    "icon": "not_started",
+    "description": "How to get started with Agency OS",
+    "sort": 1,
+    "articles": []
   },
   {
     "id": "5bb9ab97-a99b-4582-9c7c-58c9e00ccb1e",
+    "title": "Client Portal",
+    "slug": "client-portal",
+    "icon": "captive_portal",
+    "description": "How to use your client portal.",
     "sort": 2,
-    "icon": "playlist_add_check",
-    "title": "Features",
-    "description": "How to use specific features of Agency OS",
-    "slug": "features",
-    "articles": [
-      "0fd63c08-9325-44b4-b370-45d5e180f52e",
-      "edb894e2-155e-4f96-aa17-7d867c8bcf2f",
-      "fde45dfe-5a84-4bc6-ab30-0c69a38bd710",
-      "0ad83426-ed84-43e9-ac02-f74539fb5327",
-      "db03ff6c-0da5-441a-9412-00a0dc460513"
-    ]
-  },
-  {
-    "id": "a9cb4c64-bb07-468b-9465-c7357f8cdec7",
-    "sort": 3,
-    "icon": "component_exchange",
-    "title": "Components",
-    "description": "Learn how to use the built in base components",
-    "slug": "components",
-    "articles": [
-      "7d1b2bc0-1e79-4dc3-aeac-8a61d17adabf",
-      "1941383d-559c-4cd9-a80d-8a6384d68874",
-      "5e8acfb9-33fc-4bed-b9c5-c1672b3f335a"
-    ]
+    "articles": []
   }
 ]

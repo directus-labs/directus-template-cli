@@ -1,38 +1,38 @@
 [
   {
-    "color": "#2ECDA7",
-    "content": "<p>All of our downloadable resources on bunnies.</p>",
+    "seo": null,
     "id": "06da3e1e-9af6-4b27-a248-60a58dc229d2",
+    "title": "SEO",
+    "slug": "seo",
+    "color": "#2ECDA7",
+    "headline": "<p>Helpful resources on <em>search</em> engine optimization.</p>",
+    "sort": 1
+  },
+  {
     "seo": null,
-    "slug": "resources",
-    "sort": null,
-    "title": "Resource"
-  },
-  {
-    "color": "#A2B5CD",
-    "content": null,
-    "id": "da30c277-650f-421c-b976-c598f898e89e",
-    "seo": "ed4494aa-e9b3-4282-8110-26e8af84d358",
-    "slug": "video",
-    "sort": null,
-    "title": "Video"
-  },
-  {
-    "color": "#FFC23B",
-    "content": "<p>Case studies of super successful bunnies.</p>",
     "id": "4a62ba82-c48a-465f-a180-a3a8256c93bb",
-    "seo": null,
+    "title": "Case Study",
     "slug": "case-studies",
-    "sort": null,
-    "title": "Case Study"
+    "color": "#FFC23B",
+    "headline": "<p>Case studies of super <em>successful</em> bunnies.</p>",
+    "sort": 2
   },
   {
+    "seo": "ed4494aa-e9b3-4282-8110-26e8af84d358",
+    "id": "da30c277-650f-421c-b976-c598f898e89e",
+    "title": "Web Development",
+    "slug": "web-development",
+    "color": "#A2B5CD",
+    "headline": "<p>Our best and brightest advice on web development.</p>",
+    "sort": 3
+  },
+  {
+    "seo": "544fb83c-a705-4e4f-90b8-d7e2652b7ffd",
+    "id": "9896a65e-a004-4481-87cf-a07e515a5d82",
+    "title": "Analytics",
+    "slug": "analytics",
     "color": "#3399FF",
-    "content": null,
-    "id": "29b17aff-9ecb-44a7-a4f9-cbf364effd87",
-    "seo": null,
-    "slug": "podcast",
-    "sort": null,
-    "title": "Podcast"
+    "headline": "<p>Tips and advice on how to make sense of your analytics data.</p>",
+    "sort": null
   }
 ]

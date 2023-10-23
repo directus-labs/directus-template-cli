@@ -1,93 +1,99 @@
 [
   {
-    "collection": "block_cardgroup",
+    "collection": "billing",
     "meta": {
-      "collection": "block_cardgroup",
-      "icon": "view_carousel",
-      "note": null,
-      "display_template": "{{headline}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": [
-        {
-          "language": "en-US",
-          "translation": "Card Group",
-          "singular": "Card Group",
-          "plural": "Card Groups"
-        }
-      ],
+      "collection": "billing",
+      "icon": "attach_money",
+      "display_template": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#FF99DD",
+      "color": "#D064AC",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
       "item_duplication_fields": null,
-      "sort": 13,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "translations": null,
+      "note": null,
+      "sort": 8,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
-    "schema": {
-      "name": "block_cardgroup",
-      "sql": "CREATE TABLE `block_cardgroup` (`group_type` varchar(255) null default null, `headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
-    }
+    "schema": null
   },
   {
-    "collection": "block_cardgroup_cards",
+    "collection": "block_button",
     "meta": {
-      "collection": "block_cardgroup_cards",
+      "collection": "block_button",
       "icon": null,
-      "note": null,
-      "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
+      "display_template": "{{label}} - {{type}}",
       "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
       "color": null,
-      "item_duplication_fields": null,
-      "sort": 2,
-      "group": "block_cardgroup",
+      "group": "block_button_group",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Button",
+          "singular": "Button",
+          "plural": "Buttons"
+        }
+      ],
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
-      "name": "block_cardgroup_cards",
-      "sql": "CREATE TABLE \"block_cardgroup_cards\" (`block_cardgroup_id` char(36) NULL DEFAULT null, `href` varchar(255) NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `summary` text NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `block_cardgroup_cards_block_cardgroup_id_foreign` FOREIGN KEY (`block_cardgroup_id`) REFERENCES `block_cardgroup` (`id`) ON DELETE SET NULL, CONSTRAINT `block_cardgroup_cards_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_button",
+      "comment": null
     }
   },
   {
-    "collection": "block_cardgroup_posts",
+    "collection": "block_button_group",
     "meta": {
-      "collection": "block_cardgroup_posts",
-      "icon": "import_export",
-      "note": null,
+      "collection": "block_button_group",
+      "icon": "smart_button",
       "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
       "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "block_cardgroup",
+      "color": "#18222F",
+      "group": "blocks",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Button Group",
+          "singular": "Button Group",
+          "plural": "Button Groups"
+        }
+      ],
+      "note": null,
+      "sort": 17,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
-      "name": "block_cardgroup_posts",
-      "sql": "CREATE TABLE \"block_cardgroup_posts\" (`block_cardgroup_id` char(36) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `posts_id` char(36) NULL DEFAULT null, CONSTRAINT `block_cardgroup_posts_block_cardgroup_id_foreign` FOREIGN KEY (`block_cardgroup_id`) REFERENCES `block_cardgroup` (`id`) ON DELETE SET NULL, CONSTRAINT `block_cardgroup_posts_posts_id_foreign` FOREIGN KEY (`posts_id`) REFERENCES `posts` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_button_group",
+      "comment": null
     }
   },
   {
@@ -95,10 +101,17 @@
     "meta": {
       "collection": "block_columns",
       "icon": "vertical_split",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -107,22 +120,16 @@
           "plural": "Columns"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 4,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_columns",
-      "sql": "CREATE TABLE `block_columns` (`headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -130,27 +137,28 @@
     "meta": {
       "collection": "block_columns_rows",
       "icon": null,
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
       "accountability": "all",
       "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
       "group": "block_columns",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
+      "schema": "public",
       "name": "block_columns_rows",
-      "sql": "CREATE TABLE \"block_columns_rows\" (`block_columns` char(36) NULL DEFAULT null, `content` text NULL DEFAULT null, `headline` text NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `image` char(36) NULL DEFAULT null, `image_position` varchar(255) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, CONSTRAINT `block_columns_rows_block_columns_foreign` FOREIGN KEY (`block_columns`) REFERENCES `block_columns` (`id`) ON DELETE NO ACTION, CONSTRAINT `block_columns_rows_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -158,10 +166,17 @@
     "meta": {
       "collection": "block_cta",
       "icon": "skip_next",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -170,22 +185,52 @@
           "plural": "Call To Action"
         }
       ],
-      "archive_field": null,
+      "note": null,
+      "sort": 9,
       "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_cta",
+      "comment": null
+    }
+  },
+  {
+    "collection": "block_divider",
+    "meta": {
+      "collection": "block_divider",
+      "icon": "horizontal_rule",
+      "display_template": "{{title}}",
+      "archive_field": null,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 9,
+      "color": "#1A212C",
       "group": "blocks",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Divider",
+          "singular": "Divider",
+          "plural": "Dividers"
+        }
+      ],
+      "note": null,
+      "sort": 12,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
-      "name": "block_cta",
-      "sql": "CREATE TABLE `block_cta` (`buttons` json null default null, `content` text null default null, `headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "schema": "public",
+      "name": "block_divider",
+      "comment": null
     }
   },
   {
@@ -193,10 +238,17 @@
     "meta": {
       "collection": "block_faqs",
       "icon": "question_mark",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -205,22 +257,16 @@
           "plural": "FAQs"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 2,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_faqs",
-      "sql": "CREATE TABLE `block_faqs` (`faqs` json null default null, `headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -228,34 +274,35 @@
     "meta": {
       "collection": "block_form",
       "icon": "text_format",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": [
-        {
-          "language": "en-US",
-          "translation": "Form",
-          "singular": "Form",
-          "plural": "Forms"
-        }
-      ],
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 5,
+      "color": "#1A212C",
       "group": "blocks",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Form Section",
+          "singular": "Form Section",
+          "plural": "Forms Form Sections"
+        }
+      ],
+      "note": null,
+      "sort": 5,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_form",
-      "sql": "CREATE TABLE \"block_form\" (`form` char(36) NULL DEFAULT null, `headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `block_form_form_foreign` FOREIGN KEY (`form`) REFERENCES `forms` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
@@ -263,10 +310,17 @@
     "meta": {
       "collection": "block_gallery",
       "icon": "grid_view",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -275,50 +329,45 @@
           "plural": "Gallery"
         }
       ],
-      "archive_field": null,
+      "note": null,
+      "sort": 13,
       "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 12,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_gallery",
-      "sql": "CREATE TABLE `block_gallery` (`headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
     "collection": "block_gallery_files",
     "meta": {
       "collection": "block_gallery_files",
-      "icon": "import_export",
-      "note": null,
+      "icon": null,
       "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
       "accountability": "all",
       "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
       "group": "block_gallery",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
+      "schema": "public",
       "name": "block_gallery_files",
-      "sql": "CREATE TABLE \"block_gallery_files\" (`block_gallery` char(36) NULL DEFAULT null, `directus_files_id` char(36) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `sort` integer NULL DEFAULT null, CONSTRAINT `block_gallery_files_block_gallery_foreign` FOREIGN KEY (`block_gallery`) REFERENCES `block_gallery` (`id`) ON DELETE SET NULL, CONSTRAINT `block_gallery_files_directus_files_id_foreign` FOREIGN KEY (`directus_files_id`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -326,10 +375,17 @@
     "meta": {
       "collection": "block_hero",
       "icon": "aspect_ratio",
-      "note": null,
       "display_template": "{{headline}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -338,22 +394,16 @@
           "plural": "Hero"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 1,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_hero",
-      "sql": "CREATE TABLE \"block_hero\" (`buttons` json NULL DEFAULT null, `content` text NULL DEFAULT null, `headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `block_hero_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -361,10 +411,17 @@
     "meta": {
       "collection": "block_html",
       "icon": "html",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -373,22 +430,16 @@
           "plural": "Raw HTML"
         }
       ],
-      "archive_field": null,
+      "note": null,
+      "sort": 18,
       "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 15,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_html",
-      "sql": "CREATE TABLE `block_html` (`id` char(36) not null default null, `raw_html` text null default 'null', primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -396,10 +447,17 @@
     "meta": {
       "collection": "block_logocloud",
       "icon": "broken_image",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -408,50 +466,45 @@
           "plural": "Logo Cloud"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 7,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_logocloud",
-      "sql": "CREATE TABLE `block_logocloud` (`headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
-    "collection": "block_logocloud_files",
+    "collection": "block_logocloud_logos",
     "meta": {
-      "collection": "block_logocloud_files",
-      "icon": "import_export",
-      "note": null,
+      "collection": "block_logocloud_logos",
+      "icon": "home_app_logo",
       "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
+      "color": "#18222F",
       "group": "block_logocloud",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
-      "name": "block_logocloud_files",
-      "sql": "CREATE TABLE \"block_logocloud_files\" (`block_logocloud_id` char(36) NULL DEFAULT null, `file` char(36) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `sort` integer NULL DEFAULT null, CONSTRAINT `block_logocloud_files_block_logocloud_id_foreign` FOREIGN KEY (`block_logocloud_id`) REFERENCES `block_logocloud` (`id`) ON DELETE SET NULL, CONSTRAINT `block_logocloud_files_file_foreign` FOREIGN KEY (`file`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_logocloud_logos",
+      "comment": null
     }
   },
   {
@@ -459,10 +512,17 @@
     "meta": {
       "collection": "block_quote",
       "icon": "format_quote",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -471,22 +531,16 @@
           "plural": "Quotes"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 3,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_quote",
-      "sql": "CREATE TABLE \"block_quote\" (`background_color` varchar(255) NULL DEFAULT null, `content` text NULL DEFAULT null, `headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `subtitle` varchar(255) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `block_quote_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -494,10 +548,17 @@
     "meta": {
       "collection": "block_richtext",
       "icon": "format_color_text",
-      "note": null,
       "display_template": "{{headline}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -506,22 +567,70 @@
           "plural": "Rich Text"
         }
       ],
-      "archive_field": null,
+      "note": null,
+      "sort": 10,
       "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "block_richtext",
+      "comment": null
+    }
+  },
+  {
+    "collection": "blocks",
+    "meta": {
+      "collection": "blocks",
+      "icon": "content_copy",
+      "display_template": null,
+      "archive_field": null,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#FF99DD",
+      "color": "#1A212C",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
       "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
       "sort": 10,
-      "group": "blocks",
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": null
+  },
+  {
+    "collection": "block_step_items",
+    "meta": {
+      "collection": "block_step_items",
+      "icon": null,
+      "display_template": "{{title}}",
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "block_steps",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
-      "name": "block_richtext",
-      "sql": "CREATE TABLE `block_richtext` (`content` text null default null, `headline` varchar(255) null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "schema": "public",
+      "name": "block_step_items",
+      "comment": null
     }
   },
   {
@@ -529,10 +638,17 @@
     "meta": {
       "collection": "block_steps",
       "icon": "checklist",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -541,50 +657,16 @@
           "plural": "Steps"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 11,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "block_steps",
-      "sql": "CREATE TABLE `block_steps` (`alternate_image_position` boolean not null default '0', `headline` text null default null, `id` char(36) not null default null, `show_step_numbers` boolean null default '1', `title` varchar(255) null default null, primary key (`id`))"
-    }
-  },
-  {
-    "collection": "block_steps_items",
-    "meta": {
-      "collection": "block_steps_items",
-      "icon": null,
       "note": null,
-      "display_template": "{{title}}",
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
-      "archive_field": null,
+      "sort": 11,
       "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "block_steps",
-      "collapse": "open",
-      "preview_url": null
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
-      "name": "block_steps_items",
-      "sql": "CREATE TABLE \"block_steps_items\" (`block_steps` char(36) NULL DEFAULT null, `content` text NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `image` char(36) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, CONSTRAINT `block_steps_items_block_steps_foreign` FOREIGN KEY (`block_steps`) REFERENCES `block_steps` (`id`) ON DELETE NO ACTION, CONSTRAINT `block_steps_items_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_steps",
+      "comment": null
     }
   },
   {
@@ -592,10 +674,17 @@
     "meta": {
       "collection": "block_team",
       "icon": "face",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -604,22 +693,16 @@
           "plural": "Team"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 8,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_team",
-      "sql": "CREATE TABLE `block_team` (`content` text null default null, `headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -627,10 +710,17 @@
     "meta": {
       "collection": "block_testimonials",
       "icon": "star",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -639,50 +729,45 @@
           "plural": "Testimonials"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
+      "note": null,
       "sort": 6,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "block_testimonials",
-      "sql": "CREATE TABLE `block_testimonials` (`headline` text null default null, `id` char(36) not null default null, `title` varchar(255) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
-    "collection": "block_testimonials_items",
+    "collection": "block_testimonial_slider_items",
     "meta": {
-      "collection": "block_testimonials_items",
-      "icon": "import_export",
-      "note": null,
+      "collection": "block_testimonial_slider_items",
+      "icon": null,
       "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
       "accountability": "all",
       "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
       "group": "block_testimonials",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
-      "name": "block_testimonials_items",
-      "sql": "CREATE TABLE \"block_testimonials_items\" (`block_testimonials_id` char(36) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `sort` integer NULL DEFAULT null, `testimonial` char(36) NULL DEFAULT null, CONSTRAINT `block_testimonials_items_block_testimonials_id_foreign` FOREIGN KEY (`block_testimonials_id`) REFERENCES `block_testimonials` (`id`) ON DELETE SET NULL, CONSTRAINT `block_testimonials_items_testimonial_foreign` FOREIGN KEY (`testimonial`) REFERENCES `testimonials` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_testimonial_slider_items",
+      "comment": null
     }
   },
   {
@@ -690,10 +775,17 @@
     "meta": {
       "collection": "block_video",
       "icon": "video_library",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": "blocks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": [
         {
           "language": "en-US",
@@ -702,75 +794,16 @@
           "plural": "Videos"
         }
       ],
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 14,
-      "group": "blocks",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "block_video",
-      "sql": "CREATE TABLE \"block_video\" (`headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `type` varchar(255) NULL DEFAULT null, `video_file` char(36) NULL DEFAULT null, `video_url` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `block_video_video_file_foreign` FOREIGN KEY (`video_file`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
-    }
-  },
-  {
-    "collection": "blocks",
-    "meta": {
-      "collection": "blocks",
-      "icon": "square",
       "note": null,
-      "display_template": null,
-      "hidden": false,
+      "sort": 15,
+      "archive_app_filter": true,
       "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 7,
-      "group": "content",
-      "collapse": "closed",
-      "preview_url": null
-    },
-    "schema": null
-  },
-  {
-    "collection": "blog_settings",
-    "meta": {
-      "collection": "blog_settings",
-      "icon": "signpost",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": true,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "page_settings",
-      "collapse": "open",
-      "preview_url": null
+      "hidden": false
     },
     "schema": {
-      "name": "blog_settings",
-      "sql": "CREATE TABLE \"blog_settings\" (`featured_post` char(36) NULL DEFAULT null, `headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `posts_per_page` integer NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `blog_settings_featured_post_foreign` FOREIGN KEY (`featured_post`) REFERENCES `posts` (`id`) ON DELETE SET NULL, CONSTRAINT `blog_settings_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "block_video",
+      "comment": null
     }
   },
   {
@@ -778,186 +811,93 @@
     "meta": {
       "collection": "categories",
       "icon": "category",
-      "note": null,
       "display_template": "{{color}} {{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 4,
-      "group": "content",
+      "color": "#1A212C",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "categories",
-      "sql": "CREATE TABLE \"categories\" (`color` varchar(255) NULL DEFAULT null, `content` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `slug` varchar(255) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `categories_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL)"
-    }
-  },
-  {
-    "collection": "chat_config",
-    "meta": {
-      "collection": "chat_config",
-      "icon": "voice_chat",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": true,
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 2,
-      "group": "config",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "chat_config",
-      "sql": "CREATE TABLE `chat_config` (`id` char(36) not null, `modules` json null, `enabled` boolean null default '1', `hours` json null, `require_email` varchar(255) null default 'never', primary key (`id`))"
-    }
-  },
-  {
-    "collection": "config",
-    "meta": {
-      "collection": "config",
-      "icon": "settings_applications",
       "note": null,
-      "display_template": null,
-      "hidden": false,
+      "sort": 3,
+      "archive_app_filter": true,
       "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "categories",
+      "comment": null
+    }
+  },
+  {
+    "collection": "contacts",
+    "meta": {
+      "collection": "contacts",
+      "icon": "emoji_people",
+      "display_template": "{{first_name}} {{last_name}} <{{email}}>",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
       "sort_field": null,
       "accountability": "all",
       "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 5,
       "group": null,
-      "collapse": "closed",
-      "preview_url": null
-    },
-    "schema": null
-  },
-  {
-    "collection": "content",
-    "meta": {
-      "collection": "content",
-      "icon": "folder_special",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
       "translations": null,
-      "archive_field": null,
+      "note": "Contacts are the people at the different organizations you work with.",
+      "sort": 4,
       "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 3,
-      "group": null,
-      "collapse": "closed",
-      "preview_url": null
+      "singleton": false,
+      "hidden": false
     },
-    "schema": null
+    "schema": {
+      "schema": "public",
+      "name": "contacts",
+      "comment": null
+    }
   },
   {
     "collection": "conversations",
     "meta": {
       "collection": "conversations",
       "icon": "chat",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
+      "display_template": "{{title}} - {{user_created}} - {{date_created}}",
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "open",
       "sort_field": null,
       "accountability": "all",
-      "color": "#A2B5CD",
+      "color": "#6644FF",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
       "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Conversations",
+          "singular": "Conversation",
+          "plural": "Conversations"
+        }
+      ],
+      "note": "Conversations are for all the threads between you and your clients. Conversations contain messages.",
       "sort": 2,
-      "group": null,
-      "collapse": "closed",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "conversations",
-      "sql": "CREATE TABLE \"conversations\" (`id` char(36) NOT NULL, `status` varchar(255) NOT NULL DEFAULT 'draft', `date_created` datetime NULL, `date_updated` datetime NULL, `title` varchar(255) NULL, `visitor_id` char(36) null, PRIMARY KEY (`id`))"
-    }
-  },
-  {
-    "collection": "data",
-    "meta": {
-      "collection": "data",
-      "icon": "data_exploration",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#18222F",
-      "item_duplication_fields": null,
-      "sort": 6,
-      "group": null,
-      "collapse": "closed",
-      "preview_url": null
-    },
-    "schema": null
-  },
-  {
-    "collection": "events",
-    "meta": {
-      "collection": "events",
-      "icon": "network_ping",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#18222F",
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "data",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "events",
-      "sql": "CREATE TABLE `events` (`id` char(36) not null default null, `key` varchar(255) null default null, `metadata` json null default null, `service` varchar(255) null default null, `session` varchar(255) null default null, `timestamp` datetime null default null, `user` char(36) null default null, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -965,27 +905,28 @@
     "meta": {
       "collection": "forms",
       "icon": "text_format",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 4,
-      "group": "config",
+      "color": "#18222F",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 9,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "forms",
-      "sql": "CREATE TABLE \"forms\" (`date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `key` varchar(255) NULL DEFAULT null, `on_success` varchar(255) NULL DEFAULT null, `redirect_url` varchar(255) NULL DEFAULT null, `schema` json NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `submit_label` varchar(255) NULL DEFAULT null, `success_message` text NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `forms_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `forms_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
@@ -993,27 +934,28 @@
     "meta": {
       "collection": "globals",
       "icon": "south_america",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": true,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 5,
-      "group": "config",
+      "color": "#18222F",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 6,
+      "archive_app_filter": true,
+      "singleton": true,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "globals",
-      "sql": "CREATE TABLE \"globals\" (`address_country` varchar(255) NULL DEFAULT null, `address_locality` varchar(255) NULL DEFAULT null, `address_region` varchar(255) NULL DEFAULT null, `build_hook_url` varchar(255) NULL DEFAULT null, `description` text NULL DEFAULT null, `email` varchar(255) NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `og_image` char(36) NULL DEFAULT null, `phone` varchar(255) NULL DEFAULT null, `postal_code` varchar(255) NULL DEFAULT null, `routes` json NULL DEFAULT null, `social_links` json NULL DEFAULT '[]', `street_address` varchar(255) NULL DEFAULT null, `tagline` varchar(255) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `url` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `globals_og_image_foreign` FOREIGN KEY (`og_image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1021,23 +963,28 @@
     "meta": {
       "collection": "help",
       "icon": "support",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#2ECDA7",
-      "item_duplication_fields": null,
-      "sort": 4,
+      "color": "#8196B0",
       "group": null,
       "collapse": "closed",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Help Center"
+        }
+      ],
+      "note": null,
+      "sort": 11,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": null
   },
@@ -1046,27 +993,28 @@
     "meta": {
       "collection": "help_articles",
       "icon": "wifi_tethering",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#2ECDA7",
-      "item_duplication_fields": null,
-      "sort": 2,
+      "color": "#8196B0",
       "group": "help",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "help_articles",
-      "sql": "CREATE TABLE \"help_articles\" (`id` char(36) NOT NULL, `status` varchar(255) NOT NULL DEFAULT 'draft', `sort` integer NULL, `user_created` char(36) NULL, `date_created` datetime NULL, `user_updated` char(36) NULL, `date_updated` datetime NULL, `help_collection` char(36) NULL, `title` varchar(255) NULL, `slug` varchar(255) NULL, `owner` char(36) NULL, `content` text NULL, `summary` text NULL, PRIMARY KEY (`id`), CONSTRAINT `help_articles_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`), CONSTRAINT `help_articles_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`), CONSTRAINT `help_articles_help_collection_foreign` FOREIGN KEY (`help_collection`) REFERENCES `help_collections` (`id`) ON DELETE SET NULL, CONSTRAINT `help_articles_owner_foreign` FOREIGN KEY (`owner`) REFERENCES `directus_users` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1074,27 +1022,28 @@
     "meta": {
       "collection": "help_collections",
       "icon": "collections_bookmark",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#2ECDA7",
-      "item_duplication_fields": null,
-      "sort": 1,
+      "color": "#8196B0",
       "group": "help",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "help_collections",
-      "sql": "CREATE TABLE \"help_collections\" (`id` char(36) NOT NULL, `sort` integer NULL, `icon` varchar(255) NULL, `title` varchar(255) NULL, `description` text NULL, `slug` varchar(255) NULL, PRIMARY KEY (`id`))"
+      "comment": null
     }
   },
   {
@@ -1102,27 +1051,28 @@
     "meta": {
       "collection": "help_feedback",
       "icon": "insert_chart",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#2ECDA7",
-      "item_duplication_fields": null,
-      "sort": 3,
+      "color": "#8196B0",
       "group": "help",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "help_feedback",
-      "sql": "CREATE TABLE \"help_feedback\" (`id` char(36) NOT NULL, `user_created` char(36) NULL, `date_created` datetime NULL, `user_updated` char(36) NULL, `date_updated` datetime NULL, `url` varchar(255) null, `title` varchar(255) null, `comments` text null, `rating` integer null, `visitor_id` char(36) null, PRIMARY KEY (`id`), CONSTRAINT `help_feedback_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`), CONSTRAINT `help_feedback_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`))"
+      "comment": null
     }
   },
   {
@@ -1130,27 +1080,35 @@
     "meta": {
       "collection": "inbox",
       "icon": "inbox",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
+      "display_template": "{{status}} - {{date_created}}",
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "new",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#A2B5CD",
-      "item_duplication_fields": null,
-      "sort": 1,
+      "color": "#6644FF",
       "group": null,
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Inbox",
+          "singular": "Inbox",
+          "plural": "Inbox"
+        }
+      ],
+      "note": "The Inbox is for all your incoming unqualified leads and form submissions",
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "inbox",
-      "sql": "CREATE TABLE \"inbox\" (`data` json NULL DEFAULT '{}', `date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `form` char(36) NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `inbox_form_foreign` FOREIGN KEY (`form`) REFERENCES `forms` (`id`) ON DELETE SET NULL, CONSTRAINT `inbox_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `inbox_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
@@ -1158,55 +1116,35 @@
     "meta": {
       "collection": "messages",
       "icon": "chat_bubble",
-      "note": null,
       "display_template": "{{user_created}} - {{text}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#A2B5CD",
-      "item_duplication_fields": null,
-      "sort": 1,
+      "color": "#6644FF",
       "group": "conversations",
       "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "messages",
-      "sql": "CREATE TABLE \"messages\" (`id` char(36) NOT NULL, `user_created` char(36) NULL, `date_created` datetime NULL, `user_updated` char(36) NULL, `date_updated` datetime NULL, `text` text NULL, `conversation` char(36) NULL, `visitor_id` char(36) null, PRIMARY KEY (`id`), CONSTRAINT `messages_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`), CONSTRAINT `messages_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`), CONSTRAINT `messages_conversation_foreign` FOREIGN KEY (`conversation`) REFERENCES `conversations` (`id`) ON DELETE SET NULL)"
-    }
-  },
-  {
-    "collection": "metrics",
-    "meta": {
-      "collection": "metrics",
-      "icon": "123",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#18222F",
+      "preview_url": null,
       "item_duplication_fields": null,
-      "sort": 2,
-      "group": "data",
-      "collapse": "open",
-      "preview_url": null
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Messages",
+          "singular": "Message",
+          "plural": "Messages"
+        }
+      ],
+      "note": "Messages are the individual parts of a conversation.",
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
-      "name": "metrics",
-      "sql": "CREATE TABLE `metrics` (`id` char(36) not null default null, `key` varchar(255) null default null, `metadata` json null default null, `service` varchar(255) null default null, `timestamp` datetime null default null, `value` float null default null, primary key (`id`))"
+      "schema": "public",
+      "name": "messages",
+      "comment": null
     }
   },
   {
@@ -1214,27 +1152,28 @@
     "meta": {
       "collection": "navigation",
       "icon": "menu_open",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": null,
       "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 3,
-      "group": "config",
+      "color": "#18222F",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 10,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "navigation",
-      "sql": "CREATE TABLE \"navigation\" (`date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` varchar(255) NOT NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `title` varchar(255) NULL DEFAULT null, `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `navigation_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `navigation_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
@@ -1242,18 +1181,16 @@
     "meta": {
       "collection": "navigation_items",
       "icon": "navigate_next",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": "sort",
       "accountability": "all",
-      "color": null,
+      "color": "#18222F",
+      "group": "navigation",
+      "collapse": "open",
+      "preview_url": null,
       "item_duplication_fields": [
         "children",
         "has_children",
@@ -1266,95 +1203,1104 @@
         "type",
         "url"
       ],
+      "translations": null,
+      "note": null,
       "sort": 1,
-      "group": "navigation",
-      "collapse": "open",
-      "preview_url": null
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "navigation_items",
-      "sql": "CREATE TABLE \"navigation_items\" (`has_children` boolean NULL DEFAULT '0', `icon` varchar(255) NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `label` text NULL DEFAULT null, `navigation` varchar(255) NULL DEFAULT null, `open_in_new_tab` boolean NULL DEFAULT '0', `page` char(36) NULL DEFAULT null, `parent` char(36) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `type` varchar(255) NULL DEFAULT null, `url` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `navigation_items_navigation_foreign` FOREIGN KEY (`navigation`) REFERENCES `navigation` (`id`) ON DELETE SET NULL, CONSTRAINT `navigation_items_page_foreign` FOREIGN KEY (`page`) REFERENCES `pages` (`id`) ON DELETE SET NULL, CONSTRAINT `navigation_items_parent_foreign` FOREIGN KEY (`parent`) REFERENCES `navigation_items` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
-    "collection": "page_settings",
+    "collection": "organization_addresses",
     "meta": {
-      "collection": "page_settings",
-      "icon": "display_settings",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
+      "collection": "organization_addresses",
+      "icon": null,
+      "display_template": "{{name}} - {{street_address}}, {{address_locality}}, {{address_region}} {{postal_code}}",
       "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "group": "organizations",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
       "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "organization_addresses",
+      "comment": null
+    }
+  },
+  {
+    "collection": "organizations",
+    "meta": {
+      "collection": "organizations",
+      "icon": "add_business",
+      "display_template": "{{logo.$thumbnail}} {{name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "active",
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#6644FF",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Organizations",
+          "singular": "Organziation",
+          "plural": "Organizations"
+        }
+      ],
+      "note": "Organizations are your clients and customers.",
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "organizations",
+      "comment": null
+    }
+  },
+  {
+    "collection": "organizations_contacts",
+    "meta": {
+      "collection": "organizations_contacts",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "config",
+      "color": null,
+      "group": "organizations",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
-    "schema": null
+    "schema": {
+      "schema": "public",
+      "name": "organizations_contacts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_activities",
+    "meta": {
+      "collection": "os_activities",
+      "icon": "perm_phone_msg",
+      "display_template": "{{name}} - {{due_date}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "sales",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Activities",
+          "singular": "Activity",
+          "plural": "Activities"
+        }
+      ],
+      "note": "Activities are the calls, meetings, and more that move your Deals forward in your pipeline.",
+      "sort": 2,
+      "archive_app_filter": false,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_activities",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_activity_contacts",
+    "meta": {
+      "collection": "os_activity_contacts",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_activities",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_activity_contacts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_deal_contacts",
+    "meta": {
+      "collection": "os_deal_contacts",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_deals",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_deal_contacts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_deals",
+    "meta": {
+      "collection": "os_deals",
+      "icon": "attach_money",
+      "display_template": "{{name}} [{{organization.name}}] - {{close_date}}",
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "sales",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Deals",
+          "singular": "Deal",
+          "plural": "Deals"
+        }
+      ],
+      "note": "Deals are your pipeline for new projects.",
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_deals",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_deal_stages",
+    "meta": {
+      "collection": "os_deal_stages",
+      "icon": "view_kanban",
+      "display_template": "{{color}} {{name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Deal Stages",
+          "singular": "Deal Stage",
+          "plural": "Deal Stages"
+        }
+      ],
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_deal_stages",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_email_templates",
+    "meta": {
+      "collection": "os_email_templates",
+      "icon": "mark_email_unread",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Email Templates",
+          "singular": "Email Template",
+          "plural": "Email Template"
+        }
+      ],
+      "note": null,
+      "sort": 4,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_email_templates",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_expenses",
+    "meta": {
+      "collection": "os_expenses",
+      "icon": "monetization_on",
+      "display_template": "{{name}} (${{cost}}) - {{date}}",
+      "archive_field": null,
+      "archive_value": "voided",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "billing",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Expenses",
+          "singular": "Expenses",
+          "plural": "Expense"
+        }
+      ],
+      "note": null,
+      "sort": 4,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_expenses",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_invoice_items",
+    "meta": {
+      "collection": "os_invoice_items",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "group": "os_invoices",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_invoice_items",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_invoices",
+    "meta": {
+      "collection": "os_invoices",
+      "icon": "receipt_long",
+      "display_template": "INV#{{invoice_number}} - {{status}} - {{total}}",
+      "archive_field": "status",
+      "archive_value": "voided",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "billing",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Invoices",
+          "singular": "Invoice",
+          "plural": "Invoices"
+        }
+      ],
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_invoices",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_items",
+    "meta": {
+      "collection": "os_items",
+      "icon": "add_shopping_cart",
+      "display_template": "{{name}} (${{unit_price}})",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Items / Services",
+          "singular": "Item / Service",
+          "plural": "Items / Services"
+        }
+      ],
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_items",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_payments",
+    "meta": {
+      "collection": "os_payments",
+      "icon": "receipt",
+      "display_template": "{{amount}} - {{payment_date}} - {{organization.name}}",
+      "archive_field": "status",
+      "archive_value": "void",
+      "unarchive_value": "pending",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "billing",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Payments",
+          "singular": "Payment",
+          "plural": "Payments"
+        }
+      ],
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_payments",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_payment_terms",
+    "meta": {
+      "collection": "os_payment_terms",
+      "icon": "payments",
+      "display_template": "{{name}}",
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Payment Terms",
+          "singular": "Payment Term",
+          "plural": "Payment Terms"
+        }
+      ],
+      "note": null,
+      "sort": 5,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_payment_terms",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_project_contacts",
+    "meta": {
+      "collection": "os_project_contacts",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_projects",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_project_contacts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_project_files",
+    "meta": {
+      "collection": "os_project_files",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_projects",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_project_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_projects",
+    "meta": {
+      "collection": "os_projects",
+      "icon": "tab_group",
+      "display_template": "{{name}} - {{organization.name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Projects",
+          "singular": "Project",
+          "plural": "Projects"
+        }
+      ],
+      "note": "Projects are where you manage the deliverables, tasks, and milestones of producing what you sold to clients.",
+      "sort": 6,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_projects",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_project_templates",
+    "meta": {
+      "collection": "os_project_templates",
+      "icon": "list_alt_add",
+      "display_template": "{{name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "active",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": [
+        "status",
+        "description",
+        "tasks"
+      ],
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Project Templates",
+          "singular": "Project Template",
+          "plural": "Project Templates"
+        }
+      ],
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_project_templates",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_project_updates",
+    "meta": {
+      "collection": "os_project_updates",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_projects",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_project_updates",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_proposal_approvals",
+    "meta": {
+      "collection": "os_proposal_approvals",
+      "icon": null,
+      "display_template": "{{date_created}} - {{contact.first_name}} {{last_name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "group": "os_proposals",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_proposal_approvals",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_proposal_blocks",
+    "meta": {
+      "collection": "os_proposal_blocks",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": null,
+      "group": "os_proposals",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_proposal_blocks",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_proposal_contacts",
+    "meta": {
+      "collection": "os_proposal_contacts",
+      "icon": null,
+      "display_template": "{{contacts_id.first_name}} {{contacts_id.last_name}} <{{contacts_id.email}}>",
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_proposals",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_proposal_contacts",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_proposals",
+    "meta": {
+      "collection": "os_proposals",
+      "icon": "edit_document",
+      "display_template": "{{name}} - {{organization.name}}",
+      "archive_field": null,
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": "sales",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Proposals",
+          "singular": "Proposal",
+          "plural": "Proposals"
+        }
+      ],
+      "note": "Use Proposals to craft amazing quotes or statements of work for clients.",
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_proposals",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_settings",
+    "meta": {
+      "collection": "os_settings",
+      "icon": "settings_suggest",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Settings",
+          "singular": "Settings",
+          "plural": "Settings"
+        }
+      ],
+      "note": null,
+      "sort": 12,
+      "archive_app_filter": true,
+      "singleton": true,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_settings",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_task_files",
+    "meta": {
+      "collection": "os_task_files",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": null,
+      "group": "os_tasks",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_task_files",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_tasks",
+    "meta": {
+      "collection": "os_tasks",
+      "icon": "library_add_check",
+      "display_template": "{{status}} {{name}} {{type}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Tasks",
+          "singular": "Task",
+          "plural": "Tasks"
+        }
+      ],
+      "note": null,
+      "sort": 7,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_tasks",
+      "comment": null
+    }
+  },
+  {
+    "collection": "os_tax_rates",
+    "meta": {
+      "collection": "os_tax_rates",
+      "icon": "percent",
+      "display_template": "{{name}}",
+      "archive_field": "status",
+      "archive_value": "archived",
+      "unarchive_value": "draft",
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#8196B0",
+      "group": "os_settings",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Tax Rates",
+          "singular": "Tax Rate",
+          "plural": "Tax Rates"
+        }
+      ],
+      "note": null,
+      "sort": 6,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "os_tax_rates",
+      "comment": null
+    }
+  },
+  {
+    "collection": "page_blocks",
+    "meta": {
+      "collection": "page_blocks",
+      "icon": "code_blocks",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "sort",
+      "accountability": "all",
+      "color": "#18222F",
+      "group": "pages",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 3,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "page_blocks",
+      "comment": null
+    }
   },
   {
     "collection": "pages",
     "meta": {
       "collection": "pages",
       "icon": "web_asset",
-      "note": "Many-to-Any page builder example",
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "content",
+      "color": "#1A212C",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": "http://localhost:3000{{permalink}}?preview=true",
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": "Many-to-Any page builder example",
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "pages",
-      "sql": "CREATE TABLE \"pages\" (`date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `slug` varchar(255) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `title` varchar(255) NULL DEFAULT null, `user_created` varchar(36) NULL DEFAULT null, `user_updated` varchar(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `pages_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
-    "collection": "pages_blocks",
+    "collection": "pages_blog",
     "meta": {
-      "collection": "pages_blocks",
-      "icon": "import_export",
-      "note": null,
+      "collection": "pages_blog",
+      "icon": "signpost",
       "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#18222F",
+      "group": "pages",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Blog Page",
+          "singular": "Blog Page",
+          "plural": "Blog Page"
+        }
+      ],
+      "note": null,
+      "sort": 1,
       "archive_app_filter": true,
+      "singleton": true,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "pages_blog",
+      "comment": null
+    }
+  },
+  {
+    "collection": "pages_projects",
+    "meta": {
+      "collection": "pages_projects",
+      "icon": "settings_input_component",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#18222F",
+      "group": "pages",
+      "collapse": "open",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": [
+        {
+          "language": "en-US",
+          "translation": "Project Page",
+          "singular": "Project Page",
+          "plural": "Project Page"
+        }
+      ],
+      "note": null,
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": true,
+      "hidden": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "pages_projects",
+      "comment": null
+    }
+  },
+  {
+    "collection": "post_gallery_items",
+    "meta": {
+      "collection": "post_gallery_items",
+      "icon": null,
+      "display_template": null,
+      "archive_field": null,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
       "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "pages",
+      "group": "posts",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 1,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
-      "name": "pages_blocks",
-      "sql": "CREATE TABLE \"pages_blocks\" (`collection` varchar(255) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `item` varchar(255) NULL DEFAULT null, `pages_id` char(36) NULL DEFAULT null, `sort` integer NULL DEFAULT null, CONSTRAINT `pages_blocks_pages_id_foreign` FOREIGN KEY (`pages_id`) REFERENCES `pages` (`id`) ON DELETE SET NULL)"
+      "schema": "public",
+      "name": "post_gallery_items",
+      "comment": null
     }
   },
   {
@@ -1362,111 +2308,28 @@
     "meta": {
       "collection": "posts",
       "icon": "article",
-      "note": "Simple blog posts example",
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 2,
-      "group": "content",
+      "color": "#1A212C",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": "http://localhost:3000/posts/{{slug}}?preview=true",
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": "Simple blog posts example",
+      "sort": 2,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "posts",
-      "sql": "CREATE TABLE \"posts\" (`author` char(36) NULL DEFAULT null, `category` char(36) NULL DEFAULT null, `content` text NULL DEFAULT null, `date_created` datetime NULL DEFAULT null, `date_published` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `slug` varchar(255) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `summary` text NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `user_created` varchar(36) NULL DEFAULT null, `user_updated` varchar(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `posts_author_foreign` FOREIGN KEY (`author`) REFERENCES `directus_users` (`id`) ON DELETE SET NULL, CONSTRAINT `posts_category_foreign` FOREIGN KEY (`category`) REFERENCES `categories` (`id`) ON DELETE SET NULL, CONSTRAINT `posts_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `posts_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL)"
-    }
-  },
-  {
-    "collection": "projects",
-    "meta": {
-      "collection": "projects",
-      "icon": "cases",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
-      "archive_field": "status",
-      "archive_app_filter": true,
-      "archive_value": "archived",
-      "unarchive_value": "draft",
-      "sort_field": "sort",
-      "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 3,
-      "group": "content",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "projects",
-      "sql": "CREATE TABLE \"projects\" (`built_with` json NULL DEFAULT null, `client` varchar(255) NULL DEFAULT null, `content` text NULL DEFAULT null, `cost` varchar(255) NULL DEFAULT null, `date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `slug` varchar(255) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `summary` text NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `projects_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `projects_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL, CONSTRAINT `projects_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `projects_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
-    }
-  },
-  {
-    "collection": "projects_files",
-    "meta": {
-      "collection": "projects_files",
-      "icon": "import_export",
-      "note": null,
-      "display_template": null,
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 1,
-      "group": "projects",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "projects_files",
-      "sql": "CREATE TABLE \"projects_files\" (`directus_files_id` char(36) NULL DEFAULT null, `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `project` char(36) NULL DEFAULT null, `sort` integer NULL DEFAULT null, CONSTRAINT `projects_files_directus_files_id_foreign` FOREIGN KEY (`directus_files_id`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `projects_files_project_foreign` FOREIGN KEY (`project`) REFERENCES `projects` (`id`) ON DELETE SET NULL)"
-    }
-  },
-  {
-    "collection": "projects_settings",
-    "meta": {
-      "collection": "projects_settings",
-      "icon": "settings_input_component",
-      "note": null,
-      "display_template": null,
-      "hidden": false,
-      "singleton": true,
-      "translations": null,
-      "archive_field": null,
-      "archive_app_filter": true,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": "#6644FF",
-      "item_duplication_fields": null,
-      "sort": 2,
-      "group": "page_settings",
-      "collapse": "open",
-      "preview_url": null
-    },
-    "schema": {
-      "name": "projects_settings",
-      "sql": "CREATE TABLE \"projects_settings\" (`headline` text NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `seo` char(36) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `projects_settings_seo_foreign` FOREIGN KEY (`seo`) REFERENCES `seo` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1474,55 +2337,82 @@
     "meta": {
       "collection": "redirects",
       "icon": "redo",
-      "note": null,
       "display_template": "{{url_old}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 7,
-      "group": "config",
+      "color": "#18222F",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 8,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "redirects",
-      "sql": "CREATE TABLE \"redirects\" (`date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `response_code` integer NULL DEFAULT null, `url_new` varchar(255) NULL DEFAULT null, `url_old` varchar(255) NULL DEFAULT null, `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `redirects_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `redirects_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
+  },
+  {
+    "collection": "sales",
+    "meta": {
+      "collection": "sales",
+      "icon": "point_of_sale",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#D064AC",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": "Folder to organize all the Sales department functions.",
+      "sort": 5,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": null
   },
   {
     "collection": "seo",
     "meta": {
       "collection": "seo",
       "icon": "saved_search",
-      "note": null,
       "display_template": "{{og_image}}",
-      "hidden": true,
-      "singleton": false,
-      "translations": null,
       "archive_field": null,
-      "archive_app_filter": true,
       "archive_value": null,
       "unarchive_value": null,
       "sort_field": null,
       "accountability": "all",
-      "color": null,
-      "item_duplication_fields": null,
-      "sort": 6,
-      "group": "config",
+      "color": "#FF99DD",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 7,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": true
     },
     "schema": {
+      "schema": "public",
       "name": "seo",
-      "sql": "CREATE TABLE \"seo\" (`canonical_url` varchar(255) NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `meta_description` text NULL DEFAULT null, `no_follow` boolean NULL DEFAULT '0', `no_index` boolean NULL DEFAULT '0', `og_image` char(36) NULL DEFAULT null, `sitemap_change_frequency` varchar(255) NULL DEFAULT 'hourly', `sitemap_priority` float NULL DEFAULT '0.5', `title` varchar(255) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `seo_og_image_foreign` FOREIGN KEY (`og_image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1530,27 +2420,28 @@
     "meta": {
       "collection": "team",
       "icon": "people_outline",
-      "note": null,
       "display_template": null,
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 5,
-      "group": "content",
+      "color": "#1A212C",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 4,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "team",
-      "sql": "CREATE TABLE \"team\" (`bio` text NULL DEFAULT null, `date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `job_title` varchar(255) NULL DEFAULT null, `name` varchar(255) NULL DEFAULT null, `social_media` json NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `team_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `team_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `team_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
   },
   {
@@ -1558,28 +2449,54 @@
     "meta": {
       "collection": "testimonials",
       "icon": "star",
-      "note": null,
       "display_template": "{{title}}",
-      "hidden": false,
-      "singleton": false,
-      "translations": null,
       "archive_field": "status",
-      "archive_app_filter": true,
       "archive_value": "archived",
       "unarchive_value": "draft",
       "sort_field": "sort",
       "accountability": "all",
-      "color": "#FF99DD",
-      "item_duplication_fields": null,
-      "sort": 6,
-      "group": "content",
+      "color": "#1A212C",
+      "group": "website",
       "collapse": "open",
-      "preview_url": null
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 5,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
     },
     "schema": {
+      "schema": "public",
       "name": "testimonials",
-      "sql": "CREATE TABLE \"testimonials\" (`company` varchar(255) NULL DEFAULT null, `company_logo` char(36) NULL DEFAULT null, `content` text NULL DEFAULT null, `date_created` datetime NULL DEFAULT null, `date_updated` datetime NULL DEFAULT null, `id` char(36) NOT NULL DEFAULT null, `image` char(36) NULL DEFAULT null, `link` varchar(255) NULL DEFAULT null, `sort` integer NULL DEFAULT null, `status` varchar(255) NOT NULL DEFAULT 'draft', `subtitle` varchar(255) NULL DEFAULT null, `title` varchar(255) NULL DEFAULT null, `user_created` char(36) NULL DEFAULT null, `user_updated` char(36) NULL DEFAULT null, PRIMARY KEY (`id`), CONSTRAINT `testimonials_company_logo_foreign` FOREIGN KEY (`company_logo`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `testimonials_image_foreign` FOREIGN KEY (`image`) REFERENCES `directus_files` (`id`) ON DELETE SET NULL, CONSTRAINT `testimonials_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION, CONSTRAINT `testimonials_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`) ON DELETE NO ACTION)"
+      "comment": null
     }
+  },
+  {
+    "collection": "website",
+    "meta": {
+      "collection": "website",
+      "icon": "folder_special",
+      "display_template": null,
+      "archive_field": null,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": null,
+      "accountability": "all",
+      "color": "#1A212C",
+      "group": null,
+      "collapse": "closed",
+      "preview_url": null,
+      "item_duplication_fields": null,
+      "translations": null,
+      "note": null,
+      "sort": 9,
+      "archive_app_filter": true,
+      "singleton": false,
+      "hidden": false
+    },
+    "schema": null
   },
   {
     "collection": "directus_activity",
@@ -1595,8 +2512,9 @@
       "accountability": null
     },
     "schema": {
+      "schema": "public",
       "name": "directus_activity",
-      "sql": "CREATE TABLE \"directus_activity\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `action` varchar(45) NOT NULL, `user` char(36), `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, `ip` varchar(50), `user_agent` varchar(255), `collection` varchar(64) NOT NULL, `item` varchar(255) NOT NULL, `comment` text, `origin` varchar(255) null)"
+      "comment": null
     }
   },
   {
@@ -1613,8 +2531,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_collections",
-      "sql": "CREATE TABLE \"directus_collections\" (`collection` varchar(64) NOT NULL, `icon` varchar(30), `note` text, `display_template` varchar(255), `hidden` boolean NOT NULL DEFAULT '0', `singleton` boolean NOT NULL DEFAULT '0', `translations` json, `archive_field` varchar(64), `archive_app_filter` boolean NOT NULL DEFAULT '1', `archive_value` varchar(255), `unarchive_value` varchar(255), `sort_field` varchar(64), `accountability` varchar(255) DEFAULT 'all', `color` varchar(255) NULL, `item_duplication_fields` json NULL, `sort` integer, `group` varchar(64), `collapse` varchar(255) NOT NULL DEFAULT 'open', `preview_url` varchar(255) null, PRIMARY KEY (`collection`), FOREIGN KEY (`group`) REFERENCES `directus_collections` (`collection`))"
+      "comment": null
     }
   },
   {
@@ -1631,8 +2550,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_fields",
-      "sql": "CREATE TABLE \"directus_fields\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `collection` varchar(64) NOT NULL, `field` varchar(64) NOT NULL, `special` varchar(64), `interface` varchar(64), `options` json, `display` varchar(64), `display_options` json, `readonly` boolean NOT NULL DEFAULT '0', `hidden` boolean NOT NULL DEFAULT '0', `sort` integer, `width` varchar(30) DEFAULT 'full', `translations` json, `note` text, `conditions` json, `required` boolean DEFAULT '0', `group` varchar(64), `validation` json, `validation_message` text)"
+      "comment": null
     }
   },
   {
@@ -1649,8 +2569,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_files",
-      "sql": "CREATE TABLE \"directus_files\" (`id` char(36) NOT NULL, `storage` varchar(255) NOT NULL, `filename_disk` varchar(255), `filename_download` varchar(255) NOT NULL, `title` varchar(255), `type` varchar(255), `folder` char(36), `uploaded_by` char(36), `uploaded_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, `modified_by` char(36), `modified_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, `charset` varchar(50), `filesize` bigint DEFAULT null, `width` integer, `height` integer, `duration` integer, `embed` varchar(200), `description` text, `location` text, `tags` text, `metadata` json, PRIMARY KEY (`id`), FOREIGN KEY (`uploaded_by`) REFERENCES `directus_users` (`id`), FOREIGN KEY (`modified_by`) REFERENCES `directus_users` (`id`), FOREIGN KEY (`folder`) REFERENCES `directus_folders` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1667,8 +2588,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_folders",
-      "sql": "CREATE TABLE \"directus_folders\" (`id` char(36) NOT NULL, `name` varchar(255) NOT NULL, `parent` char(36), PRIMARY KEY (`id`), FOREIGN KEY (`parent`) REFERENCES `directus_folders` (`id`))"
+      "comment": null
     }
   },
   {
@@ -1685,8 +2607,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_migrations",
-      "sql": "CREATE TABLE `directus_migrations` (`version` varchar(255) not null, `name` varchar(255) not null, `timestamp` datetime default CURRENT_TIMESTAMP, primary key (`version`))"
+      "comment": null
     }
   },
   {
@@ -1703,8 +2626,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_permissions",
-      "sql": "CREATE TABLE \"directus_permissions\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `role` char(36), `collection` varchar(64) NOT NULL, `action` varchar(10) NOT NULL, `permissions` json, `validation` json, `presets` json, `fields` text, FOREIGN KEY (`role`) REFERENCES `directus_roles` (`id`) ON DELETE CASCADE)"
+      "comment": null
     }
   },
   {
@@ -1721,8 +2645,9 @@
       "accountability": null
     },
     "schema": {
+      "schema": "public",
       "name": "directus_presets",
-      "sql": "CREATE TABLE \"directus_presets\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `bookmark` varchar(255), `user` char(36), `role` char(36), `collection` varchar(64), `search` varchar(100), `layout` varchar(100) DEFAULT 'tabular', `layout_query` json, `layout_options` json, `refresh_interval` integer, `filter` json, `icon` varchar(30) DEFAULT 'bookmark', `color` varchar(255) NULL, FOREIGN KEY (`user`) REFERENCES `directus_users` (`id`) ON DELETE CASCADE, FOREIGN KEY (`role`) REFERENCES `directus_roles` (`id`) ON DELETE CASCADE)"
+      "comment": null
     }
   },
   {
@@ -1739,8 +2664,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_relations",
-      "sql": "CREATE TABLE \"directus_relations\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `many_collection` varchar(64) NOT NULL, `many_field` varchar(64) NOT NULL, `one_collection` varchar(64), `one_field` varchar(64), `one_collection_field` varchar(64), `one_allowed_collections` text, `junction_field` varchar(64), `sort_field` varchar(64), `one_deselect_action` varchar(255) NOT NULL DEFAULT 'nullify')"
+      "comment": null
     }
   },
   {
@@ -1757,8 +2683,9 @@
       "accountability": null
     },
     "schema": {
+      "schema": "public",
       "name": "directus_revisions",
-      "sql": "CREATE TABLE \"directus_revisions\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `activity` integer NOT NULL, `collection` varchar(64) NOT NULL, `item` varchar(255) NOT NULL, `data` json, `delta` json, `parent` integer, FOREIGN KEY (`parent`) REFERENCES `directus_revisions` (`id`), FOREIGN KEY (`activity`) REFERENCES `directus_activity` (`id`) ON DELETE CASCADE)"
+      "comment": null
     }
   },
   {
@@ -1775,8 +2702,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_roles",
-      "sql": "CREATE TABLE \"directus_roles\" (`id` char(36) NOT NULL, `name` varchar(100) NOT NULL, `icon` varchar(30) NOT NULL DEFAULT 'supervised_user_circle', `description` text, `ip_access` text, `enforce_tfa` boolean NOT NULL DEFAULT '0', `admin_access` boolean NOT NULL DEFAULT '0', `app_access` boolean NOT NULL DEFAULT '1', PRIMARY KEY (`id`))"
+      "comment": null
     }
   },
   {
@@ -1793,8 +2721,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_sessions",
-      "sql": "CREATE TABLE \"directus_sessions\" (`token` varchar(64) NOT NULL, `user` char(36), `expires` datetime NOT NULL, `ip` varchar(255), `user_agent` varchar(255), `share` char(36), `origin` varchar(255) null, PRIMARY KEY (`token`), FOREIGN KEY (`user`) REFERENCES `directus_users` (`id`) ON DELETE CASCADE, FOREIGN KEY (`share`) REFERENCES `directus_shares` (`id`) ON DELETE CASCADE)"
+      "comment": null
     }
   },
   {
@@ -1811,8 +2740,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_settings",
-      "sql": "CREATE TABLE \"directus_settings\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `project_name` varchar(100) NOT NULL DEFAULT 'Directus', `project_url` varchar(255), `project_color` varchar(50) DEFAULT null, `project_logo` char(36), `public_foreground` char(36), `public_background` char(36), `public_note` text, `auth_login_attempts` integer DEFAULT '25', `auth_password_policy` varchar(100), `storage_asset_transform` varchar(7) DEFAULT 'all', `storage_asset_presets` json, `custom_css` text, `storage_default_folder` char(36), `basemaps` json, `mapbox_key` varchar(255), `module_bar` json, `project_descriptor` varchar(100) NULL, `default_language` varchar(255) NOT NULL DEFAULT 'en-US', `custom_aspect_ratios` json, FOREIGN KEY (`project_logo`) REFERENCES `directus_files` (`id`), FOREIGN KEY (`public_foreground`) REFERENCES `directus_files` (`id`), FOREIGN KEY (`public_background`) REFERENCES `directus_files` (`id`), CONSTRAINT `directus_settings_storage_default_folder_foreign` FOREIGN KEY (`storage_default_folder`) REFERENCES `directus_folders` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1832,8 +2762,9 @@
       "unarchive_value": "draft"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_users",
-      "sql": "CREATE TABLE \"directus_users\" (`id` char(36) NOT NULL, `first_name` varchar(50), `last_name` varchar(50), `email` varchar(128), `password` varchar(255), `location` varchar(255), `title` varchar(50), `description` text, `tags` json, `avatar` char(36), `language` varchar(255) DEFAULT null, `theme` varchar(20) DEFAULT 'auto', `tfa_secret` varchar(255), `status` varchar(16) NOT NULL DEFAULT 'active', `role` char(36), `token` varchar(255), `last_access` datetime, `last_page` varchar(255), `provider` varchar(128) NOT NULL DEFAULT 'default', `external_identifier` varchar(255), `auth_data` json, `email_notifications` boolean DEFAULT '1', PRIMARY KEY (`id`), FOREIGN KEY (`role`) REFERENCES `directus_roles` (`id`) ON DELETE SET NULL)"
+      "comment": null
     }
   },
   {
@@ -1850,8 +2781,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_webhooks",
-      "sql": "CREATE TABLE \"directus_webhooks\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `name` varchar(255) NOT NULL, `method` varchar(10) NOT NULL DEFAULT 'POST', `url` varchar(255) NOT NULL, `status` varchar(10) NOT NULL DEFAULT 'active', `data` boolean NOT NULL DEFAULT '1', `actions` varchar(100) NOT NULL, `collections` varchar(255) NOT NULL, `headers` json)"
+      "comment": null
     }
   },
   {
@@ -1868,8 +2800,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_dashboards",
-      "sql": "CREATE TABLE `directus_dashboards` (`id` char(36) not null, `name` varchar(255) not null, `icon` varchar(30) not null default 'dashboard', `note` text, `date_created` datetime default CURRENT_TIMESTAMP, `user_created` char(36), `color` varchar(255) null, foreign key(`user_created`) references `directus_users`(`id`) on delete SET NULL, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -1886,8 +2819,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_panels",
-      "sql": "CREATE TABLE \"directus_panels\" (`id` char(36) NOT NULL, `dashboard` char(36) NOT NULL, `name` varchar(255), `icon` varchar(30) DEFAULT null, `color` varchar(10), `show_header` boolean NOT NULL DEFAULT '0', `note` text, `type` varchar(255) NOT NULL, `position_x` integer NOT NULL, `position_y` integer NOT NULL, `width` integer NOT NULL, `height` integer NOT NULL, `options` json, `date_created` datetime DEFAULT CURRENT_TIMESTAMP, `user_created` char(36), FOREIGN KEY (`dashboard`) REFERENCES `directus_dashboards` (`id`) ON DELETE CASCADE, FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`) ON DELETE SET NULL, PRIMARY KEY (`id`))"
+      "comment": null
     }
   },
   {
@@ -1904,8 +2838,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_notifications",
-      "sql": "CREATE TABLE \"directus_notifications\" (`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` datetime DEFAULT CURRENT_TIMESTAMP, `status` varchar(255) DEFAULT 'inbox', `recipient` char(36) NOT NULL, `sender` char(36), `subject` varchar(255) NOT NULL, `message` text, `collection` varchar(64), `item` varchar(255), FOREIGN KEY (`recipient`) REFERENCES `directus_users` (`id`) ON DELETE CASCADE, FOREIGN KEY (`sender`) REFERENCES `directus_users` (`id`))"
+      "comment": null
     }
   },
   {
@@ -1922,8 +2857,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_shares",
-      "sql": "CREATE TABLE `directus_shares` (`id` char(36) not null, `name` varchar(255), `collection` varchar(64), `item` varchar(255), `role` char(36), `password` varchar(255), `user_created` char(36), `date_created` datetime default CURRENT_TIMESTAMP, `date_start` datetime null default null, `date_end` datetime null default null, `times_used` integer default '0', `max_uses` integer, foreign key(`collection`) references `directus_collections`(`collection`) on delete CASCADE, foreign key(`role`) references `directus_roles`(`id`) on delete CASCADE, foreign key(`user_created`) references `directus_users`(`id`) on delete SET NULL, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -1940,8 +2876,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_flows",
-      "sql": "CREATE TABLE `directus_flows` (`id` char(36) not null, `name` varchar(255) not null, `icon` varchar(30), `color` varchar(255) null, `description` text, `status` varchar(255) not null default 'active', `trigger` varchar(255), `accountability` varchar(255) default 'all', `options` json, `operation` char(36), `date_created` datetime default CURRENT_TIMESTAMP, `user_created` char(36), foreign key(`user_created`) references `directus_users`(`id`) on delete SET NULL, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -1958,8 +2895,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_operations",
-      "sql": "CREATE TABLE `directus_operations` (`id` char(36) not null, `name` varchar(255), `key` varchar(255) not null, `type` varchar(255) not null, `position_x` integer not null, `position_y` integer not null, `options` json, `resolve` char(36), `reject` char(36), `flow` char(36) not null, `date_created` datetime default CURRENT_TIMESTAMP, `user_created` char(36), foreign key(`resolve`) references `directus_operations`(`id`), foreign key(`reject`) references `directus_operations`(`id`), foreign key(`flow`) references `directus_flows`(`id`) on delete CASCADE, foreign key(`user_created`) references `directus_users`(`id`) on delete SET NULL, primary key (`id`))"
+      "comment": null
     }
   },
   {
@@ -1976,8 +2914,9 @@
       "accountability": "all"
     },
     "schema": {
+      "schema": "public",
       "name": "directus_translations",
-      "sql": "CREATE TABLE `directus_translations` (`id` char(36) not null, `language` varchar(255) not null, `key` varchar(255) not null, `value` text not null, primary key (`id`))"
+      "comment": null
     }
   }
 ]
