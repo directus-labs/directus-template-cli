@@ -1501,61 +1501,6 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_files",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_files",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_files",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_files",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_files",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_projects",
     "action": "read",
     "presets": null,
@@ -4851,50 +4796,6 @@
   {
     "role": "8ba4ed6f-d330-4675-ae46-119c533a0928",
     "collection": "os_project_contacts",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "8ba4ed6f-d330-4675-ae46-119c533a0928",
-    "collection": "os_project_files",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "8ba4ed6f-d330-4675-ae46-119c533a0928",
-    "collection": "os_project_files",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "8ba4ed6f-d330-4675-ae46-119c533a0928",
-    "collection": "os_project_files",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "8ba4ed6f-d330-4675-ae46-119c533a0928",
-    "collection": "os_project_files",
     "action": "delete",
     "presets": null,
     "validation": {},

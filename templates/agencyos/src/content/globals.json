@@ -14,6 +14,18 @@
   "address_region": "NY",
   "address_locality": "New York",
   "address_country": "US",
+  "theme": {
+    "primary": "violet",
+    "gray": "slate",
+    "borderRadius": "xl",
+    "fonts": {
+      "families": {
+        "display": "Poppins",
+        "body": "Inter",
+        "code": "Fira Code"
+      }
+    }
+  },
   "social_links": [
     {
       "service": "github",
@@ -36,17 +48,5 @@
       "url": "https://twitter.com/directus"
     }
   ],
-  "theme": {
-    "primary": "violet",
-    "gray": "slate",
-    "borderRadius": "xl",
-    "fonts": {
-      "families": {
-        "display": "Poppins",
-        "body": "Inter",
-        "code": "Fira Code"
-      }
-    }
-  },
   "description": "A freaking awesome Nuxt + Directus app that will help you power up your agency."
 }

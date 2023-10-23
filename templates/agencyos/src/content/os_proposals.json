@@ -1,23 +1,20 @@
 [
   {
-    "id": "b3724c97-c795-49a1-a921-f6ed4034eebb",
     "deal": "21e05753-b453-4446-b35e-d0d93956d917",
     "organization": "f20f7a74-34e3-4a84-baea-d7f0f380df9e",
     "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
-    "expiration_date": "2023-10-24T16:00:00.000Z",
+    "id": "b3724c97-c795-49a1-a921-f6ed4034eebb",
     "date_updated": "2023-10-11T15:37:31.382Z",
     "date_created": "2023-09-11T15:04:14.295Z",
+    "expiration_date": "2023-10-24T16:00:00.000Z",
     "status": "approved",
     "name": "Software Proposal",
     "sort": null,
     "contacts": [
       "ee246ca2-0bc6-411a-a602-1c0db0f33771"
     ],
-    "approvals": [
-      "00f23610-2fa0-4444-b60e-dc19e9bf5ceb",
-      "ad7237c9-e8c5-4cbd-933d-0d3bdb276900"
-    ],
+    "approvals": [],
     "blocks": [
       "f534b559-e6fe-413d-adc1-97d53a1974ce",
       "f01f7407-5f3c-4249-b46a-768aa9789449",
