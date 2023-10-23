@@ -2,8 +2,6 @@
   {
     "collection": "billing",
     "meta": {
-      "collection": "billing",
-      "icon": "attach_money",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -14,6 +12,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "billing",
+      "icon": "attach_money",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -27,8 +27,6 @@
   {
     "collection": "block_button",
     "meta": {
-      "collection": "block_button",
-      "icon": null,
       "display_template": "{{label}} - {{type}}",
       "archive_field": null,
       "archive_value": "archived",
@@ -39,6 +37,8 @@
       "group": "block_button_group",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_button",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": [
         {
@@ -63,8 +63,6 @@
   {
     "collection": "block_button_group",
     "meta": {
-      "collection": "block_button_group",
-      "icon": "smart_button",
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -75,6 +73,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_button_group",
+      "icon": "smart_button",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -99,8 +99,6 @@
   {
     "collection": "block_columns",
     "meta": {
-      "collection": "block_columns",
-      "icon": "vertical_split",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -111,6 +109,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_columns",
+      "icon": "vertical_split",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -135,8 +135,6 @@
   {
     "collection": "block_columns_rows",
     "meta": {
-      "collection": "block_columns_rows",
-      "icon": null,
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": "archived",
@@ -147,6 +145,8 @@
       "group": "block_columns",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_columns_rows",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -164,8 +164,6 @@
   {
     "collection": "block_cta",
     "meta": {
-      "collection": "block_cta",
-      "icon": "skip_next",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -176,6 +174,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_cta",
+      "icon": "skip_next",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -200,8 +200,6 @@
   {
     "collection": "block_divider",
     "meta": {
-      "collection": "block_divider",
-      "icon": "horizontal_rule",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -212,6 +210,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_divider",
+      "icon": "horizontal_rule",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -236,8 +236,6 @@
   {
     "collection": "block_faqs",
     "meta": {
-      "collection": "block_faqs",
-      "icon": "question_mark",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -248,6 +246,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_faqs",
+      "icon": "question_mark",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -272,8 +272,6 @@
   {
     "collection": "block_form",
     "meta": {
-      "collection": "block_form",
-      "icon": "text_format",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -284,6 +282,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_form",
+      "icon": "text_format",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -308,8 +308,6 @@
   {
     "collection": "block_gallery",
     "meta": {
-      "collection": "block_gallery",
-      "icon": "grid_view",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -320,6 +318,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_gallery",
+      "icon": "grid_view",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -344,8 +344,6 @@
   {
     "collection": "block_gallery_files",
     "meta": {
-      "collection": "block_gallery_files",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -356,6 +354,8 @@
       "group": "block_gallery",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_gallery_files",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -373,8 +373,6 @@
   {
     "collection": "block_hero",
     "meta": {
-      "collection": "block_hero",
-      "icon": "aspect_ratio",
       "display_template": "{{headline}}",
       "archive_field": null,
       "archive_value": null,
@@ -385,6 +383,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_hero",
+      "icon": "aspect_ratio",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -409,8 +409,6 @@
   {
     "collection": "block_html",
     "meta": {
-      "collection": "block_html",
-      "icon": "html",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -421,6 +419,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_html",
+      "icon": "html",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -445,8 +445,6 @@
   {
     "collection": "block_logocloud",
     "meta": {
-      "collection": "block_logocloud",
-      "icon": "broken_image",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -457,6 +455,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_logocloud",
+      "icon": "broken_image",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -481,8 +481,6 @@
   {
     "collection": "block_logocloud_logos",
     "meta": {
-      "collection": "block_logocloud_logos",
-      "icon": "home_app_logo",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -493,6 +491,8 @@
       "group": "block_logocloud",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_logocloud_logos",
+      "icon": "home_app_logo",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -510,8 +510,6 @@
   {
     "collection": "block_quote",
     "meta": {
-      "collection": "block_quote",
-      "icon": "format_quote",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -522,6 +520,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_quote",
+      "icon": "format_quote",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -546,8 +546,6 @@
   {
     "collection": "block_richtext",
     "meta": {
-      "collection": "block_richtext",
-      "icon": "format_color_text",
       "display_template": "{{headline}}",
       "archive_field": null,
       "archive_value": null,
@@ -558,6 +556,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_richtext",
+      "icon": "format_color_text",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -582,8 +582,6 @@
   {
     "collection": "blocks",
     "meta": {
-      "collection": "blocks",
-      "icon": "content_copy",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -594,6 +592,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "blocks",
+      "icon": "content_copy",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -607,8 +607,6 @@
   {
     "collection": "block_step_items",
     "meta": {
-      "collection": "block_step_items",
-      "icon": null,
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -619,6 +617,8 @@
       "group": "block_steps",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_step_items",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -636,8 +636,6 @@
   {
     "collection": "block_steps",
     "meta": {
-      "collection": "block_steps",
-      "icon": "checklist",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -648,6 +646,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_steps",
+      "icon": "checklist",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -672,8 +672,6 @@
   {
     "collection": "block_team",
     "meta": {
-      "collection": "block_team",
-      "icon": "face",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -684,6 +682,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_team",
+      "icon": "face",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -708,8 +708,6 @@
   {
     "collection": "block_testimonials",
     "meta": {
-      "collection": "block_testimonials",
-      "icon": "star",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -720,6 +718,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_testimonials",
+      "icon": "star",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -744,8 +744,6 @@
   {
     "collection": "block_testimonial_slider_items",
     "meta": {
-      "collection": "block_testimonial_slider_items",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -756,6 +754,8 @@
       "group": "block_testimonials",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_testimonial_slider_items",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -773,8 +773,6 @@
   {
     "collection": "block_video",
     "meta": {
-      "collection": "block_video",
-      "icon": "video_library",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -785,6 +783,8 @@
       "group": "blocks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "block_video",
+      "icon": "video_library",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -809,8 +809,6 @@
   {
     "collection": "categories",
     "meta": {
-      "collection": "categories",
-      "icon": "category",
       "display_template": "{{color}} {{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -821,6 +819,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "categories",
+      "icon": "category",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -838,8 +838,6 @@
   {
     "collection": "contacts",
     "meta": {
-      "collection": "contacts",
-      "icon": "emoji_people",
       "display_template": "{{first_name}} {{last_name}} <{{email}}>",
       "archive_field": "status",
       "archive_value": "archived",
@@ -850,6 +848,8 @@
       "group": null,
       "collapse": "open",
       "preview_url": null,
+      "collection": "contacts",
+      "icon": "emoji_people",
       "item_duplication_fields": null,
       "translations": null,
       "note": "Contacts are the people at the different organizations you work with.",
@@ -867,8 +867,6 @@
   {
     "collection": "conversations",
     "meta": {
-      "collection": "conversations",
-      "icon": "chat",
       "display_template": "{{title}} - {{user_created}} - {{date_created}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -879,6 +877,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "conversations",
+      "icon": "chat",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -903,8 +903,6 @@
   {
     "collection": "forms",
     "meta": {
-      "collection": "forms",
-      "icon": "text_format",
       "display_template": null,
       "archive_field": "status",
       "archive_value": "archived",
@@ -915,6 +913,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "forms",
+      "icon": "text_format",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -932,8 +932,6 @@
   {
     "collection": "globals",
     "meta": {
-      "collection": "globals",
-      "icon": "south_america",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -944,6 +942,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "globals",
+      "icon": "south_america",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -961,8 +961,6 @@
   {
     "collection": "help",
     "meta": {
-      "collection": "help",
-      "icon": "support",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -973,6 +971,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "help",
+      "icon": "support",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -991,8 +991,6 @@
   {
     "collection": "help_articles",
     "meta": {
-      "collection": "help_articles",
-      "icon": "wifi_tethering",
       "display_template": null,
       "archive_field": "status",
       "archive_value": "archived",
@@ -1003,6 +1001,8 @@
       "group": "help",
       "collapse": "open",
       "preview_url": null,
+      "collection": "help_articles",
+      "icon": "wifi_tethering",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1020,8 +1020,6 @@
   {
     "collection": "help_collections",
     "meta": {
-      "collection": "help_collections",
-      "icon": "collections_bookmark",
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -1032,6 +1030,8 @@
       "group": "help",
       "collapse": "open",
       "preview_url": null,
+      "collection": "help_collections",
+      "icon": "collections_bookmark",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1049,8 +1049,6 @@
   {
     "collection": "help_feedback",
     "meta": {
-      "collection": "help_feedback",
-      "icon": "insert_chart",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1061,6 +1059,8 @@
       "group": "help",
       "collapse": "open",
       "preview_url": null,
+      "collection": "help_feedback",
+      "icon": "insert_chart",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1078,8 +1078,6 @@
   {
     "collection": "inbox",
     "meta": {
-      "collection": "inbox",
-      "icon": "inbox",
       "display_template": "{{status}} - {{date_created}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1090,6 +1088,8 @@
       "group": null,
       "collapse": "open",
       "preview_url": null,
+      "collection": "inbox",
+      "icon": "inbox",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1114,8 +1114,6 @@
   {
     "collection": "messages",
     "meta": {
-      "collection": "messages",
-      "icon": "chat_bubble",
       "display_template": "{{user_created}} - {{text}}",
       "archive_field": null,
       "archive_value": null,
@@ -1126,6 +1124,8 @@
       "group": "conversations",
       "collapse": "open",
       "preview_url": null,
+      "collection": "messages",
+      "icon": "chat_bubble",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1150,8 +1150,6 @@
   {
     "collection": "navigation",
     "meta": {
-      "collection": "navigation",
-      "icon": "menu_open",
       "display_template": null,
       "archive_field": "status",
       "archive_value": "archived",
@@ -1162,6 +1160,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "navigation",
+      "icon": "menu_open",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1179,8 +1179,6 @@
   {
     "collection": "navigation_items",
     "meta": {
-      "collection": "navigation_items",
-      "icon": "navigate_next",
       "display_template": "{{title}}",
       "archive_field": null,
       "archive_value": null,
@@ -1191,6 +1189,8 @@
       "group": "navigation",
       "collapse": "open",
       "preview_url": null,
+      "collection": "navigation_items",
+      "icon": "navigate_next",
       "item_duplication_fields": [
         "children",
         "has_children",
@@ -1219,8 +1219,6 @@
   {
     "collection": "organization_addresses",
     "meta": {
-      "collection": "organization_addresses",
-      "icon": null,
       "display_template": "{{name}} - {{street_address}}, {{address_locality}}, {{address_region}} {{postal_code}}",
       "archive_field": null,
       "archive_value": null,
@@ -1231,6 +1229,8 @@
       "group": "organizations",
       "collapse": "open",
       "preview_url": null,
+      "collection": "organization_addresses",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1248,8 +1248,6 @@
   {
     "collection": "organizations",
     "meta": {
-      "collection": "organizations",
-      "icon": "add_business",
       "display_template": "{{logo.$thumbnail}} {{name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1260,6 +1258,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "organizations",
+      "icon": "add_business",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1284,8 +1284,6 @@
   {
     "collection": "organizations_contacts",
     "meta": {
-      "collection": "organizations_contacts",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1296,6 +1294,8 @@
       "group": "organizations",
       "collapse": "open",
       "preview_url": null,
+      "collection": "organizations_contacts",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1313,8 +1313,6 @@
   {
     "collection": "os_activities",
     "meta": {
-      "collection": "os_activities",
-      "icon": "perm_phone_msg",
       "display_template": "{{name}} - {{due_date}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1325,6 +1323,8 @@
       "group": "sales",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_activities",
+      "icon": "perm_phone_msg",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1349,8 +1349,6 @@
   {
     "collection": "os_activity_contacts",
     "meta": {
-      "collection": "os_activity_contacts",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1361,6 +1359,8 @@
       "group": "os_activities",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_activity_contacts",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1378,8 +1378,6 @@
   {
     "collection": "os_deal_contacts",
     "meta": {
-      "collection": "os_deal_contacts",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1390,6 +1388,8 @@
       "group": "os_deals",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_deal_contacts",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1407,8 +1407,6 @@
   {
     "collection": "os_deals",
     "meta": {
-      "collection": "os_deals",
-      "icon": "attach_money",
       "display_template": "{{name}} [{{organization.name}}] - {{close_date}}",
       "archive_field": null,
       "archive_value": null,
@@ -1419,6 +1417,8 @@
       "group": "sales",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_deals",
+      "icon": "attach_money",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1443,8 +1443,6 @@
   {
     "collection": "os_deal_stages",
     "meta": {
-      "collection": "os_deal_stages",
-      "icon": "view_kanban",
       "display_template": "{{color}} {{name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1455,6 +1453,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_deal_stages",
+      "icon": "view_kanban",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1479,8 +1479,6 @@
   {
     "collection": "os_email_templates",
     "meta": {
-      "collection": "os_email_templates",
-      "icon": "mark_email_unread",
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -1491,6 +1489,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_email_templates",
+      "icon": "mark_email_unread",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1515,8 +1515,6 @@
   {
     "collection": "os_expenses",
     "meta": {
-      "collection": "os_expenses",
-      "icon": "monetization_on",
       "display_template": "{{name}} (${{cost}}) - {{date}}",
       "archive_field": null,
       "archive_value": "voided",
@@ -1527,6 +1525,8 @@
       "group": "billing",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_expenses",
+      "icon": "monetization_on",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1551,8 +1551,6 @@
   {
     "collection": "os_invoice_items",
     "meta": {
-      "collection": "os_invoice_items",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": "archived",
@@ -1563,6 +1561,8 @@
       "group": "os_invoices",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_invoice_items",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1580,8 +1580,6 @@
   {
     "collection": "os_invoices",
     "meta": {
-      "collection": "os_invoices",
-      "icon": "receipt_long",
       "display_template": "INV#{{invoice_number}} - {{status}} - {{total}}",
       "archive_field": "status",
       "archive_value": "voided",
@@ -1592,6 +1590,8 @@
       "group": "billing",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_invoices",
+      "icon": "receipt_long",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1616,8 +1616,6 @@
   {
     "collection": "os_items",
     "meta": {
-      "collection": "os_items",
-      "icon": "add_shopping_cart",
       "display_template": "{{name}} (${{unit_price}})",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1628,6 +1626,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_items",
+      "icon": "add_shopping_cart",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1652,8 +1652,6 @@
   {
     "collection": "os_payments",
     "meta": {
-      "collection": "os_payments",
-      "icon": "receipt",
       "display_template": "{{amount}} - {{payment_date}} - {{organization.name}}",
       "archive_field": "status",
       "archive_value": "void",
@@ -1664,6 +1662,8 @@
       "group": "billing",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_payments",
+      "icon": "receipt",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1688,8 +1688,6 @@
   {
     "collection": "os_payment_terms",
     "meta": {
-      "collection": "os_payment_terms",
-      "icon": "payments",
       "display_template": "{{name}}",
       "archive_field": null,
       "archive_value": null,
@@ -1700,6 +1698,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_payment_terms",
+      "icon": "payments",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1724,8 +1724,6 @@
   {
     "collection": "os_project_contacts",
     "meta": {
-      "collection": "os_project_contacts",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1736,6 +1734,8 @@
       "group": "os_projects",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_project_contacts",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1751,39 +1751,8 @@
     }
   },
   {
-    "collection": "os_project_files",
-    "meta": {
-      "collection": "os_project_files",
-      "icon": null,
-      "display_template": null,
-      "archive_field": null,
-      "archive_value": null,
-      "unarchive_value": null,
-      "sort_field": null,
-      "accountability": "all",
-      "color": null,
-      "group": "os_projects",
-      "collapse": "open",
-      "preview_url": null,
-      "item_duplication_fields": null,
-      "translations": null,
-      "note": null,
-      "sort": 3,
-      "archive_app_filter": true,
-      "singleton": false,
-      "hidden": true
-    },
-    "schema": {
-      "schema": "public",
-      "name": "os_project_files",
-      "comment": null
-    }
-  },
-  {
     "collection": "os_projects",
     "meta": {
-      "collection": "os_projects",
-      "icon": "tab_group",
       "display_template": "{{name}} - {{organization.name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1794,6 +1763,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "os_projects",
+      "icon": "tab_group",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -1818,8 +1789,6 @@
   {
     "collection": "os_project_templates",
     "meta": {
-      "collection": "os_project_templates",
-      "icon": "list_alt_add",
       "display_template": "{{name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1830,6 +1799,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_project_templates",
+      "icon": "list_alt_add",
       "item_duplication_fields": [
         "status",
         "description",
@@ -1858,8 +1829,6 @@
   {
     "collection": "os_project_updates",
     "meta": {
-      "collection": "os_project_updates",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1870,6 +1839,8 @@
       "group": "os_projects",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_project_updates",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1887,8 +1858,6 @@
   {
     "collection": "os_proposal_approvals",
     "meta": {
-      "collection": "os_proposal_approvals",
-      "icon": null,
       "display_template": "{{date_created}} - {{contact.first_name}} {{last_name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -1899,6 +1868,8 @@
       "group": "os_proposals",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_proposal_approvals",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1916,8 +1887,6 @@
   {
     "collection": "os_proposal_blocks",
     "meta": {
-      "collection": "os_proposal_blocks",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -1928,6 +1897,8 @@
       "group": "os_proposals",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_proposal_blocks",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1945,8 +1916,6 @@
   {
     "collection": "os_proposal_contacts",
     "meta": {
-      "collection": "os_proposal_contacts",
-      "icon": null,
       "display_template": "{{contacts_id.first_name}} {{contacts_id.last_name}} <{{contacts_id.email}}>",
       "archive_field": null,
       "archive_value": null,
@@ -1957,6 +1926,8 @@
       "group": "os_proposals",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_proposal_contacts",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -1974,8 +1945,6 @@
   {
     "collection": "os_proposals",
     "meta": {
-      "collection": "os_proposals",
-      "icon": "edit_document",
       "display_template": "{{name}} - {{organization.name}}",
       "archive_field": null,
       "archive_value": "archived",
@@ -1986,6 +1955,8 @@
       "group": "sales",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_proposals",
+      "icon": "edit_document",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2010,8 +1981,6 @@
   {
     "collection": "os_settings",
     "meta": {
-      "collection": "os_settings",
-      "icon": "settings_suggest",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2022,6 +1991,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "os_settings",
+      "icon": "settings_suggest",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2046,8 +2017,6 @@
   {
     "collection": "os_task_files",
     "meta": {
-      "collection": "os_task_files",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2058,6 +2027,8 @@
       "group": "os_tasks",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_task_files",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2075,8 +2046,6 @@
   {
     "collection": "os_tasks",
     "meta": {
-      "collection": "os_tasks",
-      "icon": "library_add_check",
       "display_template": "{{status}} {{name}} {{type}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -2087,6 +2056,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "os_tasks",
+      "icon": "library_add_check",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2111,8 +2082,6 @@
   {
     "collection": "os_tax_rates",
     "meta": {
-      "collection": "os_tax_rates",
-      "icon": "percent",
       "display_template": "{{name}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -2123,6 +2092,8 @@
       "group": "os_settings",
       "collapse": "open",
       "preview_url": null,
+      "collection": "os_tax_rates",
+      "icon": "percent",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2147,8 +2118,6 @@
   {
     "collection": "page_blocks",
     "meta": {
-      "collection": "page_blocks",
-      "icon": "code_blocks",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2159,6 +2128,8 @@
       "group": "pages",
       "collapse": "open",
       "preview_url": null,
+      "collection": "page_blocks",
+      "icon": "code_blocks",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2176,8 +2147,6 @@
   {
     "collection": "pages",
     "meta": {
-      "collection": "pages",
-      "icon": "web_asset",
       "display_template": "{{title}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -2188,6 +2157,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": "http://localhost:3000{{permalink}}?preview=true",
+      "collection": "pages",
+      "icon": "web_asset",
       "item_duplication_fields": null,
       "translations": null,
       "note": "Many-to-Any page builder example",
@@ -2205,8 +2176,6 @@
   {
     "collection": "pages_blog",
     "meta": {
-      "collection": "pages_blog",
-      "icon": "signpost",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2217,6 +2186,8 @@
       "group": "pages",
       "collapse": "open",
       "preview_url": null,
+      "collection": "pages_blog",
+      "icon": "signpost",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2241,8 +2212,6 @@
   {
     "collection": "pages_projects",
     "meta": {
-      "collection": "pages_projects",
-      "icon": "settings_input_component",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2253,6 +2222,8 @@
       "group": "pages",
       "collapse": "open",
       "preview_url": null,
+      "collection": "pages_projects",
+      "icon": "settings_input_component",
       "item_duplication_fields": null,
       "translations": [
         {
@@ -2277,8 +2248,6 @@
   {
     "collection": "post_gallery_items",
     "meta": {
-      "collection": "post_gallery_items",
-      "icon": null,
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2289,6 +2258,8 @@
       "group": "posts",
       "collapse": "open",
       "preview_url": null,
+      "collection": "post_gallery_items",
+      "icon": null,
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2306,8 +2277,6 @@
   {
     "collection": "posts",
     "meta": {
-      "collection": "posts",
-      "icon": "article",
       "display_template": "{{title}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -2318,6 +2287,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": "http://localhost:3000/posts/{{slug}}?preview=true",
+      "collection": "posts",
+      "icon": "article",
       "item_duplication_fields": null,
       "translations": null,
       "note": "Simple blog posts example",
@@ -2335,8 +2306,6 @@
   {
     "collection": "redirects",
     "meta": {
-      "collection": "redirects",
-      "icon": "redo",
       "display_template": "{{url_old}}",
       "archive_field": null,
       "archive_value": null,
@@ -2347,6 +2316,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "redirects",
+      "icon": "redo",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2364,8 +2335,6 @@
   {
     "collection": "sales",
     "meta": {
-      "collection": "sales",
-      "icon": "point_of_sale",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2376,6 +2345,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "sales",
+      "icon": "point_of_sale",
       "item_duplication_fields": null,
       "translations": null,
       "note": "Folder to organize all the Sales department functions.",
@@ -2389,8 +2360,6 @@
   {
     "collection": "seo",
     "meta": {
-      "collection": "seo",
-      "icon": "saved_search",
       "display_template": "{{og_image}}",
       "archive_field": null,
       "archive_value": null,
@@ -2401,6 +2370,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "seo",
+      "icon": "saved_search",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2418,8 +2389,6 @@
   {
     "collection": "team",
     "meta": {
-      "collection": "team",
-      "icon": "people_outline",
       "display_template": null,
       "archive_field": "status",
       "archive_value": "archived",
@@ -2430,6 +2399,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "team",
+      "icon": "people_outline",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2447,8 +2418,6 @@
   {
     "collection": "testimonials",
     "meta": {
-      "collection": "testimonials",
-      "icon": "star",
       "display_template": "{{title}}",
       "archive_field": "status",
       "archive_value": "archived",
@@ -2459,6 +2428,8 @@
       "group": "website",
       "collapse": "open",
       "preview_url": null,
+      "collection": "testimonials",
+      "icon": "star",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,
@@ -2476,8 +2447,6 @@
   {
     "collection": "website",
     "meta": {
-      "collection": "website",
-      "icon": "folder_special",
       "display_template": null,
       "archive_field": null,
       "archive_value": null,
@@ -2488,6 +2457,8 @@
       "group": null,
       "collapse": "closed",
       "preview_url": null,
+      "collection": "website",
+      "icon": "folder_special",
       "item_duplication_fields": null,
       "translations": null,
       "note": null,

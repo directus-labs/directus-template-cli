@@ -33,17 +33,6 @@
     "sort": 3
   },
   {
-    "os_proposals_id": null,
-    "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
-    "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
-    "id": "92e0a6a5-834d-43c6-9ab2-b4c2e4cee7d7",
-    "date_updated": "2023-09-11T17:10:31.437Z",
-    "date_created": "2023-09-11T17:03:40.693Z",
-    "collection": "block_logocloud",
-    "item": "4a030aa9-61b5-468e-830e-c0f5df7e9598",
-    "sort": 3
-  },
-  {
     "os_proposals_id": "b3724c97-c795-49a1-a921-f6ed4034eebb",
     "user_updated": null,
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -119,17 +108,6 @@
     "collection": "block_faqs",
     "item": "ec44961c-fcda-4ce7-ad9a-ec63413bffd1",
     "sort": 10
-  },
-  {
-    "os_proposals_id": null,
-    "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
-    "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
-    "id": "7501255f-39c7-421c-b72a-d0a0a671106d",
-    "date_updated": "2023-09-21T06:39:35.251Z",
-    "date_created": "2023-09-21T06:39:18.864Z",
-    "collection": "block_faqs",
-    "item": "ec44961c-fcda-4ce7-ad9a-ec63413bffd1",
-    "sort": 11
   },
   {
     "os_proposals_id": "b3724c97-c795-49a1-a921-f6ed4034eebb",

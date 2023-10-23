@@ -6,12 +6,12 @@
     "user_updated": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "id": "3df2d0b7-6041-4a11-9e97-2baec92feb87",
-    "date_created": "2023-09-21T02:42:30.723Z",
     "date_updated": "2023-09-21T02:44:42.564Z",
+    "date_created": "2023-09-21T02:42:30.723Z",
     "image_position": "left",
     "title": "UX / UI Design",
-    "content": "<p>With our user-centered design approach, we'll create an online experience that is easy and enjoyable for your customers, helping you build trust and drive conversions. Don't let a poor user experience hold you back.</p>",
     "headline": "It all starts with design",
+    "content": "<p>With our user-centered design approach, we'll create an online experience that is easy and enjoyable for your customers, helping you build trust and drive conversions. Don't let a poor user experience hold you back.</p>",
     "sort": 1
   },
   {
@@ -21,12 +21,12 @@
     "user_updated": null,
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "id": "abe68701-5815-489f-afdb-f267a489dfe0",
-    "date_created": "2023-09-21T02:44:42.509Z",
     "date_updated": null,
+    "date_created": "2023-09-21T02:44:42.509Z",
     "image_position": "right",
     "title": "Web Application Development",
-    "content": "<p>We specialize in developing web applications that are tailored to meet the unique needs of your business. Whether you need a custom CRM system, a project management tool, or a complex e-commerce platform, our team of skilled developers can build a web application that is secure, scalable, and easy to use. We use the latest web development technologies and frameworks to ensure that your application is fast, reliable, and future-proof.</p>",
     "headline": "Develop your application",
+    "content": "<p>We specialize in developing web applications that are tailored to meet the unique needs of your business. Whether you need a custom CRM system, a project management tool, or a complex e-commerce platform, our team of skilled developers can build a web application that is secure, scalable, and easy to use. We use the latest web development technologies and frameworks to ensure that your application is fast, reliable, and future-proof.</p>",
     "sort": 2
   },
   {
@@ -36,12 +36,12 @@
     "user_updated": null,
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
     "id": "093d4e39-4a34-47cd-954d-ef3cadcef45b",
-    "date_created": "2023-09-21T02:44:42.551Z",
     "date_updated": null,
+    "date_created": "2023-09-21T02:44:42.551Z",
     "image_position": "left",
     "title": "Mobile Application Development",
-    "content": "<p>Whether you need a native iOS or Android app or a hybrid app that can run on multiple platforms, our team of skilled developers can build a mobile application that is secure, scalable, and optimized for performance.&nbsp;</p>",
     "headline": "Mobile apps without the headache",
+    "content": "<p>Whether you need a native iOS or Android app or a hybrid app that can run on multiple platforms, our team of skilled developers can build a mobile application that is secure, scalable, and optimized for performance.&nbsp;</p>",
     "sort": 3
   }
 ]

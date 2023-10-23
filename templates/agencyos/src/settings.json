@@ -1,39 +1,17 @@
 {
-  "project_logo": null,
-  "storage_default_folder": null,
-  "public_background": null,
+  "project_logo": "690c2042-e3ad-46f4-9cd8-095a7b3a1df7",
   "public_foreground": null,
-  "storage_asset_transform": "all",
+  "public_background": null,
+  "storage_default_folder": null,
   "auth_password_policy": "/^.{8,}$/",
-  "project_color": "#D064AC",
-  "project_url": "https://agencyos.dev",
-  "project_name": "Agency OS",
-  "default_language": "en-US",
-  "project_descriptor": null,
+  "storage_asset_transform": "all",
   "mapbox_key": null,
+  "project_descriptor": null,
+  "default_language": "en-US",
+  "project_name": "Agency OS",
+  "project_url": "https://agencyos.dev",
+  "project_color": "#18222F",
   "custom_aspect_ratios": null,
-  "storage_asset_presets": [
-    {
-      "key": "800w",
-      "fit": "inside",
-      "width": 800,
-      "quality": 90,
-      "withoutEnlargement": true,
-      "format": "webp",
-      "transforms": [],
-      "height": null
-    },
-    {
-      "key": "1200w",
-      "fit": "inside",
-      "width": 1200,
-      "quality": 90,
-      "withoutEnlargement": true,
-      "format": "webp",
-      "transforms": []
-    }
-  ],
-  "basemaps": null,
   "module_bar": [
     {
       "type": "module",
@@ -70,8 +48,30 @@
       "locked": true
     }
   ],
+  "basemaps": null,
+  "storage_asset_presets": [
+    {
+      "key": "800w",
+      "fit": "inside",
+      "width": 800,
+      "quality": 90,
+      "withoutEnlargement": true,
+      "format": "webp",
+      "transforms": [],
+      "height": null
+    },
+    {
+      "key": "1200w",
+      "fit": "inside",
+      "width": 1200,
+      "quality": 90,
+      "withoutEnlargement": true,
+      "format": "webp",
+      "transforms": []
+    }
+  ],
   "custom_css": "",
   "public_note": null,
-  "id": 1,
-  "auth_login_attempts": 25
+  "auth_login_attempts": 25,
+  "id": 1
 }
