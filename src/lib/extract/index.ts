@@ -4,10 +4,7 @@ import path from "node:path";
 import { downloadAllFiles } from "./extract-assets";
 import extractSchema from "./extract-schema";
 import extractFromEndpoint from "./extract-from-endpoint";
-import {
-  extractPublicPermissions,
-  extractPermissions,
-} from "./extract-permissions";
+import { extractPermissions } from "./extract-permissions";
 import { extractContent } from "./extract-content";
 import extractFolders from "./extract-folders";
 import extractUsers from "./extract-users";
@@ -48,15 +45,11 @@ export default async function extract(dir: string, cli: any) {
   await extractFiles(destination);
   await extractPresets(destination);
   await extractPermissions(destination);
-  await extractPermissions(destination);
 
   // Iterate through the endpoints
   for (const endpoint of endpoints) {
     await extractFromEndpoint(endpoint, destination);
   }
-
-  // Extract public permissions
-  await extractPublicPermissions(destination);
 
   // Extract content
   await extractContent(destination);

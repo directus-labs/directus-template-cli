@@ -13,8 +13,22 @@ async function removeallPublicPermissions() {
   });
 }
 
-export async function loadPermissions(permissions: any) {
+const clearAdminPermissions = (
+  permissions: any[],
+  legacyAdminRoleId: string | number
+) => {
+  return permissions.filter(
+    (permission) => permission.role !== legacyAdminRoleId
+  );
+};
+
+export async function loadPermissions(
+  permissions: any,
+  legacyAdminRoleId: string | number,
+  newAdminRoleId: string | number
+) {
   await removeallPublicPermissions();
+  permissions = clearAdminPermissions(permissions, legacyAdminRoleId);
 
   await loadToDestination("permissions", permissions);
 }
