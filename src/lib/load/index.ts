@@ -32,13 +32,13 @@ export default async function apply(dir: string, cli: any) {
   await loadRoles(roles);
   cli.log("Loaded Roles");
 
+  await loadFolders(source);
+  cli.log("Loaded Folders");
+
   await loadFiles(readFile("files", source), source); // Comes after folders
   cli.log("Loaded Files");
   await loadUsers(readFile("users", source), legacyAdminRoleId, newAdminRoleId); // Comes after roles, files
   cli.log("Loaded Users");
-
-  await loadFolders(source);
-  cli.log("Loaded Folders");
 
   await loadDashboards(readFile("dashboards", source));
   cli.log("Loaded Dashboards");
