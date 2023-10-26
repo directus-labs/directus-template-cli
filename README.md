@@ -11,6 +11,8 @@ A CLI tool to make applying or extracting Directus "templates" a little easier..
 
 ## Usage
 
+Using the @latest tag ensures you're receiving the latest version of the packaged templates with the CLI. You can review [the specific versions on NPM](https://www.npmjs.com/package/directus-template-cli) and use @{version} syntax to apply the templates included with that version.
+
 ### Applying a Template
 
 **To avoid potential conflicts and bad outcomes, templates can only be applied to a blank instance currently.**
@@ -21,7 +23,7 @@ A CLI tool to make applying or extracting Directus "templates" a little easier..
 4. Run the following command on the terminal and follow the prompts.
 
 ```
-$ npx directus-template-cli apply
+$ npx directus-template-cli@latest apply
 ```
 
 You can choose from our templates bundled with the CLI or you can also choose a template from a local directory.
@@ -36,7 +38,7 @@ The CLI can also extract a template from a Directus instance so that it can be a
 4. Run the following command on the terminal and follow the prompts.
 
 ```
-$ npx directus-template-cli extract
+$ npx directus-template-cli@latest extract
 ```
 
 ## License
