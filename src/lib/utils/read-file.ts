@@ -10,3 +10,7 @@ export function readJsonFile(path: string): any[] {
   const obj = JSON.parse(f)
   return obj
 }
+
+export function checkPath(file: string, dir:string): boolean {
+  return fs.existsSync( `${dir}/${file}.json` );
+}

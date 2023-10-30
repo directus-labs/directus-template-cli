@@ -15,7 +15,6 @@ import extractPresets from "./extract-presets";
 export const aspects = {
   "schema and collections" : async (destination:string) => {
     await extractSchema( destination );
-    await extractFromEndpoint( "collections", destination );
   },
   "roles and permission" : async (destination:string) => {
     await extractRoles( destination );
@@ -35,6 +34,7 @@ export const aspects = {
     await extractFromEndpoint( "panels", destination );
   },
   "content" : async (destination:string) => {
+    await extractFromEndpoint( "collections", destination );
     await extractFiles( destination );
     await downloadAllFiles( destination );
     await extractFolders( destination );
