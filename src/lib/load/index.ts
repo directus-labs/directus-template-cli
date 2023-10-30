@@ -26,19 +26,21 @@ export default async function apply(dir: string, cli: any) {
   }
   
 
-  // Role Loading Logic
-  // Several other elements depend on roles being present, to know about the old and new adminRoleID. 
-  // Why are roles UUIDed anyway? Seems like something that could use a slug. What do I know...
-  //if ( checkPath("roles", source) ){
-    const roles = readFile("roles", source);
-    const legacyAdminRoleId = roles.find(
+
+  //Read adminrole
+  const adminRole = readFile("admin-role", source);
+  const legacyAdminRoleId = adminRole.find(
       (role) => role.name === "Administrator"
-    ).id;
-    const currentUser = await api.get<any>("users/me");
-    const newAdminRoleId = currentUser.data.data.role;
+  ).id;
+  const currentUser = await api.get<any>("users/me");
+  const newAdminRoleId = currentUser.data.data.role;
+
+  // Role Loading Logic
+  if ( checkPath("roles", source) ){
+    const roles = readFile("roles", source);
     await loadRoles(roles);
     cli.log("Loaded Roles");
-  //}
+  }
 
   if ( checkPath("folders", source) ){
     await loadFolders(source);

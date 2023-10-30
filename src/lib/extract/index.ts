@@ -11,9 +11,10 @@ import extractUsers from "./extract-users";
 import extractRoles from "./extract-roles";
 import extractFiles from "./extract-files";
 import extractPresets from "./extract-presets";
+import extractAdminRole from "./extract-admin-role";
 
 export const aspects = {
-  "schema and collections" : async (destination:string) => {
+  "schema" : async (destination:string) => {
     await extractSchema( destination );
   },
   "roles and permission" : async (destination:string) => {
@@ -51,6 +52,10 @@ export default async function extract(dir: string, cli: any) {
     console.log(`Attempting to create directory at: ${destination}`);
     fs.mkdirSync(destination, { recursive: true });
   }
+
+  //We need to make sure that we do have the admin role!
+  await extractAdminRole(destination);
+
   for (const key of cli.selectedAspects) {
     const callback = aspects[key]
     console.log(`Fetching ${key}`)
