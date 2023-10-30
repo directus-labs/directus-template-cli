@@ -12,21 +12,35 @@ import extractRoles from "./extract-roles";
 import extractFiles from "./extract-files";
 import extractPresets from "./extract-presets";
 
-const endpoints = [
-  // "folders",
-  // "fields",
-  // "users",
-  // "roles",
-  // "files",
-  "operations",
-  // "permissions",
-  "collections",
-  "flows",
-  "dashboards",
-  "panels",
-  // "presets",
-  "settings",
-];
+export const aspects = {
+  "schema and collections" : async (destination:string) => {
+    await extractSchema( destination );
+    await extractFromEndpoint( "collections", destination );
+  },
+  "roles and permission" : async (destination:string) => {
+    await extractRoles( destination );
+    await extractPermissions( destination );
+  },
+  "folders"     : async (destination:string) => await extractFolders( destination ),
+  "users"       : async (destination:string) => await extractUsers( destination ),  
+  "presets"     : async (destination:string) => await extractPresets( destination ),
+  "settings"    : async (destination:string) => await extractFromEndpoint( "settings", destination ),
+
+  "flows and operations" : async (destination:string) => {
+    await extractFromEndpoint( "flows", destination );
+    await extractFromEndpoint( "operations", destination );
+  },
+  "dashboards"  : async (destination:string) => {
+    await extractFromEndpoint( "dashboards", destination );
+    await extractFromEndpoint( "panels", destination );
+  },
+  "content" : async (destination:string) => {
+    await extractFiles( destination );
+    await downloadAllFiles( destination );
+    await extractFolders( destination );
+    await extractContent( destination );
+  }
+};
 
 export default async function extract(dir: string, cli: any) {
   // Get the destination directory for the actual files
@@ -37,25 +51,11 @@ export default async function extract(dir: string, cli: any) {
     console.log(`Attempting to create directory at: ${destination}`);
     fs.mkdirSync(destination, { recursive: true });
   }
-
-  await extractSchema(destination);
-  await extractFolders(destination);
-  await extractUsers(destination);
-  await extractRoles(destination);
-  await extractFiles(destination);
-  await extractPresets(destination);
-  await extractPermissions(destination);
-
-  // Iterate through the endpoints
-  for (const endpoint of endpoints) {
-    await extractFromEndpoint(endpoint, destination);
+  for (const key of cli.selectedAspects) {
+    const callback = aspects[key]
+    console.log(`Fetching ${key}`)
+    await callback( destination )
   }
-
-  // Extract content
-  await extractContent(destination);
-
-  // Extract assets
-  await downloadAllFiles(destination);
 
   return {};
 }

@@ -1,6 +1,7 @@
 import { Command, Flags } from "@oclif/core";
 import { ux } from "@oclif/core";
 import * as inquirer from "inquirer";
+import {aspects} from "../lib/extract/index";
 import { cwd } from "node:process";
 import fs from "node:fs";
 import path from "node:path";
@@ -12,6 +13,7 @@ import {
   generatePackageJsonContent,
   generateReadmeContent,
 } from "../lib/utils/template-defaults";
+import { List } from "@oclif/core/lib/interfaces/parser";
 
 const separator = "------------------";
 
@@ -20,17 +22,20 @@ export default class ExtractCommand extends Command {
 
   static examples = ["$ directus-template-cli extract"];
 
+  selectedAspects:List = []
+
   static flags = {};
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ExtractCommand);
 
-    const templateName = await ux.prompt("What is the name of the template?.");
+    const templateName = await ux.prompt("What is the name of the template?.", {"default" : "directus-project"});
 
     const directory = await ux.prompt(
-      "What directory would you like to extract the template to? If it doesn't exist, it will be created."
+      "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
+      { default: `templates/${templateName}`}
     );
-
+  
     this.log(`You selected ${directory}`);
 
     try {
@@ -63,6 +68,17 @@ export default class ExtractCommand extends Command {
     const directusToken = await getDirectusToken(directusUrl);
     api.setAuthToken(directusToken);
 
+
+    const selectedAspectsResponse = await inquirer.prompt([{
+      name: 'aspects',
+      message: 'Select aspects to choose',
+      type: 'checkbox',
+      choices: Object.keys(aspects).map( (key) => {return {"name" : key, checked : true}} )
+    }])
+    
+    this.selectedAspects = selectedAspectsResponse.aspects
+    console.log( this.selectedAspects )
+    
     this.log(separator);
     // Run the extract script
     ux.action.start(
