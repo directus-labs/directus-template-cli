@@ -1973,14 +1973,8 @@
         {
           "_or": [
             {
-              "contacts": {
-                "organizations": {
-                  "id": {
-                    "_in": [
-                      "$CURRENT_USER.contacts.organizations.organizations_id"
-                    ]
-                  }
-                }
+              "id": {
+                "_eq": "$CURRENT_USER.id"
               }
             },
             {
