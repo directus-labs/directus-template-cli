@@ -20,8 +20,8 @@
         }
       }
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -36,8 +36,8 @@
     "options": {
       "code": "function sumValues(items, propName) {\n    return items.reduce((total, item) => total + (parseFloat(item[propName] || 0)), 0);\n}\n\nfunction calculateInvoiceTotals(invoice) {\n    const lineItems = invoice.line_items || [];\n    const subtotal = sumValues(lineItems, 'line_amount').toFixed(2);\n    const totalTax = sumValues(lineItems, 'tax_amount').toFixed(2);\n    const total = (parseFloat(subtotal) + parseFloat(totalTax)).toFixed(2);\n\n    let changes = {};\n    if (invoice.subtotal !== subtotal) changes.subtotal = subtotal;\n    if (invoice.total_tax !== totalTax) changes.total_tax = totalTax;\n    if (invoice.total !== total) changes.total = total;\n\n    return {\n        changes: Object.keys(changes).length > 0 ? changes : null,\n        total: total\n    };\n}\n\nfunction calculateInvoicePayments(invoice, calculatedTotal) {\n    const payments = invoice.payments || [];\n    const totalPayments = sumValues(payments, 'amount').toFixed(2);\n    const amountDue = (parseFloat(calculatedTotal) - parseFloat(totalPayments)).toFixed(2);\n\n    let changes = {};\n    if (invoice.amount_due !== amountDue) changes.amount_due = amountDue;\n    if (invoice.amount_paid !== totalPayments) changes.amount_paid = totalPayments;\n\t\n    if (invoice.status === 'paid' && parseFloat(totalPayments) < parseFloat(calculatedTotal)) {\n        changes.status = 'unpaid';\n    } else if (invoice.status !== 'paid' && parseFloat(totalPayments) >= parseFloat(calculatedTotal)) {\n        changes.status = 'paid';\n    }\n\n    return Object.keys(changes).length > 0 ? changes : null;\n}\n\nmodule.exports = async function processInvoiceChanges(data) {\n    const invoice = data.invoice;\n    if (!invoice) throw new Error(\"Invalid invoice data\");\n\n    const { changes: totalsChanges, total: calculatedTotal } = calculateInvoiceTotals(invoice);\n    const paymentChanges = calculateInvoicePayments(invoice, calculatedTotal);\n\n    if (!totalsChanges && !paymentChanges) throw new Error('No changes necessary');\n\n    return { ...totalsChanges, ...paymentChanges };\n};\n"
     },
-    "position_y": 1,
-    "position_x": 39
+    "position_x": 39,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -57,8 +57,8 @@
       "type": "wysiwyg",
       "body": "<div>{{$trigger.body.message}}</div>\n<div>&nbsp;</div>\n<div><strong><a href=\"http://localhost:3000/proposals/{{get_proposal.id}}?approver={{get_proposal.contacts[0].contacts_id.id}}\" target=\"_blank\" rel=\"noopener\">Review Proposal</a></strong></div>"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -73,8 +73,8 @@
     "options": {
       "code": "module.exports = async function (data) {\n\t// Index data to get the string you want to slugify\n\t// Assign it to the \"text\" var below.\n\tconst text = data.$trigger.payload.title;\n\n\tconst slug = text\n\t\t.toLowerCase()\n\t\t.trim()\n\t\t.replace(/[^\\w\\s-]/g, '')\n\t\t.replace(/[\\s_-]+/g, '-')\n\t\t.replace(/^-+|-+$/g, '');\n\n\treturn slug;\n};\n"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -89,8 +89,8 @@
     "options": {
       "code": "module.exports = async function(data) {\n\tconst build_hook_url = data.globals.build_hook_url\n    if (!build_hook_url) throw new Error('Missing build hook url')\n    return build_hook_url\n}"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -105,8 +105,8 @@
     "options": {
       "code": "module.exports = async function(data) {\n\tlet nextInvoiceNumber = data.invoice_settings[0].next_invoice_number\n    nextInvoiceNumber++\n\treturn nextInvoiceNumber;\n}"
     },
-    "position_y": 19,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -121,8 +121,8 @@
     "options": {
       "code": "function extractKey(obj) {\n    if (obj.key) {\n        // If \"key\" property exists, return its value\n        return obj.key;\n    } else if (obj.keys && Array.isArray(obj.keys) && obj.keys.length > 0) {\n        // If \"keys\" property exists, is an array, and has at least one element, return the first element\n        return obj.keys[0];\n    } else {\n        // If neither condition is met, return null or throw an error\n        throw new Error('Key not found');\n        \n    }\n}\n\n\nmodule.exports = async function(data) {\n\tconst key = extractKey(data.$trigger)\n    \n    return key\n}"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -140,8 +140,8 @@
         "{{$trigger.body.os_project_template.key}}"
       ]
     },
-    "position_y": 1,
-    "position_x": 20
+    "position_x": 20,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -157,8 +157,8 @@
       "collection": "os_settings",
       "permissions": "$full"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -173,8 +173,8 @@
     "options": {
       "code": "function extractDomain(inputUrl) {\n\t// Regular expression to extract domain from URL\n\tconst regex = /^(?:https?:\\/\\/)?(?:www\\.)?([^\\/?#]+)(?:[\\/?#]|$)/i;\n\tconst matches = inputUrl.match(regex);\n\n\t// Return the matched domain or undefined if not found\n\treturn matches && matches[1];\n}\n\nmodule.exports = function (data) {\n\tconst website = data.$trigger.payload.website;\n\n\tconst domain = extractDomain(website);\n\n\tif (!domain) {\n\t\tthrow new Error('Unable to properly determine the domain for this website');\n\t}\n\treturn domain;\n};\n"
     },
-    "position_y": 1,
-    "position_x": 55
+    "position_x": 55,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -189,8 +189,8 @@
     "options": {
       "message": "Missing build hook URL"
     },
-    "position_y": 17,
-    "position_x": 55
+    "position_x": 55,
+    "position_y": 17
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -214,8 +214,8 @@
         ]
       }
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -240,8 +240,8 @@
       ],
       "collection": "os_proposals"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -260,8 +260,8 @@
         "next_invoice_number": "{{increment_invoice_number}}"
       }
     },
-    "position_y": 19,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -282,8 +282,8 @@
         "logo": "{{import_logo.data.data.id}}"
       }
     },
-    "position_y": 19,
-    "position_x": 59
+    "position_x": 59,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -299,8 +299,8 @@
       "method": "POST",
       "url": "{{check_build_hook}}"
     },
-    "position_y": 1,
-    "position_x": 55
+    "position_x": 55,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -315,8 +315,8 @@
     "options": {
       "code": "module.exports = async function (data) {\n\tconst item = { ...data.invoice_items, ...data.$trigger.payload };\n\n\t// Basic validation for unit_price and quantity\n\tif (!item.unit_price || !item.quantity) {\n\t\tthrow new Error('Missing or invalid unit_price or quantity.');\n\t}\n\n\t// Calculate line_amount\n\tconst lineAmount = parseFloat(item.unit_price) * parseFloat(item.quantity);\n\tif (isNaN(lineAmount)) {\n\t\tthrow new Error('Error calculating line_amount.');\n\t}\n\titem.line_amount = lineAmount;\n\n\t// Validate and calculate tax_amount if tax_rate is provided\n\tif (item.tax_rate && item.tax_rate.rate) {\n\t\tconst taxRateId = item.tax_rate.id;\n\t\tconst taxAmount = (lineAmount * parseFloat(item.tax_rate.rate)) / 100;\n\t\tif (isNaN(taxAmount)) {\n\t\t\tthrow new Error('Error calculating tax_amount.');\n\t\t}\n\t\titem.tax_amount = taxAmount;\n\n\t\tdelete item.tax_rate;\n\t\titem.tax_rate = taxRateId;\n\t}\n\n\treturn item;\n};\n"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -340,8 +340,8 @@
         }
       }
     },
-    "position_y": 1,
-    "position_x": 20
+    "position_x": 20,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -360,8 +360,8 @@
         "{{$trigger.payload.invoice}}"
       ]
     },
-    "position_y": 1,
-    "position_x": 57
+    "position_x": 57,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -384,8 +384,8 @@
         }
       }
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -401,8 +401,8 @@
       "collection": "os_projects",
       "payload": "{{format_project_from_template}}"
     },
-    "position_y": 1,
-    "position_x": 56
+    "position_x": 56,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -427,8 +427,8 @@
         ]
       }
     },
-    "position_y": 1,
-    "position_x": 21
+    "position_x": 21,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -447,8 +447,8 @@
         "slug": "{{ slug_me }}"
       }
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -469,8 +469,8 @@
       "collection": "os_projects",
       "item": "{{create_project}}"
     },
-    "position_y": 1,
-    "position_x": 74
+    "position_x": 74,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -485,8 +485,8 @@
     "options": {
       "code": "module.exports = async function(data) {\n    // Validate necessary fields in the trigger data\n    if (!data || !data.$trigger || !data.$trigger.body || !data.get_project_template || !data.get_project_template.tasks) {\n        throw new Error('Invalid or missing data in trigger payload');\n    }\n\n    const { project_start_date, project_due_date } = data.$trigger.body;\n    const projectStartDate = project_start_date ? new Date(project_start_date) : new Date();\n    const projectDueDate = project_due_date ? new Date(project_due_date) : new Date();\n\n    const templateTasks = data.get_project_template.tasks;\n    const projectTasks = [];\n\n    for (const task of templateTasks) {\n        let taskStartDate;\n        let taskDueDate;\n\n        if (task.set_dates_relative_to === 'project_start_date' && project_start_date) {\n            taskStartDate = new Date(projectStartDate);\n            taskStartDate.setDate(taskStartDate.getDate() + (task.start_days || 0));\n\n            taskDueDate = new Date(projectStartDate);\n            taskDueDate.setDate(taskDueDate.getDate() + (task.due_days || 0));\n        } else if (task.set_dates_relative_to === 'project_due_date' && project_due_date) {\n            taskStartDate = new Date(projectDueDate);\n            taskStartDate.setDate(taskStartDate.getDate() - (task.start_days || 0));\n\n            taskDueDate = new Date(projectDueDate);\n            taskDueDate.setDate(taskDueDate.getDate() - (task.due_days || 0));\n        }\n\n        // If dates are not calculated due to missing project dates, default to null\n        const newTask = {\n            name: task.name,\n            description: task.description,\n            type: task.type,\n            start_date: taskStartDate ? taskStartDate.toISOString() : null,\n            due_date: taskDueDate ? taskDueDate.toISOString() : null,\n            is_visible_to_client: task.is_visible_to_client ?? false,\n            assigned_to: task.default_team_assigned_to?.key ?? null,\n            form: task.form ?? null,\n            embed_url: task.embed_url ?? null\n        };\n\n        projectTasks.push(newTask);\n    }\n\n    const project = {\n        name: data.$trigger.body.name,\n        tasks: projectTasks,\n        organization: data.$trigger.body.organization.key,\n        contacts: [\n            { contacts_id: data.$trigger.body.contact.key }\n        ],\n        owner: data.$accountability.user,\n        start_date: project_start_date ? projectStartDate.toISOString() : null,\n        due_date: project_due_date ? projectDueDate.toISOString() : null,\n    };\n    \n    return project;\n};\n"
     },
-    "position_y": 1,
-    "position_x": 38
+    "position_x": 38,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -502,8 +502,8 @@
       "permissions": "$full",
       "collection": "globals"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -518,8 +518,8 @@
     "options": {
       "message": "The payload did not include a `website`."
     },
-    "position_y": 19,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -535,8 +535,8 @@
       "permissions": "$full",
       "collection": "os_invoice_config"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -555,8 +555,8 @@
       "subject": "New post is ready to review",
       "body": "Hello Team,\n\nThe following article has been submitted for your review. Please log in, and either approve this content or provide feedback for necessary improvements.\n\nhttps://nuxt-starter.directus.app/admin/posts/{{$trigger.keys[0]}}\n\nBest,\n\n//"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -571,8 +571,8 @@
     "options": {
       "code": "module.exports = async function(data) {\n    const hasFolder = data.get_org.folder\n    if (hasFolder) { \n        // We can update the folder through the organization\n        return {\n            folder: {\n                id: hasFolder,\n\t            name: data.get_org.name,\n            }\n        }\n            \n    } else {\n        return {\n            folder: {\n                name: data.get_org.name,\n                parent: data.settings[0].organization_folder_root ?? null\n            }\n        }\n    }\n}"
     },
-    "position_y": 19,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -599,8 +599,8 @@
       ],
       "body": "{\n\t\"url\": \"https://logo.clearbit.com/{{extract_domain}}\",\n\t\"data\": {\n\t\"title\": \"{{extract_domain}} Logo\"\n\t}\n\t}\n"
     },
-    "position_y": 19,
-    "position_x": 41
+    "position_x": 41,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -619,8 +619,8 @@
       "collection": "organizations",
       "permissions": "$full"
     },
-    "position_y": 19,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -635,8 +635,8 @@
     "options": {
       "flow": "69e87d0b-df14-4779-bdc8-abc05f2f1e97"
     },
-    "position_y": 1,
-    "position_x": 19
+    "position_x": 19,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -658,8 +658,8 @@
         "invoice_number": "{{invoice_settings[0].next_invoice_number}}"
       }
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -674,8 +674,8 @@
     "options": {
       "code": "// This function is called when used with an Event Hook - Action (Non-Blocking) - Trigger for a flow. It is used to extract the key from the trigger object because the syntax return from Directus can be different depending on the type of trigger. For example, the trigger object for a \"New Item\" trigger is different than the trigger object for a \"New Item in View\" trigger. This function is used to extract the key from the trigger object regardless of the type of trigger.\n\nfunction extractKey(obj) {\n\tif (obj.key) {\n\t\t// If \"key\" property exists, return its value\n\t\treturn obj.key;\n\t} else if (obj.keys && Array.isArray(obj.keys) && obj.keys.length > 0) {\n\t\t// If \"keys\" property exists, is an array, and has at least one element, return the first element\n\t\treturn obj.keys[0];\n\t} else {\n\t\t// If neither condition is met, return null or throw an error\n\t\tthrow new Error('Key not found');\n\t}\n}\n\nmodule.exports = async function (data) {\n\tconst key = extractKey(data.$trigger);\n\n\treturn key;\n};\n"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -695,8 +695,8 @@
       "collection": "organizations",
       "permissions": "$full"
     },
-    "position_y": 19,
-    "position_x": 55
+    "position_x": 55,
+    "position_y": 19
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -711,7 +711,7 @@
     "options": {
       "code": "module.exports = async function(data) {\n    return data.read_globals[0]\n}"
     },
-    "position_y": 1,
-    "position_x": 37
+    "position_x": 37,
+    "position_y": 1
   }
 ]

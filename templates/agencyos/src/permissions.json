@@ -832,7 +832,15 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -843,7 +851,15 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -876,7 +892,15 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -887,7 +911,15 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -898,7 +930,17 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "pages_id": {
+            "status": {
+              "_eq": "published"
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -953,7 +995,28 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "_or": [
+            {
+              "organization": {
+                "id": {
+                  "_in": [
+                    "$CURRENT_USER.contacts.organizations.organizations_id"
+                  ]
+                }
+              }
+            },
+            {
+              "user_created": {
+                "_eq": "$CURRENT_USER.id"
+              }
+            }
+          ]
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -966,7 +1029,19 @@
     "validation": {},
     "permissions": {},
     "fields": [
-      "*"
+      "id",
+      "status",
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "job_title",
+      "organizations",
+      "user",
+      "date_created",
+      "user_updated",
+      "date_updated",
+      "user_created"
     ]
   },
   {
@@ -1282,51 +1357,7 @@
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_items",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_items",
     "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_items",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_items",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_items",
-    "action": "share",
     "presets": null,
     "validation": {},
     "permissions": {},
@@ -1351,51 +1382,19 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payments",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payments",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payments",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payment_terms",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "organization": {
+            "id": {
+              "_in": [
+                "$CURRENT_USER.contacts.organizations.organizations_id"
+              ]
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -1413,44 +1412,23 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payment_terms",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payment_terms",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_payment_terms",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_project_contacts",
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "os_projects_id": {
+            "organization": {
+              "_in": [
+                "$CURRENT_USER.contacts.organizations.organizations_id"
+              ]
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -1459,39 +1437,6 @@
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_project_contacts",
     "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_contacts",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_contacts",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_contacts",
-    "action": "delete",
     "presets": null,
     "validation": {},
     "permissions": {},
@@ -1524,88 +1469,23 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_projects",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_projects",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_projects",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_updates",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_updates",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_project_updates",
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_updates",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_project_updates",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "project": {
+            "organization": {
+              "_in": [
+                "$CURRENT_USER.contacts.organizations.organizations_id"
+              ]
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -1634,96 +1514,8 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_approvals",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_approvals",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_approvals",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_blocks",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_blocks",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_proposal_blocks",
     "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_blocks",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_blocks",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_contacts",
-    "action": "create",
     "presets": null,
     "validation": {},
     "permissions": {},
@@ -1744,162 +1536,8 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_contacts",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_contacts",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposal_contacts",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposals",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "os_proposals",
     "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposals",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposals",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_proposals",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_tasks",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_tasks",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_tasks",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_tasks",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_task_files",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_task_files",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_task_files",
-    "action": "update",
     "presets": null,
     "validation": {},
     "permissions": {},
@@ -1935,62 +1573,17 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations_contacts",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "id": {
+            "_in": [
+              "$CURRENT_USER.contacts.organizations.organizations_id"
+            ]
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2001,40 +1594,17 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations_contacts",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations_contacts",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organizations_contacts",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "organizations_id": {
+            "_in": [
+              "$CURRENT_USER.contacts.organizations.organizations_id"
+            ]
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2045,62 +1615,17 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organization_addresses",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organization_addresses",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organization_addresses",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "organization_addresses",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "contacts",
-    "action": "create",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "organization": {
+            "_in": [
+              "$CURRENT_USER.contacts.organizations.organizations_id"
+            ]
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2111,29 +1636,17 @@
     "action": "update",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "contacts",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "contacts",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "id": {
+            "_in": [
+              "$CURRENT_USER.contacts.id"
+            ]
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2151,39 +1664,6 @@
   },
   {
     "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "conversations",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "conversations",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "conversations",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
     "collection": "messages",
     "action": "create",
     "presets": null,
@@ -2199,7 +1679,30 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "_or": [
+            {
+              "conversation": {
+                "organization": {
+                  "_in": [
+                    "$CURRENT_USER.contacts.organizations.organizations_id"
+                  ]
+                }
+              }
+            },
+            {
+              "user_created": {
+                "_in": [
+                  "$CURRENT_USER.contacts.organizations.organizations_id"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2210,29 +1713,17 @@
     "action": "update",
     "presets": null,
     "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "messages",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "messages",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "user_created": {
+            "id": {
+              "_eq": "$CURRENT_USER.id"
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2256,40 +1747,7 @@
     "validation": {},
     "permissions": {},
     "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "inbox",
-    "action": "update",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "inbox",
-    "action": "delete",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "inbox",
-    "action": "share",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
+      "id"
     ]
   },
   {
@@ -2298,7 +1756,15 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "status": {
+            "_eq": "published"
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2309,7 +1775,30 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "_or": [
+            {
+              "navigation": {
+                "status": {
+                  "_eq": "published"
+                }
+              }
+            },
+            {
+              "parent": {
+                "navigation": {
+                  "status": {
+                    "_eq": "published"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2456,7 +1945,19 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "project": {
+            "organization": {
+              "_in": [
+                "$CURRENT_USER.contacts.organizations.organizations_id"
+              ]
+            }
+          }
+        }
+      ]
+    },
     "fields": [
       "*"
     ]
@@ -2467,86 +1968,47 @@
     "action": "read",
     "presets": null,
     "validation": {},
-    "permissions": {},
+    "permissions": {
+      "_and": [
+        {
+          "_or": [
+            {
+              "contacts": {
+                "organizations": {
+                  "id": {
+                    "_in": [
+                      "$CURRENT_USER.contacts.organizations.organizations_id"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "role": {
+                "name": {
+                  "_contains": "Team"
+                }
+              }
+            },
+            {
+              "role": {
+                "name": {
+                  "_contains": "Admin"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
     "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_activities",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_activity_contacts",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_deal_contacts",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_deals",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_deal_stages",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_email_templates",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
-    ]
-  },
-  {
-    "role": "edc2e863-e2c4-4ee3-bcbd-d090df2911e1",
-    "collection": "os_expenses",
-    "action": "read",
-    "presets": null,
-    "validation": {},
-    "permissions": {},
-    "fields": [
-      "*"
+      "first_name",
+      "contacts",
+      "last_name",
+      "email",
+      "avatar",
+      "title",
+      "id"
     ]
   },
   {
@@ -5759,6 +5221,17 @@
     ]
   },
   {
+    "role": null,
+    "collection": "conversations",
+    "action": "read",
+    "presets": null,
+    "validation": {},
+    "permissions": {},
+    "fields": [
+      "*"
+    ]
+  },
+  {
     "role": "2d490b3f-7528-4b85-a05f-44aac2f2e05d",
     "permissions": {},
     "validation": null,
@@ -6049,10 +5522,15 @@
       "preferences_divider",
       "avatar",
       "language",
-      "theme",
+      "appearance",
+      "theme_light",
+      "theme_dark",
+      "theme_light_overrides",
+      "theme_dark_overrides",
       "tfa_secret",
       "status",
-      "role"
+      "role",
+      "theme"
     ],
     "system": true,
     "collection": "directus_users",
