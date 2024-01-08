@@ -1,16 +1,38 @@
 {
-  "project_logo": "690c2042-e3ad-46f4-9cd8-095a7b3a1df7",
-  "public_foreground": null,
   "public_background": null,
+  "public_foreground": null,
+  "project_logo": "690c2042-e3ad-46f4-9cd8-095a7b3a1df7",
+  "public_favicon": null,
   "storage_default_folder": null,
-  "auth_password_policy": "/^.{8,}$/",
-  "storage_asset_transform": "all",
-  "mapbox_key": null,
-  "project_descriptor": null,
+  "default_theme_dark": null,
+  "default_theme_light": null,
+  "default_appearance": "auto",
   "default_language": "en-US",
-  "project_name": "Agency OS",
-  "project_url": "https://agencyos.dev",
+  "project_descriptor": null,
+  "mapbox_key": null,
+  "storage_asset_transform": "all",
+  "auth_password_policy": "/^.{8,}$/",
   "project_color": "#18222F",
+  "project_url": "https://agencyos.dev",
+  "project_name": "Agency OS",
+  "theme_dark_overrides": {
+    "primary": "#ff99dd"
+  },
+  "theme_light_overrides": {
+    "fontFamilyDisplay": "\"Poppins\", system-ui",
+    "navigation": {
+      "list": {
+        "backgroundActive": "#FFD6F1"
+      },
+      "background": "#FAFBFC",
+      "modules": {
+        "button": {
+          "backgroundActive": "#FAFBFC",
+          "foregroundActive": "#ff99dd"
+        }
+      }
+    }
+  },
   "custom_aspect_ratios": null,
   "module_bar": [
     {
@@ -72,6 +94,6 @@
   ],
   "custom_css": "",
   "public_note": null,
-  "auth_login_attempts": 25,
-  "id": 1
+  "id": 1,
+  "auth_login_attempts": 25
 }

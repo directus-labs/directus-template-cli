@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "directus": "13.1.1",
+  "directus": "10.8.3",
   "vendor": "postgres",
   "collections": [
     {
@@ -24,7 +24,8 @@
         "sort": 8,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       }
     },
     {
@@ -55,7 +56,8 @@
             "plural": "Buttons"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "block_button"
@@ -80,7 +82,7 @@
         "preview_url": null,
         "singleton": false,
         "sort": 17,
-        "sort_field": "sort",
+        "sort_field": null,
         "translations": [
           {
             "language": "en-US",
@@ -89,7 +91,8 @@
             "plural": "Button Groups"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "block_button_group"
@@ -123,7 +126,8 @@
             "plural": "Columns"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_columns"
@@ -150,7 +154,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "block_columns_rows"
@@ -184,7 +189,8 @@
             "plural": "Call To Action"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_cta"
@@ -218,7 +224,8 @@
             "plural": "Dividers"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_divider"
@@ -252,7 +259,8 @@
             "plural": "FAQs"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_faqs"
@@ -286,7 +294,8 @@
             "plural": "Forms Form Sections"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_form"
@@ -320,7 +329,8 @@
             "plural": "Gallery"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_gallery"
@@ -347,7 +357,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "block_gallery_files"
@@ -381,7 +392,8 @@
             "plural": "Hero"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_hero"
@@ -415,7 +427,8 @@
             "plural": "Raw HTML"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_html"
@@ -449,7 +462,8 @@
             "plural": "Logo Cloud"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_logocloud"
@@ -476,7 +490,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_logocloud_logos"
@@ -510,7 +525,8 @@
             "plural": "Quotes"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_quote"
@@ -544,7 +560,8 @@
             "plural": "Rich Text"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_richtext"
@@ -571,7 +588,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_step_items"
@@ -605,7 +623,8 @@
             "plural": "Steps"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_steps"
@@ -639,7 +658,8 @@
             "plural": "Team"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_team"
@@ -666,7 +686,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "block_testimonial_slider_items"
@@ -700,7 +721,8 @@
             "plural": "Testimonials"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_testimonials"
@@ -734,7 +756,8 @@
             "plural": "Videos"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "block_video"
@@ -761,7 +784,8 @@
         "sort": 10,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       }
     },
     {
@@ -785,7 +809,8 @@
         "sort": 3,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "categories"
@@ -812,7 +837,8 @@
         "sort": 4,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "contacts"
@@ -823,7 +849,7 @@
       "meta": {
         "accountability": "all",
         "archive_app_filter": true,
-        "archive_field": "status",
+        "archive_field": null,
         "archive_value": "archived",
         "collapse": "closed",
         "collection": "conversations",
@@ -846,7 +872,8 @@
             "plural": "Conversations"
           }
         ],
-        "unarchive_value": "open"
+        "unarchive_value": "open",
+        "versioning": true
       },
       "schema": {
         "name": "conversations"
@@ -873,7 +900,8 @@
         "sort": 9,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "forms"
@@ -900,7 +928,8 @@
         "sort": 6,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "globals"
@@ -932,7 +961,8 @@
             "translation": "Help Center"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       }
     },
     {
@@ -956,7 +986,8 @@
         "sort": 2,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "help_articles"
@@ -983,7 +1014,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "help_collections"
@@ -1010,7 +1042,8 @@
         "sort": 3,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "help_feedback"
@@ -1044,7 +1077,8 @@
             "plural": "Inbox"
           }
         ],
-        "unarchive_value": "new"
+        "unarchive_value": "new",
+        "versioning": false
       },
       "schema": {
         "name": "inbox"
@@ -1078,7 +1112,8 @@
             "plural": "Messages"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "messages"
@@ -1105,7 +1140,8 @@
         "sort": 10,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "navigation"
@@ -1141,9 +1177,10 @@
         "preview_url": null,
         "singleton": false,
         "sort": 1,
-        "sort_field": "sort",
+        "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "navigation_items"
@@ -1170,7 +1207,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "organization_addresses"
@@ -1204,7 +1242,8 @@
             "plural": "Organizations"
           }
         ],
-        "unarchive_value": "active"
+        "unarchive_value": "active",
+        "versioning": false
       },
       "schema": {
         "name": "organizations"
@@ -1231,7 +1270,8 @@
         "sort": 2,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "organizations_contacts"
@@ -1265,7 +1305,8 @@
             "plural": "Activities"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_activities"
@@ -1292,7 +1333,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_activity_contacts"
@@ -1319,7 +1361,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_deal_contacts"
@@ -1353,7 +1396,8 @@
             "plural": "Deal Stages"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_deal_stages"
@@ -1387,7 +1431,8 @@
             "plural": "Deals"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_deals"
@@ -1421,7 +1466,8 @@
             "plural": "Email Template"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_email_templates"
@@ -1455,7 +1501,8 @@
             "plural": "Expense"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_expenses"
@@ -1482,7 +1529,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_invoice_items"
@@ -1516,7 +1564,8 @@
             "plural": "Invoices"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_invoices"
@@ -1550,7 +1599,8 @@
             "plural": "Items / Services"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_items"
@@ -1584,7 +1634,8 @@
             "plural": "Payment Terms"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_payment_terms"
@@ -1618,7 +1669,8 @@
             "plural": "Payments"
           }
         ],
-        "unarchive_value": "pending"
+        "unarchive_value": "pending",
+        "versioning": false
       },
       "schema": {
         "name": "os_payments"
@@ -1645,7 +1697,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_project_contacts"
@@ -1683,7 +1736,8 @@
             "plural": "Project Templates"
           }
         ],
-        "unarchive_value": "active"
+        "unarchive_value": "active",
+        "versioning": false
       },
       "schema": {
         "name": "os_project_templates"
@@ -1710,7 +1764,8 @@
         "sort": 2,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_project_updates"
@@ -1744,7 +1799,8 @@
             "plural": "Projects"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_projects"
@@ -1771,7 +1827,8 @@
         "sort": 2,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_proposal_approvals"
@@ -1798,7 +1855,8 @@
         "sort": 3,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_proposal_blocks"
@@ -1825,7 +1883,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_proposal_contacts"
@@ -1859,7 +1918,8 @@
             "plural": "Proposals"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_proposals"
@@ -1893,7 +1953,8 @@
             "plural": "Settings"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_settings"
@@ -1920,7 +1981,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "os_task_files"
@@ -1954,7 +2016,8 @@
             "plural": "Tasks"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_tasks"
@@ -1988,7 +2051,8 @@
             "plural": "Tax Rates"
           }
         ],
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "os_tax_rates"
@@ -2006,7 +2070,7 @@
         "color": "#18222F",
         "display_template": null,
         "group": "pages",
-        "hidden": false,
+        "hidden": true,
         "icon": "code_blocks",
         "item_duplication_fields": null,
         "note": null,
@@ -2015,7 +2079,8 @@
         "sort": 3,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "page_blocks"
@@ -2042,7 +2107,8 @@
         "sort": 1,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "pages"
@@ -2076,7 +2142,8 @@
             "plural": "Blog Page"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "pages_blog"
@@ -2110,7 +2177,8 @@
             "plural": "Project Page"
           }
         ],
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "pages_projects"
@@ -2137,7 +2205,8 @@
         "sort": 1,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "post_gallery_items"
@@ -2164,7 +2233,8 @@
         "sort": 2,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "posts"
@@ -2191,7 +2261,8 @@
         "sort": 8,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "redirects"
@@ -2218,7 +2289,8 @@
         "sort": 5,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       }
     },
     {
@@ -2242,7 +2314,8 @@
         "sort": 7,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       },
       "schema": {
         "name": "seo"
@@ -2269,7 +2342,8 @@
         "sort": 4,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "team"
@@ -2296,7 +2370,8 @@
         "sort": 5,
         "sort_field": "sort",
         "translations": null,
-        "unarchive_value": "draft"
+        "unarchive_value": "draft",
+        "versioning": false
       },
       "schema": {
         "name": "testimonials"
@@ -2323,7 +2398,8 @@
         "sort": 9,
         "sort_field": null,
         "translations": null,
-        "unarchive_value": null
+        "unarchive_value": null,
+        "versioning": false
       }
     }
   ],
@@ -3071,7 +3147,7 @@
       "meta": {
         "collection": "block_button_group",
         "conditions": null,
-        "display": null,
+        "display": "formatted-value",
         "display_options": null,
         "field": "alignment",
         "group": null,
@@ -3081,12 +3157,16 @@
         "options": {
           "choices": [
             {
-              "text": "Left",
-              "value": "left"
+              "text": "$t:start",
+              "value": "start"
             },
             {
               "text": "Center",
               "value": "center"
+            },
+            {
+              "text": "$t:end",
+              "value": "end"
             }
           ]
         },
@@ -9237,7 +9317,7 @@
         "options": null,
         "readonly": false,
         "required": false,
-        "sort": 10,
+        "sort": 11,
         "special": null,
         "translations": null,
         "validation": null,
@@ -9275,13 +9355,13 @@
         },
         "field": "date_created",
         "group": null,
-        "hidden": true,
+        "hidden": false,
         "interface": "datetime",
         "note": null,
         "options": null,
         "readonly": true,
         "required": false,
-        "sort": 3,
+        "sort": 7,
         "special": [
           "cast-timestamp",
           "date-created"
@@ -9417,7 +9497,7 @@
         "options": null,
         "readonly": false,
         "required": false,
-        "sort": 9,
+        "sort": 10,
         "special": null,
         "translations": null,
         "validation": null,
@@ -9464,7 +9544,7 @@
         },
         "readonly": false,
         "required": false,
-        "sort": 8,
+        "sort": 9,
         "special": [
           "o2m"
         ],
@@ -9472,6 +9552,50 @@
         "validation": null,
         "validation_message": null,
         "width": "full"
+      }
+    },
+    {
+      "collection": "conversations",
+      "field": "organization",
+      "type": "uuid",
+      "meta": {
+        "collection": "conversations",
+        "conditions": null,
+        "display": null,
+        "display_options": null,
+        "field": "organization",
+        "group": null,
+        "hidden": false,
+        "interface": "select-dropdown-m2o",
+        "note": null,
+        "options": null,
+        "readonly": false,
+        "required": false,
+        "sort": 3,
+        "special": [
+          "m2o"
+        ],
+        "translations": null,
+        "validation": null,
+        "validation_message": null,
+        "width": "half"
+      },
+      "schema": {
+        "name": "organization",
+        "table": "conversations",
+        "data_type": "uuid",
+        "default_value": null,
+        "max_length": null,
+        "numeric_precision": null,
+        "numeric_scale": null,
+        "is_nullable": true,
+        "is_unique": false,
+        "is_primary_key": false,
+        "is_generated": false,
+        "generation_expression": null,
+        "has_auto_increment": false,
+        "foreign_key_table": "organizations",
+        "foreign_key_column": "id"
       }
     },
     {
@@ -9523,7 +9647,7 @@
         "translations": null,
         "validation": null,
         "validation_message": null,
-        "width": "full"
+        "width": "half"
       },
       "schema": {
         "name": "status",
@@ -9560,7 +9684,7 @@
         "options": null,
         "readonly": false,
         "required": false,
-        "sort": 7,
+        "sort": 8,
         "special": null,
         "translations": null,
         "validation": null,
@@ -9596,7 +9720,7 @@
         "display_options": null,
         "field": "user_created",
         "group": null,
-        "hidden": true,
+        "hidden": false,
         "interface": "select-dropdown-m2o",
         "note": null,
         "options": {
@@ -9604,7 +9728,7 @@
         },
         "readonly": false,
         "required": false,
-        "sort": 5,
+        "sort": 6,
         "special": [
           "m2o",
           "user-created"
@@ -9649,7 +9773,7 @@
         "options": null,
         "readonly": false,
         "required": false,
-        "sort": 6,
+        "sort": 5,
         "special": [
           "m2o",
           "user-updated"
@@ -9694,7 +9818,7 @@
         "options": null,
         "readonly": false,
         "required": false,
-        "sort": 11,
+        "sort": 12,
         "special": null,
         "translations": null,
         "validation": null,
@@ -14627,7 +14751,7 @@
         "translations": null,
         "validation": null,
         "validation_message": null,
-        "width": "half"
+        "width": "full"
       },
       "schema": {
         "name": "icon",
@@ -14713,7 +14837,7 @@
         "translations": null,
         "validation": null,
         "validation_message": null,
-        "width": "half"
+        "width": "full"
       },
       "schema": {
         "name": "label",
@@ -35728,6 +35852,31 @@
         "constraint_name": "contacts_user_updated_foreign",
         "on_update": "NO ACTION",
         "on_delete": "NO ACTION"
+      }
+    },
+    {
+      "collection": "conversations",
+      "field": "organization",
+      "related_collection": "organizations",
+      "meta": {
+        "junction_field": null,
+        "many_collection": "conversations",
+        "many_field": "organization",
+        "one_allowed_collections": null,
+        "one_collection": "organizations",
+        "one_collection_field": null,
+        "one_deselect_action": "nullify",
+        "one_field": null,
+        "sort_field": null
+      },
+      "schema": {
+        "table": "conversations",
+        "column": "organization",
+        "foreign_key_table": "organizations",
+        "foreign_key_column": "id",
+        "constraint_name": "conversations_organization_foreign",
+        "on_update": "NO ACTION",
+        "on_delete": "SET NULL"
       }
     },
     {

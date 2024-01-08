@@ -1,9 +1,9 @@
 {
   "name": "directus-template-agencyos",
   "templateName": "AgencyOS",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
-  "author": "Bryant Gillespie",
+  "author": "",
   "license": "MIT",
   "files": [
     "src"
