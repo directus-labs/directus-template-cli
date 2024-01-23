@@ -30,7 +30,7 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
-    "@oclif/test": "^2.3.16",
+    "@oclif/test": "^2.4.2",
     "@types/chai": "^4",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.18.24",
