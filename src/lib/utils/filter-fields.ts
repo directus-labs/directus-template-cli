@@ -1,4 +1,4 @@
-// Utility function to filter out non-system fields
+// Utility function to remove relationship data (arrays of integers or UUIDs) from system collection data. Used for when custom fields are added to system collections. The relational data should be populated when the actual data is loaded.
 export default function filterFields(dataArray, systemFields) {
   return dataArray.map(item => {
     for (const key of Object.keys(item)) {
