@@ -1,10 +1,9 @@
-import {Command, Flags, ux} from '@oclif/core'
+import {Command, ux} from '@oclif/core'
 import * as inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
 // import {cwd} from 'node:process'
 
-import {api} from '../lib/api'
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
@@ -75,8 +74,6 @@ export default class ApplyCommand extends Command {
   static flags = {}
 
   public async run(): Promise<void> {
-    const {flags} = await this.parse(ApplyCommand)
-
     const chosenTemplate = await getTemplate()
     this.log(`You selected ${chosenTemplate.template.templateName}`)
 
