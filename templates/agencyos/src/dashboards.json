@@ -7,18 +7,7 @@
     "icon": "point_of_sale",
     "name": "2. Sales Pipeline",
     "note": null,
-    "panels": [
-      "28d6c776-0caa-4038-a1be-e7e11d3b9eee",
-      "429d22a1-d60c-4daa-a9c0-a2db3cbb89b3",
-      "4a74d1ec-9900-4d85-8c67-b803f5f7c4b3",
-      "6ea8ff25-d7f8-4494-b29e-79246cce6af9",
-      "b8f3d4ba-b3f6-4169-bcb8-1a8b44dacda0",
-      "dd4f2150-6f2c-42ca-860e-6388ab34a951",
-      "e02ea3df-0463-453a-a47b-668e29281085",
-      "e622d2c5-5e75-47fa-9d92-a7e112d57478",
-      "e72af19e-3b25-42eb-a415-0c3d3b011749",
-      "f5f8724b-5881-418b-b613-544507755d29"
-    ]
+    "panels": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -28,18 +17,7 @@
     "icon": "dashboard",
     "name": "1. My Dashboard",
     "note": "Shows the open tasks and sales activities for a selected user.",
-    "panels": [
-      "16690e0b-ffc4-471f-9762-d4f2e55ad543",
-      "2080c1a2-404d-4886-acfd-2ed468c2ec73",
-      "23dec2a6-f1a8-450b-81eb-6d6eb772b69b",
-      "24c2b515-4d64-4919-9410-8a40cfba81ce",
-      "64783f47-3380-406a-a436-b065dfeaaae8",
-      "8628bb84-90bb-4ff1-8142-42d385bbe3f0",
-      "96e4f6a7-2673-4394-bddc-3b59c1999d2b",
-      "b2be5f3d-0500-442d-a8c7-84a8d06c92e6",
-      "b6e4c3e3-655a-42e0-a72a-cb6906fae70f",
-      "c0b8367a-e18e-4f83-8cfe-a6fa92a17553"
-    ]
+    "panels": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -49,16 +27,6 @@
     "icon": "help_center",
     "name": "3. Help Center Feedback",
     "note": "Dashboard to analyze help center feedback.",
-    "panels": [
-      "33d54856-e7a5-4346-bb50-448535fee9b9",
-      "39c82b64-df2a-4d83-a2b8-a41575e87af3",
-      "3ca99f50-b186-4213-be9c-8773904cfd5e",
-      "775d0469-a878-4814-b5c3-2558dbab1b1a",
-      "77a5d341-747b-4210-baf8-10a61bf6a10a",
-      "8194088d-4321-4cce-94e3-ac77d8f02ef6",
-      "9bf6a9fe-3dc2-460c-863b-3533876c569d",
-      "b45fdb03-f5c4-414f-aeec-9f33f3e0340b",
-      "be40aae0-728b-4171-8c1e-34ca955f89eb"
-    ]
+    "panels": null
   }
 ]

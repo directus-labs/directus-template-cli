@@ -16,12 +16,7 @@
       ]
     },
     "description": "Start a new build for the website.",
-    "operations": [
-      "40fd454c-a438-47bb-9bc5-399d1fffd562",
-      "70242292-da15-47fc-8ec8-edc40d192410",
-      "a207e95a-65b9-488e-ac1f-3fbabb01446c",
-      "e2189b0d-54b6-46d7-b979-25021c1f7840"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -46,7 +41,7 @@
       ]
     },
     "description": "Sends email notifications whenever new payments are received.",
-    "operations": []
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -72,11 +67,7 @@
       ]
     },
     "description": "Part of several flows that correctly calculates invoice line items and totals on update.",
-    "operations": [
-      "0cb36f9e-c84d-4e85-b23c-7eaf2b3e2f6b",
-      "aa0755b9-1bef-422c-b03d-07af0e42ab2a",
-      "ac6ebd69-ec0e-4e11-8e94-0c22b635fe11"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -93,10 +84,7 @@
       "return": "$last"
     },
     "description": "This is a utility flow to use in other flows when you need data from the Globals collection.",
-    "operations": [
-      "bb1b1e3f-032e-48b7-b260-1cf3af4a116c",
-      "fd271542-fac2-42d8-aa10-a02520c3753f"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -120,10 +108,7 @@
       "return": "$last"
     },
     "description": "Part of several flows that correctly calculates invoice line items and totals on update.",
-    "operations": [
-      "86e25afa-0940-4970-a331-979b6efb2112",
-      "a395ac61-f429-481e-b957-19e9ce0ef2eb"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -146,12 +131,7 @@
       ]
     },
     "description": "Generates the invoice number for new invoices (unless you manually enter an invoice number).",
-    "operations": [
-      "427ee1d9-4bac-4113-96ea-c3911bc8ed21",
-      "8d1406b1-bc45-4564-8d0c-c9db1101ece3",
-      "cd56fd51-c0f4-4744-8622-855dca695df9",
-      "e333ec0c-49a9-41c1-acd4-593619cec456"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -175,14 +155,7 @@
       ]
     },
     "description": "Uses the Clearbit Logo API to import a logo for an organization whenever they are created or updated.",
-    "operations": [
-      "0a95cdb6-8492-43e8-a2c9-0dfdc0ea2a9d",
-      "5cee46e9-e59e-4bee-8958-6e21e46f1da1",
-      "968684f7-e04d-4bb2-af05-f4c7cb5225b5",
-      "cae72421-7737-4dd7-af91-ef0ce795bb36",
-      "daaac907-97f2-4cac-9687-132d6bf7f392",
-      "e77e2f02-ba09-4cf1-85ff-acd0f85f02e2"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -207,9 +180,7 @@
       ]
     },
     "description": "Creates a matching item in the `seo` collection whenever an item in a trigger collection is created.",
-    "operations": [
-      "a7a66ae8-47ad-4d7a-97d3-e27f8c52241b"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -234,10 +205,7 @@
       ]
     },
     "description": "Generate slugs for 'pages', 'posts', and other content collections. ",
-    "operations": [
-      "1d167b20-13af-4f0b-afe1-a4c4d8971654",
-      "adcc6c22-a63a-46dc-8f1c-cb0b997a3106"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -260,10 +228,7 @@
       ]
     },
     "description": "Send email when posts are ready for review.",
-    "operations": [
-      "aa70c7bb-cb61-417f-9110-468d79b4849b",
-      "d1bfebad-1335-4a63-b9cb-f2e705244738"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -368,12 +333,7 @@
       "confirmationDescription": "Create a New Project 🚀"
     },
     "description": "Creates a new project using a template.",
-    "operations": [
-      "43e30267-a0bd-43e9-8f3c-56be4dcf565a",
-      "ab0750d0-7dc0-4927-a0df-47ef5643afd9",
-      "afd3e10b-ec05-48ba-9fdd-98a91e7b8bb7",
-      "bae0bd5b-bdc7-4b75-9b33-7b63eca22a23"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -397,13 +357,7 @@
       ]
     },
     "description": "Creates and updates organization file folders whenever an organization is created or updated.",
-    "operations": [
-      "43c19fc5-0b7e-410a-bda6-a88273f983d0",
-      "58124944-d33c-4d7e-8fd3-dfe76309ff7b",
-      "d41e3629-f303-4c8b-a0e5-6d04f228d67a",
-      "e0745757-aada-4167-9faf-d119b2b37c99",
-      "e7909463-c740-4b32-9c12-90f50f2f0d29"
-    ]
+    "operations": null
   },
   {
     "user_created": "95e535d2-f45b-4d94-891b-a89ee6ed1475",
@@ -443,9 +397,6 @@
       ]
     },
     "description": "Submits a proposal to the organization and contact.",
-    "operations": [
-      "18e48c59-e5af-4988-9b85-55e499549149",
-      "870017e8-bc7d-459b-a087-04cc00f05a5c"
-    ]
+    "operations": null
   }
 ]
