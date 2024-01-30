@@ -26,7 +26,7 @@ export default async function loadDashboards(dir: string) {
   await loadPanels(dir)
 
   ux.action.stop()
-  ux.log('Loaded Dashboards')
+  ux.log('Loaded dashboards')
 }
 
 export async function loadPanels(dir: string) {

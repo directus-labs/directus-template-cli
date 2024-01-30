@@ -10,9 +10,8 @@ import readFile from '../utils/read-file'
  */
 
 export default async function loadRelations(dir: string) {
-  ux.action.start('Loading relations')
-
   const relations = readFile('relations', dir)
+  ux.action.start(`Loading ${relations.length} relations`)
 
   const relationsToAdd = relations.map(i => {
     delete i.meta.id

@@ -6,9 +6,8 @@ import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
 export default async function loadRoles(dir: string) {
-  ux.action.start('Loading roles')
-
   const roles = readFile('roles', dir)
+  ux.action.start(`Loading ${roles.length} roles`)
 
   const cleanedUpRoles = roles.map(role => {
     delete role.users

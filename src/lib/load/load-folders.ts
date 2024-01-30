@@ -6,11 +6,10 @@ import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFolders(dir: string) {
-  ux.action.start('Loading folders')
+  const folders = readFile('folders', dir)
+  ux.action.start(`Loading ${folders.length} folders`)
 
   try {
-    const folders = readFile('folders', dir)
-
     const folderSkeleton = folders.map(folder => ({id: folder.id, name: folder.name}))
 
     // Create the folders
@@ -24,4 +23,7 @@ export default async function loadFolders(dir: string) {
   } catch (error) {
     logError(error)
   }
+
+  ux.action.stop()
+  ux.log('Loaded folders')
 }
