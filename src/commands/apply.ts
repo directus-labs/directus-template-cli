@@ -10,6 +10,7 @@ import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import logError from '../lib/utils/log-error'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
 import {transformGitHubUrl} from '../lib/utils/transform-github-url'
+import {resolvePathAndCheckExistence} from '../utils/path-utils'
 
 const separator = '------------------'
 
@@ -40,13 +41,19 @@ async function getTemplate() {
 
   if (templateType.templateType === 'official') {
     // Get official templates
-    const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
-      dir: 'downloads/',
-      force: true,
-      preferOffline: true,
-    })
+    let templates: any[] = []
 
-    const templates = await readAllTemplates(dir)
+    try {
+      const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
+        dir: 'downloads/',
+        force: true,
+        preferOffline: true,
+      })
+
+      templates = await readAllTemplates(dir)
+    } catch (error) {
+      logError(error, {fatal: true})
+    }
 
     const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
     template = await inquirer.prompt([
@@ -64,11 +71,9 @@ async function getTemplate() {
       'What is the local template directory?',
     )
 
-    if (!path.isAbsolute(localTemplateDir)) {
-      localTemplateDir = path.join(cwd(), localTemplateDir)
-    }
+    localTemplateDir = resolvePathAndCheckExistence(localTemplateDir)
 
-    if (fs.existsSync(localTemplateDir)) {
+    if (localTemplateDir) {
       template = {template: await readTemplate(localTemplateDir)}
     } else {
       ux.error('Directory does not exist.')
@@ -81,11 +86,24 @@ async function getTemplate() {
     try {
       const ghString = await transformGitHubUrl(ghTemplateUrl)
 
+      // Resolve the path for downloading
+      const downloadDir = resolvePathAndCheckExistence(path.join(__dirname, '..', 'downloads', 'github'), false)
+      if (!downloadDir) {
+        throw new Error(`Invalid download directory: ${path.join(__dirname, '..', 'downloads', 'github')}`)
+      }
+
+      // Download the template
       const {dir} = await downloadTemplate(ghString, {
-        dir: path.join(__dirname, '..', 'downloads', 'github'),
+        dir: downloadDir,
         force: true,
         forceClean: true,
       })
+
+      // Check if the directory exists after download
+      const resolvedDir = resolvePathAndCheckExistence(dir)
+      if (!resolvedDir) {
+        throw new Error(`Downloaded template directory does not exist: ${dir}`)
+      }
 
       template = {template: await readTemplate(dir)}
     } catch (error) {
@@ -119,7 +137,7 @@ export default class ApplyCommand extends Command {
       `Applying template - ${chosenTemplate.template.templateName} to ${directusUrl}`,
     )
 
-    await apply(chosenTemplate.template.directoryPath.toString())
+    await apply(chosenTemplate.template.directoryPath)
 
     ux.action.stop()
 
