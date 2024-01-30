@@ -22,11 +22,9 @@
     "@oclif/core": "^3.18.1",
     "@oclif/plugin-help": "^6.0.12",
     "@oclif/plugin-plugins": "^4.1.22",
-    "axios": "^1.6.7",
     "bottleneck": "^2.19.5",
     "dotenv": "^16.4.1",
     "formdata-node": "^6.0.3",
-    "generate-password": "^1.7.1",
     "inquirer": "^8.2.5",
     "slugify": "^1.6.6"
   },
