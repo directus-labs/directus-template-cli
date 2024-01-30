@@ -19,7 +19,7 @@ export default async function loadPermissions(
     try {
       await api.client.request(createPermission(permission))
     } catch (error) {
-      logError(error, {logToFile: true})
+      logError(error)
     }
   }
 
