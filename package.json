@@ -4,7 +4,7 @@
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "bin": {
-    "directus-template-util": "./bin/run"
+    "directus-template-cli": "./bin/run"
   },
   "homepage": "https://github.com/directus-community/directus-template-cli",
   "license": "MIT",
