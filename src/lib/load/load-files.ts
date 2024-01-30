@@ -10,9 +10,8 @@ import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
 export default async (dir: string) => {
-  ux.action.start('Loading files')
-
   const files = readFile('files', dir)
+  ux.action.start(`Loading ${files.length} files`)
 
   for (const asset of files) {
     const fileName = asset.filename_disk

@@ -1,7 +1,8 @@
-import {createUser, readMe} from '@directus/sdk'
+import {createUser} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
+import getRoleIds from '../utils/get-role-ids'
 import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
@@ -13,7 +14,7 @@ export default async function loadUsers(
 
   const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
-  const cleanedUpUsers = users.map(user => {
+  const filteredUsers = users.map(user => {
     // If the user is an admin, we need to change their role to the new admin role
     const isAdmin = user.role === legacyAdminRoleId
     user.role = isAdmin ? newAdminRoleId : user.role
@@ -25,23 +26,14 @@ export default async function loadUsers(
     return user
   })
 
-  for (const user of cleanedUpUsers) {
+  for (const user of filteredUsers) {
     try {
       await api.client.request(createUser(user))
     } catch (error) {
       logError(error)
     }
   }
-}
 
-async function getRoleIds(dir: string) {
-  const roles = readFile('roles', dir)
-
-  const legacyAdminRoleId = roles.find(role => role.name === 'Administrator').id
-
-  const currentUser = await api.client.request(readMe())
-
-  const newAdminRoleId = currentUser.role
-
-  return {legacyAdminRoleId, newAdminRoleId}
+  ux.action.stop()
+  ux.log('Loaded users')
 }

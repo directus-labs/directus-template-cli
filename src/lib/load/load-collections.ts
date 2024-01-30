@@ -1,4 +1,4 @@
-import {createCollection, updateCollection} from '@directus/sdk'
+import {createCollection, createField, updateCollection} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
@@ -10,8 +10,9 @@ import readFile from '../utils/read-file'
  */
 
 export default async function loadCollections(dir: string) {
-  ux.action.start('Loading collections and fields')
   const collections = readFile('collections', dir)
+  const fields = readFile('fields', dir)
+  ux.action.start(`Loading ${collections.length} collections and ${fields.length} fields.`)
 
   // Remove the group so that we can create the collections
   const removedGroupKey = structuredClone(collections).map(col => {
@@ -19,16 +20,15 @@ export default async function loadCollections(dir: string) {
     return col
   })
 
-  await addCollections(removedGroupKey, dir)
+  await addCollections(removedGroupKey, fields)
   await updateCollections(collections)
+  await addCustomFieldsOnSystemCollections(fields)
 
   ux.action.stop()
   ux.log('Loaded collections and fields.')
 }
 
-async function addCollections(collections: any[], dir: string) {
-  const fields = readFile('fields', dir)
-
+async function addCollections(collections: any[], fields: any[]) {
   for await (const collection of collections) {
     try {
       collection.fields = fields.filter(
@@ -52,6 +52,20 @@ async function updateCollections(collections: any[]) {
         }
         await api.client.request(updateCollection(collection.collection, pl))
       }
+    } catch (error) {
+      logError(error)
+    }
+  }
+}
+
+async function addCustomFieldsOnSystemCollections(fields: any[]) {
+  const customFields = fields.filter(
+    (field: any) => field.collection.startsWith('directus_'),
+  )
+
+  for await (const field of customFields) {
+    try {
+      await api.client.request(createField(field.collection, field))
     } catch (error) {
       logError(error)
     }
