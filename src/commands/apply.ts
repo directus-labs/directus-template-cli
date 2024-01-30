@@ -13,21 +13,6 @@ import {transformGitHubUrl} from '../lib/utils/transform-github-url'
 const separator = '------------------'
 
 async function getTemplate() {
-  // Clear local downloads folder if it exists to avoid loading old templates
-  const downloadsDir = path.join(cwd(), 'downloads')
-  if (fs.existsSync(downloadsDir)) {
-    fs.rmSync(downloadsDir, {recursive: true})
-  }
-
-  // Get official templates
-  const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
-    dir: 'downloads/official',
-  })
-
-  const templates = await readAllTemplates(dir)
-
-  const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
-
   const templateType: any = await inquirer.prompt([
     {
       choices: [
@@ -53,6 +38,16 @@ async function getTemplate() {
   let template: any
 
   if (templateType.templateType === 'official') {
+    // Get official templates
+    const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
+      dir: 'downloads/',
+      force: true,
+      preferOffline: true,
+    })
+
+    const templates = await readAllTemplates(dir)
+
+    const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
     template = await inquirer.prompt([
       {
         choices: officialTemplateChoices,
@@ -81,7 +76,7 @@ async function getTemplate() {
     const ghString = await transformGitHubUrl(ghTemplateUrl)
 
     const {dir} = await downloadTemplate(ghString, {
-      dir: 'downloads/git',
+      dir: 'downloads/github',
     })
 
     template = {template: await readTemplate(dir)}
