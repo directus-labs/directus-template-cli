@@ -8,9 +8,9 @@ import {cwd} from 'node:process'
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import logError from '../lib/utils/log-error'
+import resolvePathAndCheckExistence from '../lib/utils/path'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
 import {transformGitHubUrl} from '../lib/utils/transform-github-url'
-import {resolvePathAndCheckExistence} from '../utils/path-utils'
 
 const separator = '------------------'
 

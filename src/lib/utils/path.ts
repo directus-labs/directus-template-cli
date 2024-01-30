@@ -9,7 +9,7 @@ import {cwd} from 'node:process'
  * @param checkExistence Whether to check if the resolved path exists.
  * @returns The resolved absolute path if it exists, or null if it doesn't.
  */
-export function resolvePathAndCheckExistence(inputPath: string, checkExistence: boolean = true): null | string {
+export default function resolvePathAndCheckExistence(inputPath: string, checkExistence: boolean = true): null | string {
   const resolvedPath = path.isAbsolute(inputPath) ? inputPath : path.resolve(cwd(), inputPath)
 
   if (!checkExistence || fs.existsSync(resolvedPath)) {
