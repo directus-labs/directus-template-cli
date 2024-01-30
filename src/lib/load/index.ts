@@ -1,3 +1,5 @@
+import {downloadTemplate} from 'giget'
+
 import loadCollections from './load-collections'
 import loadDashboards from './load-dashboards'
 import loadData from './load-data'
@@ -21,29 +23,29 @@ export default async function apply(dir: string, cli: any) {
   // await loadSchema(source + "/schema");
 
   // If adding schema instead of overwriting
-  //   await loadCollections(source)
-  //   await loadRelations(source)
+  await loadCollections(source)
+  await loadRelations(source)
 
-  //   await loadRoles(source)
+  await loadRoles(source)
 
-  //   await loadFolders(source)
-  //   await loadFiles(source)
+  await loadFolders(source)
+  await loadFiles(source)
 
-  //   await loadUsers(source)
+  await loadUsers(source)
 
-  //   await loadDashboards(source)
+  await loadDashboards(source)
 
-  //   await loadData(source)
+  await loadData(source)
 
   await loadFlows(source)
 
-  //   await loadPresets(source)
+  await loadPresets(source)
 
-  //   await loadTranslations(source)
+  await loadTranslations(source)
 
-  //   await loadSettings(source)
+  await loadSettings(source)
 
-  //   await loadPermissions(source)
+  await loadPermissions(source)
 
   return {}
 }

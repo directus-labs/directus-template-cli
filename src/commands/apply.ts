@@ -1,18 +1,30 @@
 import {Command, ux} from '@oclif/core'
+import {downloadTemplate} from 'giget'
 import * as inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
-// import {cwd} from 'node:process'
+import {cwd} from 'node:process'
 
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
+import {transformGitHubUrl} from '../lib/utils/transform-github-url'
 
 const separator = '------------------'
 
 async function getTemplate() {
-  const TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates')
-  const templates = await readAllTemplates(TEMPLATE_DIR)
+  // Clear local downloads folder if it exists to avoid loading old templates
+  const downloadsDir = path.join(cwd(), 'downloads')
+  if (fs.existsSync(downloadsDir)) {
+    fs.rmSync(downloadsDir, {recursive: true})
+  }
+
+  // Get official templates
+  const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
+    dir: 'downloads/official',
+  })
+
+  const templates = await readAllTemplates(dir)
 
   const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
 
@@ -27,10 +39,10 @@ async function getTemplate() {
           name: 'From a local directory',
           value: 'local',
         },
-        // {
-        //   name: "From a git repository",
-        //   value: "git",
-        // },
+        {
+          name: 'From a GitHub repository',
+          value: 'github',
+        },
       ],
       message: 'What type of template would you like to apply?',
       name: 'templateType',
@@ -61,6 +73,18 @@ async function getTemplate() {
     } else {
       ux.error('Directory does not exist.')
     }
+  }
+
+  if (templateType.templateType === 'github') {
+    const ghTemplateUrl = await ux.prompt('What is the GitHub repository URL?')
+
+    const ghString = await transformGitHubUrl(ghTemplateUrl)
+
+    const {dir} = await downloadTemplate(ghString, {
+      dir: 'downloads/git',
+    })
+
+    template = {template: await readTemplate(dir)}
   }
 
   return template
