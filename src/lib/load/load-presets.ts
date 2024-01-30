@@ -1,26 +1,24 @@
-import { api } from "../api";
+import {createPresets} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-export default async (presets: any[]) => {
-  await deleteAllPresets();
-  const cleanPresets = presets.map((preset) => {
-    preset.user = null;
-    return preset;
-  });
-  try {
-    await api.post("presets", cleanPresets);
-  } catch (error) {
-    console.log("Error uploading preset", error.response.data.errors);
-  }
-};
+import {api} from '../sdk'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
 
-const deleteAllPresets = async () => {
+export default async function loadPresets(dir: string) {
+  ux.action.start('Loading presets')
+  const presets = readFile('presets', dir)
+
+  const cleanPresets = presets.map(preset => {
+    preset.user = null
+    return preset
+  })
   try {
-    const { data: presets } = await api.get<any>("presets");
-    const ids = presets.data.map((preset) => preset.id);
-    await api.delete("presets", {
-      data: ids,
-    });
+    await api.client.request(createPresets(cleanPresets))
   } catch (error) {
-    console.log("Error removing existing presets", error.response.data.errors);
+    logError(error)
   }
-};
+
+  ux.action.stop()
+  ux.log('Loaded presets')
+}

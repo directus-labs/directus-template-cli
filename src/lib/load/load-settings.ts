@@ -1,8 +1,15 @@
-import {api} from '../api'
-export default async function loadSettings(settingsObj: any) {
+import {updateSettings} from '@directus/sdk'
+
+import {api} from '../sdk'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
+
+export default async function loadSettings(dir: string) {
+  const settings = readFile('settings', dir)
   try {
-    const {data} = await api.patch('settings', settingsObj)
+    // @ts-ignore
+    await api.client.request(updateSettings(settings))
   } catch (error) {
-    console.log('Error loading settings', error.response.data.errors)
+    logError(error)
   }
 }
