@@ -1,4 +1,4 @@
-import {readRelations} from '@directus/sdk'
+import {readFields, readRelations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
@@ -12,11 +12,24 @@ export default async function extractRelations(dir: string) {
   try {
     const response = await api.client.request(readRelations())
 
-    // @TODO: Support custom fields for system collections
-    // Filter out system collections
+    // Fetching fields to filter out system fields while retaining custom fields on system collections
+    const fields = await api.client.request(readFields())
+
+    const customFields = fields.filter(
+      (i: any) => !i.meta.system,
+    )
+
     const relations = response
+
+    // Filter out relations where the collection starts with 'directus_' && the field is not within the customFields array
     .filter(
-      (i: { collection: string }) => !i.collection.startsWith('directus_'),
+      (i: any) =>
+        !i.collection.startsWith('directus_', 0)
+            || customFields.some(
+              (f: { collection: string; field: string }) =>
+                f.collection === i.collection && f.field === i.field,
+            ),
+
     )
     .map(i => {
       delete i.meta.id

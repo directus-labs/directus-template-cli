@@ -12,11 +12,10 @@ export default async function extractFields(dir: string) {
   try {
     const response = await api.client.request(readFields())
 
-    // @TODO: Support custom fields for system collections
-    // Filter out system collections
     const fields = response
     .filter(
-      (i: { collection: string }) => !i.collection.startsWith('directus_'),
+      // @ts-ignore
+      (i: { collection: string }) => !i.meta.system,
     )
     .map(i => {
       delete i.meta.id
