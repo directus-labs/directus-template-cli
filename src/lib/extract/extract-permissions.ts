@@ -1,22 +1,24 @@
-import { api } from "../api";
-import writeToFile from "../utils/write-to-file";
+import {readPermissions} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-export async function extractPermissions(dir: string) {
+import {api} from '../sdk'
+import writeToFile from '../utils/write-to-file'
+
+export default async function extractPermissions(dir: string) {
   try {
-    const { data }: { data: any } = await api.get("permissions", {
-      params: {
-        limit: "-1",
-      },
-    });
+    const response = await api.client.request(readPermissions({
+      limit: -1,
+    }))
 
     // Delete the id field from the permissions so we don't have to reset the autoincrement on the db
-    data.data.forEach((permission: any) => {
-      delete permission.id;
-    });
+    for (const permission of response) {
+      delete permission.id
+    }
 
-    // Write the public permissions to the specified directory
-    await writeToFile("permissions", data.data, dir);
+    await writeToFile('permissions', response, dir)
+    ux.log('Extracted permissions')
   } catch (error) {
-    console.log("Error fetching permissions:", error);
+    ux.warn('Error extracting permissions:')
+    ux.warn(error.message)
   }
 }
