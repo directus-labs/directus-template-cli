@@ -1,5 +1,3 @@
-import {downloadTemplate} from 'giget'
-
 import loadCollections from './load-collections'
 import loadDashboards from './load-dashboards'
 import loadData from './load-data'
@@ -10,12 +8,12 @@ import loadPermissions from './load-permissions'
 import loadPresets from './load-presets'
 import loadRelations from './load-relations'
 import loadRoles from './load-roles'
-import loadSchema from './load-schema'
+// import loadSchema from './load-schema'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
 import loadUsers from './load-users'
 
-export default async function apply(dir: string, cli: any) {
+export default async function apply(dir: string) {
   // Get the source directory for the actual files
   const source = dir + '/src'
 

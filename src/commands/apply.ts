@@ -113,7 +113,7 @@ export default class ApplyCommand extends Command {
       `Applying template - ${chosenTemplate.template.templateName} to ${directusUrl}`,
     )
 
-    await apply(chosenTemplate.template.directoryPath.toString(), this)
+    await apply(chosenTemplate.template.directoryPath.toString())
 
     ux.action.stop()
 

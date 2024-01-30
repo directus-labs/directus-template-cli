@@ -3,7 +3,7 @@ import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
 import logError from '../utils/log-error'
-import readFile from '../utils/read-file.js'
+import readFile from '../utils/read-file'
 
 /**
  * Load relationships into the Directus instance
