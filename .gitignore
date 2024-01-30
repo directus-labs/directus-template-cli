@@ -10,3 +10,4 @@ oclif.manifest.json
 .DS_Store
 
 /downloads
+/**/downloads
