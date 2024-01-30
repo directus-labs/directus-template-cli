@@ -12,8 +12,8 @@ export const generatePackageJsonContent = (templateName: string) => {
     {
       author: '',
       description: '',
+      directusTemplate: true,
       files: ['src'],
-      license: 'MIT',
       name: packageName,
       templateName,
       version: '1.0.0',
