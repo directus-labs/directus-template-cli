@@ -7,6 +7,7 @@ import {cwd} from 'node:process'
 
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
+import logError from '../lib/utils/log-error'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
 import {transformGitHubUrl} from '../lib/utils/transform-github-url'
 
@@ -59,9 +60,13 @@ async function getTemplate() {
   }
 
   if (templateType.templateType === 'local') {
-    const localTemplateDir = await ux.prompt(
+    let localTemplateDir = await ux.prompt(
       'What is the local template directory?',
     )
+
+    if (!path.isAbsolute(localTemplateDir)) {
+      localTemplateDir = path.join(cwd(), localTemplateDir)
+    }
 
     if (fs.existsSync(localTemplateDir)) {
       template = {template: await readTemplate(localTemplateDir)}
@@ -73,13 +78,19 @@ async function getTemplate() {
   if (templateType.templateType === 'github') {
     const ghTemplateUrl = await ux.prompt('What is the GitHub repository URL?')
 
-    const ghString = await transformGitHubUrl(ghTemplateUrl)
+    try {
+      const ghString = await transformGitHubUrl(ghTemplateUrl)
 
-    const {dir} = await downloadTemplate(ghString, {
-      dir: 'downloads/github',
-    })
+      const {dir} = await downloadTemplate(ghString, {
+        dir: path.join(__dirname, '..', 'downloads', 'github'),
+        force: true,
+        forceClean: true,
+      })
 
-    template = {template: await readTemplate(dir)}
+      template = {template: await readTemplate(dir)}
+    } catch (error) {
+      logError(error, {fatal: true})
+    }
   }
 
   return template
