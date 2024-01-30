@@ -1,122 +1,105 @@
-import { Command, Flags } from "@oclif/core";
-import { ux } from "@oclif/core";
-import * as inquirer from "inquirer";
-import { cwd } from "node:process";
-import fs from "node:fs";
-import path from "node:path";
-import { readTemplate, readAllTemplates } from "../lib/utils/read-templates";
-import { api } from "../lib/api";
-import apply from "../lib/load/";
-import { getDirectusUrl, getDirectusToken } from "../lib/utils/auth";
+import {Command, Flags, ux} from '@oclif/core'
+import * as inquirer from 'inquirer'
+import fs from 'node:fs'
+import path from 'node:path'
+// import {cwd} from 'node:process'
 
-const separator = "------------------";
+import {api} from '../lib/api'
+import apply from '../lib/load/'
+import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
+import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
+
+const separator = '------------------'
 
 async function getTemplate() {
-  const TEMPLATE_DIR = path.join(__dirname, "..", "..", "templates");
-  const templates = await readAllTemplates(TEMPLATE_DIR);
+  const TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates')
+  const templates = await readAllTemplates(TEMPLATE_DIR)
 
-  const officialTemplateChoices = templates.map((template: any) => {
-    return { name: template.templateName, value: template };
-  });
+  const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
 
   const templateType: any = await inquirer.prompt([
     {
-      name: "templateType",
-      message: "What type of template would you like to apply?",
-      type: "list",
       choices: [
         {
-          name: "Official templates",
-          value: "official",
+          name: 'Official templates',
+          value: 'official',
         },
         {
-          name: "From a local directory",
-          value: "local",
+          name: 'From a local directory',
+          value: 'local',
         },
         // {
         //   name: "From a git repository",
         //   value: "git",
         // },
       ],
+      message: 'What type of template would you like to apply?',
+      name: 'templateType',
+      type: 'list',
     },
-  ]);
+  ])
 
-  let template: any;
+  let template: any
 
-  if (templateType.templateType === "official") {
+  if (templateType.templateType === 'official') {
     template = await inquirer.prompt([
       {
-        name: "template",
-        message: "Select a template.",
-        type: "list",
         choices: officialTemplateChoices,
+        message: 'Select a template.',
+        name: 'template',
+        type: 'list',
       },
-    ]);
+    ])
   }
 
-  if (templateType.templateType === "local") {
+  if (templateType.templateType === 'local') {
     const localTemplateDir = await ux.prompt(
-      "What is the local template directory?"
-    );
+      'What is the local template directory?',
+    )
 
-    if (!fs.existsSync(localTemplateDir)) {
-      ux.error("Directory does not exist.");
+    if (fs.existsSync(localTemplateDir)) {
+      template = {template: await readTemplate(localTemplateDir)}
     } else {
-      template = { template: await readTemplate(localTemplateDir) };
+      ux.error('Directory does not exist.')
     }
   }
 
-  return template;
+  return template
 }
 
 export default class ApplyCommand extends Command {
-  static description = "Apply a template to a blank Directus instance.";
+  static description = 'Apply a template to a blank Directus instance.'
 
-  static examples = ["$ directus-template-cli apply"];
+  static examples = ['$ directus-template-cli apply']
 
-  static flags = {};
+  static flags = {}
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(ApplyCommand);
+    const {flags} = await this.parse(ApplyCommand)
 
-    const chosenTemplate = await getTemplate();
-    this.log(`You selected ${chosenTemplate.template.templateName}`);
-    this.log(separator);
+    const chosenTemplate = await getTemplate()
+    this.log(`You selected ${chosenTemplate.template.templateName}`)
 
-    const directusUrl = await getDirectusUrl();
-    api.setBaseUrl(directusUrl);
+    this.log(separator)
 
-    const directusToken = await getDirectusToken(directusUrl);
-    api.setAuthToken(directusToken);
+    const directusUrl = await getDirectusUrl()
+    await getDirectusToken(directusUrl)
 
-    this.log(separator);
-
-    // Check if Directus instance is empty, if not, throw error
-    const { data }: { data: any } = await api.get("/collections");
-    // Look for collections that don't start with directus_
-    const collections = data.data.filter((collection: any) => {
-      return !collection.collection.startsWith("directus_");
-    });
-
-    if (collections.length > 0) {
-      ux.error(
-        "Directus instance is not empty. Please use a blank instance. Copying a template into an existing instance is not supported at this time."
-      );
-    }
+    this.log(separator)
 
     // Run load script
     ux.action.start(
-      `Applying template - ${chosenTemplate.template.templateName}`
-    );
+      `Applying template - ${chosenTemplate.template.templateName} to ${directusUrl}`,
+    )
 
-    await apply(chosenTemplate.template.directoryPath, this);
+    await apply(chosenTemplate.template.directoryPath.toString(), this)
 
-    ux.action.stop();
+    ux.action.stop()
 
-    this.log(separator);
+    this.log(separator)
 
-    this.log("Template applied successfully.");
+    this.log('Template applied successfully.')
 
-    this.exit(0);
+    this.exit(0)
   }
 }
