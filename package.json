@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@directus/sdk": "^14.0.0",
+    "@directus/types": "^11.0.3",
     "@oclif/core": "^3.18.1",
     "@oclif/plugin-help": "^6.0.12",
     "@oclif/plugin-plugins": "^4.1.22",
