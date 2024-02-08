@@ -33,5 +33,4 @@ This is a template for [Directus](https://directus.io/) - an open-source headles
 
 ## License
 
-This template is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 `

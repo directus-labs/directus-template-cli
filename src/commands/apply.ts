@@ -1,9 +1,7 @@
 import {Command, ux} from '@oclif/core'
 import {downloadTemplate} from 'giget'
 import * as inquirer from 'inquirer'
-import fs from 'node:fs'
 import path from 'node:path'
-import {cwd} from 'node:process'
 
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
@@ -43,9 +41,15 @@ async function getTemplate() {
     // Get official templates
     let templates: any[] = []
 
+    // Resolve the path for downloading
+    const downloadDir = resolvePathAndCheckExistence(path.join(__dirname, '..', 'downloads', 'official'), false)
+    if (!downloadDir) {
+      throw new Error(`Invalid download directory: ${path.join(__dirname, '..', 'downloads', 'official')}`)
+    }
+
     try {
-      const {dir} = await downloadTemplate('github:directus-community/directus-template-cli/templates', {
-        dir: 'downloads/',
+      const {dir} = await downloadTemplate('github:directus-community/directus-templates', {
+        dir: downloadDir,
         force: true,
         preferOffline: true,
       })
@@ -81,7 +85,7 @@ async function getTemplate() {
   }
 
   if (templateType.templateType === 'github') {
-    const ghTemplateUrl = await ux.prompt('What is the GitHub repository URL?')
+    const ghTemplateUrl = await ux.prompt('What is the public GitHub repository URL?')
 
     try {
       const ghString = await transformGitHubUrl(ghTemplateUrl)
@@ -133,7 +137,7 @@ export default class ApplyCommand extends Command {
     this.log(separator)
 
     // Run load script
-    ux.action.start(
+    ux.log(
       `Applying template - ${chosenTemplate.template.templateName} to ${directusUrl}`,
     )
 

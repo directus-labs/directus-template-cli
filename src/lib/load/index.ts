@@ -1,5 +1,4 @@
 import {ux} from '@oclif/core'
-import * as inquirer from 'inquirer'
 
 import checkTemplate from '../utils/check-template'
 import loadCollections from './load-collections'
@@ -12,7 +11,7 @@ import loadPermissions from './load-permissions'
 import loadPresets from './load-presets'
 import loadRelations from './load-relations'
 import loadRoles from './load-roles'
-import loadSchema from './load-schema'
+// import loadSchema from './load-schema'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
 import loadUsers from './load-users'
@@ -21,15 +20,15 @@ export default async function apply(dir: string) {
   // Get the source directory for the actual files
   const source = dir + '/src'
 
-  const schemaOptions = await checkTemplate(source)
+  const isTemplateOk = await checkTemplate(source)
 
-  if (!schemaOptions.collections && !schemaOptions.schema) {
-    ux.error('The template is missing the schema file or the collections, fields, and relations files.')
-    return
+  if (!isTemplateOk) {
+    ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
   }
 
+  // @TODO: Possibly add schema snapshot diff in the future but for now we only want to load the schema
   // If overwriting schema
-  // await loadSchema(source + "/schema");
+  //   await loadSchema(source)
 
   // If adding schema instead of overwriting
   await loadCollections(source)
