@@ -1,99 +1,147 @@
-import {api} from '../api'
+import {createItem, createItems, updateItem, updateItems, updateSingleton} from '@directus/sdk'
+import {ux} from '@oclif/core'
 import path from 'node:path'
 
-export default async function loadData(collections: any, dir:string) {
+import {api} from '../sdk'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
+
+export default async function loadData(dir:string) {
+  const collections = readFile('collections', dir)
+  ux.action.start(`Loading data for ${collections.length} collections`)
+  await loadSkeletonRecords(dir)
+  await loadFullData(dir)
+  await loadSingletons(dir)
+
+  ux.action.stop()
+  ux.log('Loaded data.')
+}
+
+async function loadSkeletonRecords(dir: string) {
+  ux.log('Loading skeleton records')
+  const collections = readFile('collections', dir)
+
+  const primaryKeyMap = await getCollectionPrimaryKeys(dir)
+
   const userCollections = collections
   .filter(item => !item.collection.startsWith('directus_', 0))
   .filter(item => item.schema !== null) // Filter our any "folders"
-  await loadSkeletonRecords(userCollections, dir) // Empty Records with IDs only
-  await loadFullData(userCollections, dir) // Updates all skeleton records with their other values
-  await loadSingletons(userCollections, dir)
-}
+  .filter(item => !item.meta.singleton) // Filter out any singletons
 
-// Handle mandatory fields properly
-// Upload record id.
-// SQL reset indexes once everything is loaded. - This is required for
-// Project Settings - ?
-const loadSkeletonRecords = async (userCollections: any, dir:string) => {
   for (const collection of userCollections) {
     const name = collection.collection
-    const url = path.resolve(
+    const primaryKeyField = getPrimaryKey(primaryKeyMap, name)
+
+    const sourceDir = path.resolve(
       dir,
       'content',
-      `${name}.json`,
     )
-    try {
-      const sourceData = (await import(url)).default
 
-      if (!collection.meta.singleton) {
-        for (const entry of sourceData) {
-          try {
-            const {data} = await api.post(`items/${name}`, {
-              id: entry.id,
-            })
-          } catch (error) {
-            if (
-              error.response.data.errors[0].extensions.code !==
-              'RECORD_NOT_UNIQUE'
-            ) {
-              console.log(
-                'error creating skeleton record',
-                error.response.data.errors,
-              )
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error.response.data.errors)
-    }
-  }
-}
+    const data = readFile(name, sourceDir)
 
-const loadFullData = async (userCollections: any, dir:string) => {
-  for (const collection of userCollections) {
-    const name = collection.collection
-    const url = path.resolve(
-      dir,
-      'content',
-      `${name}.json`,
-    )
-    try {
-      const sourceData = (await import(url)).default
-
-      if (!collection.meta.singleton) {
-        for (const row of sourceData) {
-          delete row.user_created
-          delete row.user_updated
-          const {data} = await api.patch(`items/${name}/${row.id}`, row)
-        }
-      }
-    } catch (error) {
-      console.log(`Error updating ${name}`, error.response.data.errors)
-    }
-  }
-}
-
-const loadSingletons = async (userCollections: any, dir:string) => {
-  for (const collection of userCollections) {
-    if (collection.meta.singleton) {
-      const name = collection.collection
-      const url = path.resolve(
-        dir,
-        'content',
-        `${name}.json`,
-      )
+    for (const entry of data) {
       try {
-        const sourceData = (await import(url)).default
-        delete sourceData.user_created
-        delete sourceData.user_updated
-        const {data} = await api.patch(`items/${name}`, sourceData)
+        await api.client.request(createItem(name, {
+          [primaryKeyField]: entry[primaryKeyField],
+        }))
       } catch (error) {
-        console.log(
-          `Error loading singleton ${name}`,
-          error.response.data.errors,
-        )
+        logError(error)
       }
     }
   }
+
+  ux.log('Loaded skeleton records')
+}
+
+async function loadFullData(dir:string) {
+  ux.log('Updating records with full data')
+
+  const collections = readFile('collections', dir)
+
+  const primaryKeyMap = await getCollectionPrimaryKeys(dir)
+
+  const userCollections = collections
+  .filter(item => !item.collection.startsWith('directus_', 0))
+  .filter(item => item.schema !== null) // Filter our any "folders"
+  .filter(item => !item.meta.singleton) // Filter out any singletons
+
+  for (const collection of userCollections) {
+    const name = collection.collection
+    const primaryKeyField = getPrimaryKey(primaryKeyMap, name)
+    const sourceDir = path.resolve(
+      dir,
+      'content',
+    )
+
+    const data = readFile(name, sourceDir)
+
+    try {
+      for (const row of data) {
+        delete row.user_created
+        delete row.user_updated
+        await api.client.request(updateItem(name, row[primaryKeyField], row))
+      }
+    } catch (error) {
+      logError(error)
+    }
+  }
+
+  ux.log('Updated records with full data')
+}
+
+async function loadSingletons(dir:string) {
+  ux.log('Loading data for singleton collections')
+  const collections = readFile('collections', dir)
+
+  const singletonCollections = collections
+  .filter(item => !item.collection.startsWith('directus_', 0))
+  .filter(
+    item => item.meta.singleton,
+  )
+
+  for (const collection of  singletonCollections) {
+    const name = collection.collection
+    const sourceDir = path.resolve(
+      dir,
+      'content',
+    )
+
+    const data = readFile(name, sourceDir)
+
+    try {
+      // @ts-ignore
+      delete data.user_created
+      // @ts-ignore
+      delete data.user_updated
+      await api.client.request(updateSingleton(name, data))
+    } catch (error) {
+      logError(error)
+    }
+  }
+
+  ux.log('Loaded data for singleton collections')
+}
+
+async function getCollectionPrimaryKeys(dir: string) {
+  const fields = readFile('fields', dir)
+
+  const primaryKeys = {}
+
+  for (const field of fields) {
+    if (field.schema && field.schema?.is_primary_key) {
+      primaryKeys[field.collection] = field.field
+    }
+  }
+
+  return primaryKeys
+}
+
+function getPrimaryKey(collectionsMap: any, collection: string) {
+  if (!collectionsMap[collection]) {
+    throw new Error(
+      `Collection ${collection} not found in collections map`,
+    )
+  }
+
+  return collectionsMap[collection]
 }

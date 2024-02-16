@@ -1,24 +1,27 @@
-import { api } from "../api";
-import writeToFile from "../utils/write-to-file";
-import filterFields from "../utils/filter-fields";
-const systemFields = ["id", "name", "parent"];
+import {readFolders} from '@directus/sdk'
+import {ux} from '@oclif/core'
+
+import {api} from '../sdk'
+import filterFields from '../utils/filter-fields'
+import {directusFolderFields} from '../utils/system-fields'
+import writeToFile from '../utils/write-to-file'
 
 /**
- * Extract folders from the API
+ * Extract folders from the Directus instance
  */
+
 export default async function extractFolders(dir: string) {
   try {
-    const { data }: { data: any } = await api.get("/folders", {
-      params: {
-        limit: "-1",
-      },
-    });
+    const response = await api.client.request(readFolders(
+      {limit: -1},
+    ))
 
-    const filteredData = filterFields(data.data, systemFields);
+    const folders = filterFields(response, directusFolderFields)
 
-    // Use the dynamic dir parameter
-    await writeToFile("folders", filteredData, dir);
+    await writeToFile('folders', folders, dir)
+    ux.log('Extracted folders')
   } catch (error) {
-    console.log("Error extracting Folders:", error.response.data.errors);
+    ux.warn('Error extracting Folders:')
+    ux.warn(error.message)
   }
 }

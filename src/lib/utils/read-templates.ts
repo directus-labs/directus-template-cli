@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs'
+import path from 'node:path'
 
 interface Template {
   directoryPath: string;
@@ -7,48 +7,48 @@ interface Template {
 }
 
 export async function readTemplate(
-  directoryPath: string
+  directoryPath: string,
 ): Promise<Template | null> {
-  const packageFilePath = path.join(directoryPath, "package.json");
+  const packageFilePath = path.join(directoryPath, 'package.json')
 
   try {
-    const packageData = await fs.promises.readFile(packageFilePath, "utf-8");
-    const packageJson: { templateName?: string } = JSON.parse(packageData);
+    const packageData = await fs.promises.readFile(packageFilePath, 'utf8')
+    const packageJson: { templateName?: string } = JSON.parse(packageData)
 
     if (packageJson.templateName) {
       return {
         directoryPath,
         templateName: packageJson.templateName,
-      };
+      }
     }
 
-    return null;
+    return null
   } catch (error) {
     console.error(
-      `Failed to read package.json file in directory ${directoryPath}: ${error}`
-    );
-    return null;
+      `Failed to read package.json file in directory ${directoryPath}: ${error}`,
+    )
+    return null
   }
 }
 
 export async function readAllTemplates(
-  directoryPath: string
+  directoryPath: string,
 ): Promise<Template[]> {
-  const templates: Template[] = [];
+  const templates: Template[] = []
 
-  const files = await fs.promises.readdir(directoryPath);
+  const files = await fs.promises.readdir(directoryPath)
 
   for (const file of files) {
-    const filePath = path.join(directoryPath, file);
-    const stats = await fs.promises.stat(filePath);
+    const filePath = path.join(directoryPath, file)
+    const stats = await fs.promises.stat(filePath)
 
     if (stats.isDirectory()) {
-      const template = await readTemplate(filePath);
+      const template = await readTemplate(filePath)
       if (template) {
-        templates.push(template);
+        templates.push(template)
       }
     }
   }
 
-  return templates;
+  return templates
 }

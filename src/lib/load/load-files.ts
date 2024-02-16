@@ -1,31 +1,39 @@
-import FormData from "form-data";
-import { api } from "../api";
 
-import fs from "node:fs";
-import path from "node:path";
+import {uploadFiles} from '@directus/sdk'
+import {ux} from '@oclif/core'
+import {FormData} from 'formdata-node'
+import {readFileSync} from 'node:fs'
+import path from 'node:path'
 
-export default async (assets: any, dir: string) => {
-  for (const asset of assets) {
-    const fileName = asset.filename_disk;
-    const assetPath = path.resolve(dir, "assets", fileName);
-    const fileStream = fs.createReadStream(assetPath);
+import {api} from '../sdk'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
 
-    const form = new FormData();
-    form.append("id", asset.id);
-    if (asset.title) form.append("title", asset.title);
-    if (asset.description) form.append("description", asset.description);
-    if (asset.folder) form.append("folder", asset.folder);
-    form.append("file", fileStream);
+export default async (dir: string) => {
+  const files = readFile('files', dir)
+  ux.action.start(`Loading ${files.length} files`)
+
+  for (const asset of files) {
+    const fileName = asset.filename_disk
+    const assetPath = path.resolve(dir, 'assets', fileName)
+    const fileStream = new Blob([readFileSync(assetPath)], {type: asset.type})
+
+    const form = new FormData()
+    form.append('id', asset.id)
+
+    if (asset.title) form.append('title', asset.title)
+    if (asset.description) form.append('description', asset.description)
+    if (asset.folder) form.append('folder', asset.folder)
+
+    form.append('file', fileStream, fileName)
 
     try {
-      const { data }: { data: any } = await api.post("files", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await api.client.request(uploadFiles(form))
     } catch (error) {
-      console.log(error.response.data.errors);
+      logError(error)
     }
   }
-  // console.log('file', file);
-};
+
+  ux.action.stop()
+  ux.log('Loaded Files')
+}

@@ -1,35 +1,25 @@
-import { api } from "../api";
-import writeToFile from "../utils/write-to-file";
-import filterFields from "../utils/filter-fields";
+import {readRoles} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-const systemFields = [
-  "id",
-  "name",
-  "description",
-  "icon",
-  "enforce_tfa",
-  "external_id",
-  "ip_whitelist",
-  "app_access",
-  "admin_access",
-];
+import {api} from '../sdk'
+import filterFields from '../utils/filter-fields'
+import {directusRoleFields} from '../utils/system-fields'
+import writeToFile from '../utils/write-to-file'
 
 /**
  * Extract roles from the API
  */
+
 export default async function extractRoles(dir: string) {
   try {
-    const { data }: { data: any } = await api.get("/roles", {
-      params: {
-        limit: "-1",
-      },
-    });
+    const response = await api.client.request(readRoles({limit: -1}))
 
-    const filteredData = filterFields(data.data, systemFields);
+    const roles = filterFields(response, directusRoleFields)
 
-    // Use the dynamic dir parameter
-    await writeToFile("roles", filteredData, dir);
+    await writeToFile('roles', roles, dir)
+    ux.log('Extracted roles')
   } catch (error) {
-    console.log("Error extracting Roles:", error.response.data.errors);
+    ux.warn('Error extracting Roles:')
+    ux.warn(error.message)
   }
 }

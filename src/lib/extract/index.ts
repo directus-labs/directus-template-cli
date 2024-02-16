@@ -1,61 +1,61 @@
-import fs from "node:fs";
-import path from "node:path";
+import {ux} from '@oclif/core'
+import fs from 'node:fs'
 
-import { downloadAllFiles } from "./extract-assets";
-import extractSchema from "./extract-schema";
-import extractFromEndpoint from "./extract-from-endpoint";
-import { extractPermissions } from "./extract-permissions";
-import { extractContent } from "./extract-content";
-import extractFolders from "./extract-folders";
-import extractUsers from "./extract-users";
-import extractRoles from "./extract-roles";
-import extractFiles from "./extract-files";
-import extractPresets from "./extract-presets";
+import {downloadAllFiles} from './extract-assets'
+import extractCollections from './extract-collections'
+import {extractContent} from './extract-content'
+import {extractDashboards, extractPanels} from './extract-dashboards'
+import extractFields from './extract-fields'
+import extractFiles from './extract-files'
+import {extractFlows, extractOperations} from './extract-flows'
+import extractFolders from './extract-folders'
+import extractPermissions from './extract-permissions'
+import extractPresets from './extract-presets'
+import extractRelations from './extract-relations'
+import extractRoles from './extract-roles'
+import extractSchema from './extract-schema'
+import extractSettings from './extract-settings'
+import extractTranslations from './extract-translations'
+import extractUsers from './extract-users'
 
-const endpoints = [
-  // "folders",
-  // "fields",
-  // "users",
-  // "roles",
-  // "files",
-  "operations",
-  // "permissions",
-  "collections",
-  "flows",
-  "dashboards",
-  "panels",
-  // "presets",
-  "settings",
-];
-
-export default async function extract(dir: string, cli: any) {
+export default async function extract(dir: string) {
   // Get the destination directory for the actual files
-  const destination = dir + "/src";
+  const destination = dir + '/src'
 
   // Check if directory exists, if not, then create it.
   if (!fs.existsSync(destination)) {
-    console.log(`Attempting to create directory at: ${destination}`);
-    fs.mkdirSync(destination, { recursive: true });
+    ux.log(`Attempting to create directory at: ${destination}`)
+    fs.mkdirSync(destination, {recursive: true})
   }
 
-  await extractSchema(destination);
-  await extractFolders(destination);
-  await extractUsers(destination);
-  await extractRoles(destination);
-  await extractFiles(destination);
-  await extractPresets(destination);
-  await extractPermissions(destination);
+  await extractSchema(destination)
 
-  // Iterate through the endpoints
-  for (const endpoint of endpoints) {
-    await extractFromEndpoint(endpoint, destination);
-  }
+  await extractCollections(destination)
+  await extractFields(destination)
+  await extractRelations(destination)
 
-  // Extract content
-  await extractContent(destination);
+  await extractFolders(destination)
+  await extractFiles(destination)
 
-  // Extract assets
-  await downloadAllFiles(destination);
+  await extractUsers(destination)
+  await extractRoles(destination)
+  await extractPermissions(destination)
 
-  return {};
+  await extractPresets(destination)
+
+  await extractTranslations(destination)
+
+  await extractFlows(destination)
+  await extractOperations(destination)
+
+  await extractDashboards(destination)
+  await extractPanels(destination)
+
+  await extractSettings(destination)
+
+  await extractContent(destination)
+
+  await downloadAllFiles(destination)
+
+  return {}
 }
