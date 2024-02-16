@@ -1,12 +1,13 @@
 import fs from 'node:fs'
-export default function readFile(file: string, dir:string): any[] {
-  const f = fs.readFileSync(`${dir}/${file}.json`, 'utf8')
-  const obj = JSON.parse(f)
-  return obj
-}
+import path from 'node:path'
 
-export function readJsonFile(path: string): any[] {
-  const f = fs.readFileSync(`${path}.json`, 'utf8')
-  const obj = JSON.parse(f)
+export default function readFile(file: string, dir: string): any[] {
+  const filePath = path.join(dir, `${file}.json`) // Use path.join for proper path resolution
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`File not found: ${filePath}`) // Improved error handling
+  }
+
+  const fileContents = fs.readFileSync(filePath, 'utf8')
+  const obj = JSON.parse(fileContents)
   return obj
 }

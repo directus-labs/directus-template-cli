@@ -1,73 +1,59 @@
-import { api } from "../api";
-import readFile from "../utils/read-file";
-import loadToDestination from "../utils/load-to-destination";
-import loadSchema from "./load-schema";
-import loadRoles from "./load-roles";
-import loadDashboards from "./load-dashboards";
-import loadFiles from "./load-files";
-import loadFolders from "./load-folders";
-import loadUsers from "./load-users";
-import loadFlows from "./load-flows";
-import loadOperations from "./load-operations";
-import loadData from "./load-data";
-import loadPresets from "./load-presets";
-import loadSettings from "./load-settings";
-import { loadPermissions } from "./load-permissions";
+import {ux} from '@oclif/core'
 
-export default async function apply(dir: string, cli: any) {
+import checkTemplate from '../utils/check-template'
+import loadCollections from './load-collections'
+import loadDashboards from './load-dashboards'
+import loadData from './load-data'
+import loadFiles from './load-files'
+import loadFlows from './load-flows'
+import loadFolders from './load-folders'
+import loadPermissions from './load-permissions'
+import loadPresets from './load-presets'
+import loadRelations from './load-relations'
+import loadRoles from './load-roles'
+// import loadSchema from './load-schema'
+import loadSettings from './load-settings'
+import loadTranslations from './load-translations'
+import loadUsers from './load-users'
+
+export default async function apply(dir: string) {
   // Get the source directory for the actual files
-  const source = dir + "/src";
+  const source = dir + '/src'
 
-  // Load the template files into the destination
-  await loadSchema(source + "/schema");
-  cli.log("Loaded Schema");
+  const isTemplateOk = await checkTemplate(source)
 
-  // Role Loading Logic
-  const roles = readFile("roles", source);
-  const legacyAdminRoleId = roles.find(
-    (role) => role.name === "Administrator"
-  ).id;
-  const currentUser = await api.get<any>("users/me");
-  const newAdminRoleId = currentUser.data.data.role;
-  await loadRoles(roles);
-  cli.log("Loaded Roles");
+  if (!isTemplateOk) {
+    ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
+  }
 
-  await loadFolders(source);
-  cli.log("Loaded Folders");
+  // @TODO: Possibly add schema snapshot diff in the future but for now we only want to load the schema
+  // If overwriting schema
+  //   await loadSchema(source)
 
-  await loadFiles(readFile("files", source), source); // Comes after folders
-  cli.log("Loaded Files");
-  await loadUsers(readFile("users", source), legacyAdminRoleId, newAdminRoleId); // Comes after roles, files
-  cli.log("Loaded Users");
+  // If adding schema instead of overwriting
+  await loadCollections(source)
+  await loadRelations(source)
 
-  await loadDashboards(readFile("dashboards", source));
-  cli.log("Loaded Dashboards");
+  await loadRoles(source)
 
-  await loadToDestination("panels", readFile("panels", source)); // Comes after dashboards
-  cli.log("Loaded Panels");
+  await loadFolders(source)
+  await loadFiles(source)
 
-  await loadData(readFile("collections", source), source);
-  cli.log("Loaded Data");
+  await loadUsers(source)
 
-  // Loading Flows and Operations after data so we don't trigger the flows on the data we're loading
-  await loadFlows(readFile("flows", source));
-  cli.log("Loaded Flows");
+  await loadDashboards(source)
 
-  await loadOperations(readFile("operations", source)); // Comes after flows
-  cli.log("Loaded Operations");
+  await loadData(source)
 
-  await loadPresets(readFile("presets", source));
-  cli.log("Loaded Presets");
+  await loadFlows(source)
 
-  await loadSettings(readFile("settings", source));
-  cli.log("Loaded Settings");
+  await loadPresets(source)
 
-  await loadPermissions(
-    readFile("permissions", source),
-    legacyAdminRoleId,
-    newAdminRoleId
-  );
+  await loadTranslations(source)
 
-  cli.log("Loaded Permissions");
-  return {};
+  await loadSettings(source)
+
+  await loadPermissions(source)
+
+  return {}
 }

@@ -1,26 +1,38 @@
-import { api } from "../api";
+import {createRoles, updateRole} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-export default async function loadRoles(roles: any) {
-  const cleanedUpRoles = roles.map((role) => {
-    delete role.users;
-    return role;
-  });
+import {api} from '../sdk'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
+
+export default async function loadRoles(dir: string) {
+  const roles = readFile('roles', dir)
+  ux.action.start(`Loading ${roles.length} roles`)
+
+  const cleanedUpRoles = roles.map(role => {
+    delete role.users
+    return role
+  })
 
   const adminRole = cleanedUpRoles.find(
-    (role) => role.name === "Administrator"
-  );
+    role => role.name === 'Administrator',
+  )
 
   // Admin role isn't touched.
   const customRoles = cleanedUpRoles.filter(
-    (role) => role.name !== "Administrator"
-  );
+    role => role.name !== 'Administrator',
+  )
 
   try {
-    const { data }: { data: any } = await api.post("roles", customRoles);
-  } catch {
-    // maybe the roles already exist
+    // Create the custom roles aside from public and admin
+    await api.client.request(createRoles(customRoles))
+
+    // Update the admin role
+    await api.client.request(updateRole(adminRole.id, adminRole))
+  } catch (error) {
+    logError(error)
   }
 
-  const adminUpdate = await api.patch(`roles/${adminRole.id}`, adminRole);
-  console.log("Seeded Roles");
+  ux.action.stop()
+  ux.log('Loaded roles')
 }

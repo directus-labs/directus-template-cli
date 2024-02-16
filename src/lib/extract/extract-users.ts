@@ -1,48 +1,28 @@
-import { api } from "../api";
-import writeToFile from "../utils/write-to-file";
-import filterFields from "../utils/filter-fields";
+import {readUsers} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-const systemFields = [
-  "id",
-  "status",
-  "first_name",
-  "last_name",
-  "email",
-  "password",
-  "token",
-  "last_access",
-  "last_page",
-  "external_identifier",
-  "tfa_secret",
-  "auth_data",
-  "provider",
-  "theme",
-  "role",
-  "language",
-  "avatar",
-  "title",
-  "description",
-  "location",
-  "tags",
-  "email_notifications",
-];
+import {api} from '../sdk'
+import filterFields from '../utils/filter-fields'
+import {directusUserFields} from '../utils/system-fields'
+import writeToFile from '../utils/write-to-file'
 
 /**
- * Extract users from the API
+ * Extract users from the Directus instance
  */
+
 export default async function extractUsers(dir: string) {
   try {
-    const { data }: { data: any } = await api.get("/users", {
-      params: {
-        limit: "-1",
-      },
-    });
+    const response = await api.client.request(readUsers({
+      limit: -1,
+    }),
+    )
 
-    const filteredData = filterFields(data.data, systemFields);
+    const users = filterFields(response, directusUserFields)
 
-    // Use the dynamic dir parameter
-    await writeToFile("users", filteredData, dir);
+    await writeToFile('users', users, dir)
+    ux.log('Extracted users')
   } catch (error) {
-    console.log("Error extracting Users:", error.response.data.errors);
+    ux.warn('Error extracting Users:')
+    ux.warn(error.message)
   }
 }

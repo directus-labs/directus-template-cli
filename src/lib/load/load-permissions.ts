@@ -1,34 +1,28 @@
-import { api } from "../api";
-import loadToDestination from "../utils/load-to-destination";
+import {createPermission} from '@directus/sdk'
+import {ux} from '@oclif/core'
 
-async function removeallPublicPermissions() {
-  const { data }: { data } = await api.get(
-    "permissions?filter[role][_null]=true&limit=-1"
-  );
-  console.log("Removing all public permissions", data.data);
-  const ids = data.data.map((i) => i.id);
-  if (!ids) return;
-  await api.delete("permissions", {
-    data: ids,
-  });
-}
+import {api} from '../sdk'
+import getRoleIds from '../utils/get-role-ids'
+import logError from '../utils/log-error'
+import readFile from '../utils/read-file'
 
-const clearAdminPermissions = (
-  permissions: any[],
-  legacyAdminRoleId: string | number
-) => {
-  return permissions.filter(
-    (permission) => permission.role !== legacyAdminRoleId
-  );
-};
+export default async function loadPermissions(
+  dir: string) {
+  const permissions = readFile('permissions', dir)
+  ux.action.start(`Loading ${permissions.length} permissions`)
 
-export async function loadPermissions(
-  permissions: any,
-  legacyAdminRoleId: string | number,
-  newAdminRoleId: string | number
-) {
-  await removeallPublicPermissions();
-  permissions = clearAdminPermissions(permissions, legacyAdminRoleId);
+  const {legacyAdminRoleId} = await getRoleIds(dir)
 
-  await loadToDestination("permissions", permissions);
+  const filteredPermissions = permissions.filter(permission => permission.role !== legacyAdminRoleId)
+
+  for (const permission of filteredPermissions) {
+    try {
+      await api.client.request(createPermission(permission))
+    } catch (error) {
+      logError(error)
+    }
+  }
+
+  ux.action.stop()
+  ux.log('Loaded permissions')
 }
