@@ -15,6 +15,7 @@ import loadRoles from './load-roles'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
 import loadUsers from './load-users'
+import updateFields from './update-fields'
 
 export default async function apply(dir: string) {
   // Get the source directory for the actual files
@@ -54,6 +55,9 @@ export default async function apply(dir: string) {
   await loadSettings(source)
 
   await loadPermissions(source)
+
+  // update all fields again
+  await updateFields(source)
 
   return {}
 }

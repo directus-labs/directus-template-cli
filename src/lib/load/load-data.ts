@@ -79,6 +79,15 @@ async function loadFullData(dir:string) {
       for (const row of data) {
         delete row.user_created
         delete row.user_updated
+
+        // Remove any arrays from the row. These are alias fields so will get filled in when the related item is added
+        const keys = Object.keys(row)
+        for (const key of keys) {
+          if (Array.isArray(row[key])) {
+            delete row[key]
+          }
+        }
+
         await api.client.request(updateItem(name, row[primaryKeyField], row))
       }
     } catch (error) {

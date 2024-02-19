@@ -31,9 +31,18 @@ export default async function loadCollections(dir: string) {
 async function addCollections(collections: any[], fields: any[]) {
   for await (const collection of collections) {
     try {
-      collection.fields = fields.filter(
-        (field: any) => field.collection === collection.collection,
-      )
+      collection.fields = fields
+      .filter((field: any) => field.collection === collection.collection)
+
+      collection.fields.map((field: any) => {
+        if (field.schema?.is_primary_key === false) {
+          field.schema.is_nullable = true;
+          field.meta.required = false;
+          field.schema.default_value = null;
+          }
+
+        return field
+        })
       await api.client.request(createCollection(collection))
     } catch (error) {
       logError(error)
