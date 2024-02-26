@@ -48,7 +48,7 @@ async function getTemplate() {
     }
 
     try {
-      const {dir} = await downloadTemplate('github:directus-community/directus-templates', {
+      const {dir} = await downloadTemplate('github:directus-labs/directus-templates', {
         dir: downloadDir,
         force: true,
         preferOffline: true,
