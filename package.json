@@ -1,6 +1,6 @@
 {
   "name": "directus-template-cli",
-  "version": "4.0.1",
+  "version": "0.4.1",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "bin": {
