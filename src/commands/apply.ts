@@ -121,7 +121,7 @@ async function getTemplate() {
   }
 
   if (templateType.templateType === 'directus-plus') {
-    openUrl('https://directus.io/plus')
+    openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
     ux.log('Redirecting to Directus website.')
     ux.exit(0)
   }
