@@ -6,6 +6,7 @@ import path from 'node:path'
 import apply from '../lib/load/'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import logError from '../lib/utils/log-error'
+import openUrl from '../lib/utils/open-url'
 import resolvePathAndCheckExistence from '../lib/utils/path'
 import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
 import {transformGitHubUrl} from '../lib/utils/transform-github-url'
@@ -17,16 +18,20 @@ async function getTemplate() {
     {
       choices: [
         {
-          name: 'Official templates',
-          value: 'official',
+          name: 'Community templates',
+          value: 'community',
         },
         {
           name: 'From a local directory',
           value: 'local',
         },
         {
-          name: 'From a GitHub repository',
+          name: 'From a public GitHub repository',
           value: 'github',
+        },
+        {
+          name: 'Get premium templates',
+          value: 'directus-plus',
         },
       ],
       message: 'What type of template would you like to apply?',
@@ -37,8 +42,8 @@ async function getTemplate() {
 
   let template: any
 
-  if (templateType.templateType === 'official') {
-    // Get official templates
+  if (templateType.templateType === 'community') {
+    // Get community templates
     let templates: any[] = []
 
     // Resolve the path for downloading
@@ -59,10 +64,10 @@ async function getTemplate() {
       logError(error, {fatal: true})
     }
 
-    const officialTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
+    const communityTemplateChoices = templates.map((template: any) => ({name: template.templateName, value: template}))
     template = await inquirer.prompt([
       {
-        choices: officialTemplateChoices,
+        choices: communityTemplateChoices,
         message: 'Select a template.',
         name: 'template',
         type: 'list',
@@ -115,6 +120,12 @@ async function getTemplate() {
     }
   }
 
+  if (templateType.templateType === 'directus-plus') {
+    openUrl('https://directus.io/plus')
+    ux.log('Redirecting to Directus website.')
+    ux.exit(0)
+  }
+
   return template
 }
 
@@ -127,14 +138,14 @@ export default class ApplyCommand extends Command {
 
   public async run(): Promise<void> {
     const chosenTemplate = await getTemplate()
-    this.log(`You selected ${chosenTemplate.template.templateName}`)
+    ux.log(`You selected ${chosenTemplate.template.templateName}`)
 
-    this.log(separator)
+    ux.log(separator)
 
     const directusUrl = await getDirectusUrl()
     await getDirectusToken(directusUrl)
 
-    this.log(separator)
+    ux.log(separator)
 
     // Run load script
     ux.log(
@@ -145,10 +156,10 @@ export default class ApplyCommand extends Command {
 
     ux.action.stop()
 
-    this.log(separator)
+    ux.log(separator)
 
-    this.log('Template applied successfully.')
+    ux.log('Template applied successfully.')
 
-    this.exit(0)
+    ux.exit(0)
   }
 }
