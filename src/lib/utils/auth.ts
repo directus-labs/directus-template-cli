@@ -5,7 +5,12 @@ import {api} from '../sdk'
 import validateUrl from './validate-url'
 
 export async function getDirectusUrl() {
-  const directusUrl = await ux.prompt('What is your Directus URL?', {default: 'http://localhost:8055'})
+  let directusUrl
+  if (process.env.DIRECTUS_URL) {
+    directusUrl = process.env.DIRECTUS_URL
+  } else {
+    directusUrl = await ux.prompt('What is your Directus URL?', {default: 'http://localhost:8055' })
+  }
 
   // Validate URL
   if (!validateUrl(directusUrl)) {
@@ -19,7 +24,12 @@ export async function getDirectusUrl() {
 }
 
 export async function getDirectusToken(directusUrl: string) {
-  const directusToken = await ux.prompt('What is your Directus Admin Token?')
+  let directusToken
+  if (process.env.DIRECTUS_TOKEN) {
+    directusToken = process.env.DIRECTUS_TOKEN
+  } else {
+    directusToken = await ux.prompt('What is your Directus Admin Token?')
+  }
 
   // Validate token
   try {

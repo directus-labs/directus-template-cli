@@ -18,11 +18,20 @@ export default class ExtractCommand extends Command {
   static examples = ['$ directus-template-cli extract']
 
   public async run(): Promise<void> {
-    const templateName = await ux.prompt('What is the name of the template?.')
-
-    const directory = await ux.prompt(
-      "What directory would you like to extract the template to? If it doesn't exist, it will be created.", {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
-    )
+    let templateName
+    let directory;
+    if (process.env.DIRECTUS_TEMPLATE_NAME) {
+      templateName = process.env.DIRECTUS_TEMPLATE_NAME;
+    } else {
+      templateName = await ux.prompt('What is the name of the template?.')
+    }
+    if (process.env.DIRECTUS_TEMPLATE_DIR) {
+      directory = process.env.DIRECTUS_TEMPLATE_DIR;
+    } else {
+      directory = await ux.prompt(
+        "What directory would you like to extract the template to? If it doesn't exist, it will be created.", {default: `templates/${slugify(templateName, {lower: true, strict: true })}`},
+      )
+    }
 
     this.log(`You selected ${directory}`)
 
