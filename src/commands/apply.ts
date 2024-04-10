@@ -11,29 +11,37 @@ import {readAllTemplates, readTemplate} from '../lib/utils/read-templates'
 import {transformGitHubUrl} from '../lib/utils/transform-github-url'
 
 const separator = '------------------'
-
 async function getTemplate() {
-  const templateType: any = await inquirer.prompt([
-    {
-      choices: [
-        {
-          name: 'Official templates',
-          value: 'official',
-        },
-        {
-          name: 'From a local directory',
-          value: 'local',
-        },
-        {
-          name: 'From a GitHub repository',
-          value: 'github',
-        },
-      ],
-      message: 'What type of template would you like to apply?',
-      name: 'templateType',
-      type: 'list',
-    },
-  ])
+  let templateType : {
+    templateType?: string
+  } = {}
+
+  if(process.env.DIRECTUS_TEMPLATE_DIR) {
+    templateType.templateType = 'local'
+  } else {
+    const templateType: any = await inquirer.prompt([
+      {
+        choices: [
+          {
+            name: 'Official templates',
+            value: 'official',
+          },
+          {
+            name: 'From a local directory',
+            value: 'local',
+          },
+          {
+            name: 'From a GitHub repository',
+            value: 'github',
+          },
+        ],
+        message: 'What type of template would you like to apply?',
+        name: 'templateType',
+        type: 'list',
+      },
+      
+    ])
+  }
 
   let template: any
 
@@ -71,9 +79,15 @@ async function getTemplate() {
   }
 
   if (templateType.templateType === 'local') {
-    let localTemplateDir = await ux.prompt(
-      'What is the local template directory?',
-    )
+    let localTemplateDir
+
+    if(process.env.DIRECTUS_TEMPLATE_DIR) {
+      localTemplateDir = process.env.DIRECTUS_TEMPLATE_DIR
+    } else {
+      localTemplateDir = await ux.prompt(
+        'What is the local template directory?',
+      )
+  }
 
     localTemplateDir = resolvePathAndCheckExistence(localTemplateDir)
 
