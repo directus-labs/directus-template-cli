@@ -17,7 +17,7 @@ interface Options {
 }
 
 export default function logError(error: Error, options: Options = {}) {
-  const errorMessage = `Status ${error.response.status} • ${error.errors[0].message}\n`
+  const errorMessage = `Status ${error.response.status} • ${JSON.stringify(error.errors[0].message)}\n`
 
   if (options.fatal) {
     ux.error(errorMessage)
