@@ -16,7 +16,7 @@ export default async function extractRelations(dir: string) {
     const fields = await api.client.request(readFields())
 
     const customFields = fields.filter(
-      (i: any) => !i.meta.system,
+      (i: any) => !i.meta?.system,
     )
 
     const relations = response

@@ -12,13 +12,20 @@ export default async function extractFields(dir: string) {
   try {
     const response = await api.client.request(readFields())
 
+    if (!Array.isArray(response)) {
+      throw new TypeError('Unexpected response format')
+    }
+
     const fields = response
     .filter(
       // @ts-ignore
-      (i: { collection: string }) => !i.meta.system,
+      (i: { collection: string; meta?: { system?: boolean } }) => i.meta && !i.meta.system,
     )
     .map(i => {
-      delete i.meta.id
+      if (i.meta) {
+        delete i.meta.id
+      }
+
       return i
     })
 
@@ -27,5 +34,6 @@ export default async function extractFields(dir: string) {
   } catch (error) {
     ux.warn('Error extracting Fields:')
     ux.warn(error.message)
+    console.error(error)
   }
 }
