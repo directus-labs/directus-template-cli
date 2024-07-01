@@ -44,6 +44,50 @@ The CLI can also extract a template from a Directus instance so that it can be a
 $ npx directus-template-cli@latest extract
 ```
 
+## Extract Command
+
+To extract a template named `name` from a directory `data/backup`, use the following command:
+
+```
+./bin/dev cli extract
+    --templateName name
+    --directory data/backup
+    --directusUrl https://www.example.com
+    --directusToken xxxxxx
+```
+
+
+### Parameters:
+
+- `--templateName`: The name of the template you wish to extract.
+- `--directory`: The path to the directory where the template will be extracted.
+- `--directusUrl`: The URL of your Directus instance.
+- `--directusToken`: An authentication token for accessing your Directus instance.
+
+
+
+## Apply Command
+
+To apply a locally stored template located at `data/backup` to your Directus instance, use the following command:
+
+```
+./bin/dev cli apply
+    --templateType local-cli
+    --templateLocation data/backup
+    --directusUrl https://www.example.com
+    --directusToken xxxxxx
+```
+
+
+### Parameters:
+
+- `--templateType`: The type of the template you wish to apply (e.g., `local-cli`).
+- `--templateLocation`: The path to the directory where the template is stored.
+- `--directusUrl`: The URL of your Directus instance.
+- `--directusToken`: An authentication token for accessing your Directus instance.
+
+
+
 ## License
 
 This tool is licensed under the [MIT License](https://opensource.org/licenses/MIT).
