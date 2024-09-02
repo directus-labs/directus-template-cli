@@ -1,6 +1,7 @@
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
+import extractAccess from './extract-access'
 import {downloadAllFiles} from './extract-assets'
 import extractCollections from './extract-collections'
 import {extractContent} from './extract-content'
@@ -10,6 +11,7 @@ import extractFiles from './extract-files'
 import {extractFlows, extractOperations} from './extract-flows'
 import extractFolders from './extract-folders'
 import extractPermissions from './extract-permissions'
+import extractPolicies from './extract-policies'
 import extractPresets from './extract-presets'
 import extractRelations from './extract-relations'
 import extractRoles from './extract-roles'
@@ -40,6 +42,8 @@ export default async function extract(dir: string) {
   await extractUsers(destination)
   await extractRoles(destination)
   await extractPermissions(destination)
+  await extractPolicies(destination)
+  await extractAccess(destination)
 
   await extractPresets(destination)
 

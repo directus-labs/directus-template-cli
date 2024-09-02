@@ -1,6 +1,7 @@
 import {ux} from '@oclif/core'
 
 import checkTemplate from '../utils/check-template'
+import loadAccess from './load-access'
 import loadCollections from './load-collections'
 import loadDashboards from './load-dashboards'
 import loadData from './load-data'
@@ -8,6 +9,7 @@ import loadFiles from './load-files'
 import loadFlows from './load-flows'
 import loadFolders from './load-folders'
 import loadPermissions from './load-permissions'
+import loadPolicies from './load-policies'
 import loadPresets from './load-presets'
 import loadRelations from './load-relations'
 import loadRoles from './load-roles'
@@ -35,11 +37,14 @@ export default async function apply(dir: string) {
   await loadRelations(source)
 
   await loadRoles(source)
+  await loadPolicies(source)
 
   await loadFolders(source)
   await loadFiles(source)
 
   await loadUsers(source)
+
+  await loadAccess(source)
 
   await loadDashboards(source)
 

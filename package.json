@@ -18,7 +18,8 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@directus/sdk": "^14.0.0",
+    "@directus/cli": "^9.14.3",
+    "@directus/sdk": "^17.0.0",
     "@directus/types": "^11.0.3",
     "@oclif/core": "^3.18.1",
     "@oclif/plugin-help": "^6.0.12",

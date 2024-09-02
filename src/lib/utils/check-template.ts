@@ -6,12 +6,12 @@ export default async function checkTemplate(dir: string) {
   // Check for the collections,fields, and relations files
   try {
     // const schemaDir = path.join(dir, 'schema')
-
     const collections = readFile('collections', dir)
     const fields = readFile('fields', dir)
-    const relations = readFile('relations', dir)
+    // const relations = readFile('relations', dir)
 
-    const isCollectionsOk = collections.length > 0 && fields.length > 0 && relations.length > 0
+    // && relations.length > 0
+    const isCollectionsOk = collections.length > 0 && fields.length > 0
     return isCollectionsOk
   } catch (error) {
     console.error(error)
