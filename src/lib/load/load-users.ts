@@ -23,6 +23,9 @@ export default async function loadUsers(
     delete user.last_page
     delete user.token
 
+    // Delete passwords to prevent setting to *******
+    delete user.password
+
     return user
   })
 
