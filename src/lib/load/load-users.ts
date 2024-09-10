@@ -27,6 +27,11 @@ export default async function loadUsers(
   })
 
   for (const user of filteredUsers) {
+    // If user email is null, we need to delete the email key to pass validation
+    if (user.email === null) {
+      delete user.email
+    }
+
     try {
       await api.client.request(createUser(user))
     } catch (error) {
