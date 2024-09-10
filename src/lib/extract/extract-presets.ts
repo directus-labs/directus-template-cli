@@ -21,7 +21,7 @@ export default async function extractPresets(dir: string) {
     ))
 
     // Remove the id field from the presets so we don't have to reset the autoincrement on the db
-    const presets = response.map((preset: any) => {
+    const presets = response.map(preset => {
       delete preset.id
       return preset
     })

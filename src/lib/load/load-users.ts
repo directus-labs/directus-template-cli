@@ -22,14 +22,14 @@ export default async function loadUsers(
     // Delete the unneeded fields
     delete user.last_page
     delete user.token
-
+    delete user.policies
     // Delete passwords to prevent setting to *******
     delete user.password
 
     return user
   })
 
-  for (const user of filteredUsers) {
+  for await (const user of filteredUsers) {
     // If user email is null, we need to delete the email key to pass validation
     if (user.email === null) {
       delete user.email

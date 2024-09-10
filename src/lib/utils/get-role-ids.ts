@@ -6,11 +6,12 @@ import readFile from './read-file'
 export default async function getRoleIds(dir: string) {
   const roles = readFile('roles', dir)
 
-  const legacyAdminRoleId = roles.find(role => role.name === 'Administrator').id
+  // Legacy admin role may be undefined if the admin role was renamed in the source Directus project.
+  const legacyAdminRoleId:string |undefined = roles.find(role => role.name === 'Administrator')?.id
 
   const currentUser = await api.client.request(readMe())
 
-  const newAdminRoleId = currentUser.role
+  const newAdminRoleId = currentUser.role as string
 
   return {legacyAdminRoleId, newAdminRoleId}
 }

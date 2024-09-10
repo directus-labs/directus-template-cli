@@ -4,6 +4,10 @@ import {ux} from '@oclif/core'
 import {api} from '../sdk'
 import writeToFile from '../utils/write-to-file'
 
+/**
+ * Extract policies from the API
+ */
+
 export default async function extractPolicies(dir: string) {
   try {
     const response = await api.client.request(readPolicies({limit: -1}))
