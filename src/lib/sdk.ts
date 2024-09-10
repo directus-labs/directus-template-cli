@@ -18,9 +18,6 @@ class Api {
     this.limiter = new Bottleneck({
       maxConcurrent: 10, // Max 10 concurrent requests
       minTime: 100, // 100ms between requests
-      reservoir: 60, // Reservoir of requests to refill
-      reservoirRefreshAmount: 60,
-      reservoirRefreshInterval: 60 * 1000, // 1 minute
       retryCount: 3, // Retry failed requests up to 3 times
       retryDelay: 3000, // Wait 3 seconds between retries
     })
