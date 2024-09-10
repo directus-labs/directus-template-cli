@@ -1,10 +1,7 @@
 import type {AuthenticationClient, RestClient} from '@directus/sdk'
 
 import {authentication, createDirectus, rest} from '@directus/sdk'
-import {ux} from '@oclif/core'
 import Bottleneck from 'bottleneck'
-
-import logError from './utils/log-error'
 
 export interface Schema{
     any
@@ -21,26 +18,12 @@ class Api {
       retryCount: 3, // Retry failed requests up to 3 times
       retryDelay: 3000, // Wait 3 seconds between retries
     })
-
-    this.limiter.on('failed', async (error, jobInfo: any) => {
-      ux.log(`Job ${jobInfo.options.id} failed:`)
-      logError(error)
-      if (jobInfo.retryCount < 3) {
-        ux.log(`Retrying job ${jobInfo.options.id} in ${jobInfo.retryDelay}ms`)
-        return jobInfo.retryDelay
-      }
-    })
-
-    this.limiter.on('retry', (error, jobInfo) => {
-      ux.log(`Now retrying ${jobInfo.options.id}`)
-    })
   }
 
   public initialize(url: string): void {
     this.client = createDirectus<Schema>(url, {
       globals: {
-        // @ts-ignore
-        fetch: (...args: any) => this.limiter.schedule(() => fetch(...args)),
+        fetch: (...args) => this.limiter.schedule(() => fetch(...args)),
       },
     })
     .with(rest())
