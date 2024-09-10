@@ -1,4 +1,4 @@
-import {createUser} from '@directus/sdk'
+import {createUser, readUsers} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
@@ -13,6 +13,16 @@ export default async function loadUsers(
   ux.action.start(`Loading ${users.length} users`)
 
   const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
+
+  const incomingUserEmails = users.map(user => user.email)
+
+  const existingUsers = await api.client.request(readUsers({
+    filter: {
+      email: {
+        _in: incomingUserEmails,
+      },
+    },
+  }))
 
   const filteredUsers = users.map(user => {
     // If the user is an admin, we need to change their role to the new admin role
@@ -30,8 +40,8 @@ export default async function loadUsers(
   })
 
   for await (const user of filteredUsers) {
-    // If user email is null, we need to delete the email key to pass validation
-    if (user.email === null) {
+    // If user email is null or already in use, we just delete the email key to pass validation and retain the user and any realationship data
+    if (user.email === null || existingUsers.some(existingUser => existingUser.email === user.email)) {
       delete user.email
     }
 
