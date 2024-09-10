@@ -13,6 +13,7 @@ import loadPolicies from './load-policies'
 import loadPresets from './load-presets'
 import loadRelations from './load-relations'
 import loadRoles from './load-roles'
+import loadExtensions from './load-extensions'
 // import loadSchema from './load-schema'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
@@ -59,6 +60,8 @@ export default async function apply(dir: string) {
   await loadSettings(source)
 
   await loadPermissions(source)
+
+  await loadExtensions(source)
 
   return {}
 }

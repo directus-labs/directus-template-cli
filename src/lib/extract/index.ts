@@ -6,6 +6,7 @@ import {downloadAllFiles} from './extract-assets'
 import extractCollections from './extract-collections'
 import {extractContent} from './extract-content'
 import {extractDashboards, extractPanels} from './extract-dashboards'
+import extractExtensions from './extract-extensions'
 import extractFields from './extract-fields'
 import extractFiles from './extract-files'
 import {extractFlows, extractOperations} from './extract-flows'
@@ -56,6 +57,7 @@ export default async function extract(dir: string) {
   await extractPanels(destination)
 
   await extractSettings(destination)
+  await extractExtensions(destination)
 
   await extractContent(destination)
 
