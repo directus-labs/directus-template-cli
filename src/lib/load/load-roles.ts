@@ -1,4 +1,4 @@
-import {createRoles, updateRole} from '@directus/sdk'
+import {createRole, readRoles, updateRole} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
@@ -9,37 +9,45 @@ import readFile from '../utils/read-file'
 export default async function loadRoles(dir: string) {
   const roles = readFile('roles', dir)
   ux.action.start(`Loading ${roles.length} roles`)
+  const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
-  const cleanedUpRoles = roles.map(role => {
+  // Fetch existing roles
+  const existingRoles = await api.client.request(readRoles({
+    limit: -1,
+  }))
+  const existingRoleIds = new Set(existingRoles.map(role => role.id))
+  const existingRoleNames = new Set(existingRoles.map(role => role.name.toLowerCase()))
+
+  const cleanedUpRoles = roles
+  .filter(role => role.name !== 'Administrator') // Don't load legacy admin role
+  .filter(role => !existingRoleNames.has(role.name.toLowerCase())) // Filter out roles with existing names
+  .map(role => {
     const r = {...role}
     delete r.users // Alias field. User roles will be applied when the users are loaded.
     delete r.parent // We need to load all roles first
     return r
   })
-  // Don't load legacy admin role.
-  .filter(role => role.name !== 'Administrator')
 
-  const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
+  for await (const role of cleanedUpRoles) {
+    try {
+      if (existingRoleIds.has(role.id)) {
+        ux.log(`Skipping existing role: ${role.name}`)
+        continue
+      }
 
-  // Just load another admin role, because other roles may have a parent of admin
-  // Admin role isn't touched.
-  // const customRoles = cleanedUpRoles.filter(
-  //   role => role.name !== 'Administrator',
-  // )
-
-  try {
-    // Create the custom roles aside from public and admin
-    await api.client.request(createRoles(cleanedUpRoles))
-
-    // Update the admin role. Do we need to do this?
-    // await api.client.request(updateRole(newAdminRoleId.id, adminRoleFromSource))
-  } catch (error) {
-    logError(error)
+      // Create new role
+      await api.client.request(createRole(role))
+      ux.log(`Created new role: ${role.name}`)
+      // Add the new role ID and name to our sets of existing roles
+      existingRoleIds.add(role.id)
+      existingRoleNames.add(role.name.toLowerCase())
+    } catch (error) {
+      logError(error)
+    }
   }
 
   // Now add in any parent fields
   const rolesWithParents = roles.filter(role => role.parent !== null)
-
   for await (const role of rolesWithParents) {
     try {
       // Remap any roles where the parent ID is the default admin role
@@ -49,6 +57,7 @@ export default async function loadRoles(dir: string) {
 
       const simplifiedRole = {parent: role.parent}
       await api.client.request(updateRole(role.id, simplifiedRole))
+      ux.log(`Updated parent for role: ${role.name}`)
     } catch (error) {
       logError(error)
     }
@@ -57,4 +66,3 @@ export default async function loadRoles(dir: string) {
   ux.action.stop()
   ux.log('Loaded roles')
 }
-

@@ -1,8 +1,7 @@
-import {createPermissions} from '@directus/sdk'
+import {createPermissions, readPermissions} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-// import getRoleIds from '../utils/get-role-ids'
 import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
@@ -11,15 +10,26 @@ export default async function loadPermissions(
   const permissions = readFile('permissions', dir)
   ux.action.start(`Loading ${permissions.length} permissions`)
 
-  // const {legacyAdminRoleId} = await getRoleIds(dir)
-
-  const filteredPermissions = permissions
-  // .filter(permission => permission.role !== legacyAdminRoleId) // Legacy. permissions are no longer related to roles
-  .filter(permission => permission.policy !== null)  // public permissions have policy: null
-  // Todo a way of updating public policies
-
   try {
-    await api.client.request(createPermissions(filteredPermissions))
+    const existingPermissions = await api.client.request(readPermissions({
+      limit: -1,
+    }))
+
+    const existingPermissionKeys = new Set(
+      existingPermissions.map(p => `${p.collection}:${p.action}:${p.policy}`),
+    )
+
+    // Filter out duplicates
+    const newPermissions = permissions.filter(newPerm =>
+      !existingPermissionKeys.has(`${newPerm.collection}:${newPerm.action}:${newPerm.policy}`),
+    )
+
+    if (newPermissions.length > 0) {
+      await api.client.request(createPermissions(newPermissions))
+      ux.log(`Created ${newPermissions.length} new permissions`)
+    } else {
+      ux.log('No new permissions to create')
+    }
   } catch (error) {
     logError(error)
   }
