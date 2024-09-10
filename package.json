@@ -24,6 +24,7 @@
     "@oclif/plugin-help": "^6.0.12",
     "@oclif/plugin-plugins": "^4.1.22",
     "bottleneck": "^2.19.5",
+    "defu": "^6.1.4",
     "dotenv": "^16.4.1",
     "formdata-node": "^6.0.3",
     "giget": "^1.2.1",
