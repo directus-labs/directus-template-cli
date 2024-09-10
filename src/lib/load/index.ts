@@ -29,11 +29,7 @@ export default async function apply(dir: string) {
     ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
   }
 
-  // @TODO: Possibly add schema snapshot diff in the future but for now we only want to load the schema
-  // If overwriting schema
-  //   await loadSchema(source)
 
-  // If adding schema instead of overwriting
   await loadCollections(source)
   await loadRelations(source)
 
