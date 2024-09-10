@@ -18,13 +18,11 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@directus/cli": "^9.14.3",
-    "@directus/sdk": "^17.0.0",
-    "@directus/types": "^11.0.3",
+    "@directus/sdk": "^17.0.1",
+    "@directus/types": "^12.0.1",
     "@oclif/core": "^3.18.1",
     "@oclif/plugin-help": "^6.0.12",
     "@oclif/plugin-plugins": "^4.1.22",
-    "axios": "^1.6.7",
     "bottleneck": "^2.19.5",
     "dotenv": "^16.4.1",
     "formdata-node": "^6.0.3",
