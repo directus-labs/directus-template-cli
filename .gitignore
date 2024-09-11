@@ -11,3 +11,5 @@ oclif.manifest.json
 
 /downloads
 /**/downloads
+.env
+.directus-template-cli/logs
