@@ -6,7 +6,7 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async (dir: string) => {
@@ -30,7 +30,7 @@ export default async (dir: string) => {
     try {
       await api.client.request(uploadFiles(form))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 

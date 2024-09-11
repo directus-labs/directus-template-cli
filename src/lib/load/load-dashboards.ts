@@ -2,7 +2,7 @@ import {createDashboard, createPanel} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadDashboards(dir: string) {
@@ -19,7 +19,7 @@ export default async function loadDashboards(dir: string) {
     try {
       await api.client.request(createDashboard(dashboard))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 
@@ -37,7 +37,7 @@ export async function loadPanels(dir: string) {
     try {
       await api.client.request(createPanel(panel))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }

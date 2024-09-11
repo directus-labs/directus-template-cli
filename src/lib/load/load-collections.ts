@@ -2,7 +2,7 @@ import {createCollection, createField, updateCollection} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 /**
@@ -36,7 +36,7 @@ async function addCollections(collections: any[], fields: any[]) {
       )
       await api.client.request(createCollection(collection))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }
@@ -53,7 +53,7 @@ async function updateCollections(collections: any[]) {
         await api.client.request(updateCollection(collection.collection, pl))
       }
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }
@@ -67,7 +67,7 @@ async function addCustomFieldsOnSystemCollections(fields: any[]) {
     try {
       await api.client.request(createField(field.collection, field))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }

@@ -3,7 +3,7 @@ import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
 import getRoleIds from '../utils/get-role-ids'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadUsers(
@@ -48,7 +48,7 @@ export default async function loadUsers(
     try {
       await api.client.request(createUser(user))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 

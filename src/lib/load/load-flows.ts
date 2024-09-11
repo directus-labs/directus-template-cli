@@ -1,23 +1,38 @@
-import {createFlow, createOperations, updateOperation} from '@directus/sdk'
+import {createFlow, createOperations, readFlows, updateOperation} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFlows(dir: string) {
   const flows = readFile('flows', dir)
   ux.action.start(`Loading ${flows.length} flows`)
 
-  for (const flow of flows) {
-    delete flow.operations
-  }
+  // Fetch existing flows
+  const existingFlows = await api.client.request(readFlows({
+    limit: -1,
+  }))
+  const existingFlowIds = new Set(existingFlows.map(flow => flow.id))
 
-  for (const flow of flows) {
+  const cleanedUpFlows = flows.map(flow => {
+    const cleanFlow = {...flow}
+    delete cleanFlow.operations
+    return cleanFlow
+  })
+
+  for (const flow of cleanedUpFlows) {
     try {
+      if (existingFlowIds.has(flow.id)) {
+        ux.log(`Skipping existing flow: ${flow.name}`)
+        continue
+      }
+
       await api.client.request(createFlow(flow))
+      ux.log(`Created new flow: ${flow.name}`)
+      existingFlowIds.add(flow.id)
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 
@@ -49,7 +64,7 @@ export async function loadOperations(dir: string) {
     try {
       await api.client.request(updateOperation(operation.id, pl))
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }

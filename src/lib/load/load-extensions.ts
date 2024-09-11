@@ -3,7 +3,7 @@ import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
 import {Extension} from '../types/extension'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 async function installExtension(extension: any): Promise<void> {
@@ -51,7 +51,7 @@ export default async function loadExtensions(dir: string): Promise<void> {
         })
         return `Installed ${ext.schema?.name}`
       } catch (error) {
-        logError(error)
+        catchError(error)
         return `Failed to install ${ext.schema?.name}`
       }
     }))

@@ -2,7 +2,7 @@ import {createPermissions, readPermissions} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadPermissions(
@@ -31,7 +31,7 @@ export default async function loadPermissions(
       ux.log('No new permissions to create')
     }
   } catch (error) {
-    logError(error)
+    catchError(error)
   }
 
   ux.action.stop()

@@ -1,7 +1,7 @@
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 interface Access {
@@ -58,7 +58,7 @@ export default async function loadAccess(dir: string) {
       existingAccessById.set(acc.id, acc)
       existingAccessByCompositeKey.set(compositeKey, acc)
     } catch (error) {
-      logError(error, {
+      catchError(error, {
         context: {
           access: acc,
         },

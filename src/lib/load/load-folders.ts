@@ -2,7 +2,7 @@ import {createFolders, updateFolder} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFolders(dir: string) {
@@ -21,7 +21,7 @@ export default async function loadFolders(dir: string) {
       await api.client.request(updateFolder(id, rest))
     }))
   } catch (error) {
-    logError(error)
+    catchError(error)
   }
 
   ux.action.stop()

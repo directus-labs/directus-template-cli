@@ -2,8 +2,8 @@ import {createRole, readRoles, updateRole} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import getRoleIds from '../utils/get-role-ids'
-import logError from '../utils/log-error'
 import readFile from '../utils/read-file'
 
 export default async function loadRoles(dir: string) {
@@ -42,7 +42,7 @@ export default async function loadRoles(dir: string) {
       existingRoleIds.add(role.id)
       existingRoleNames.add(role.name.toLowerCase())
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 
@@ -59,7 +59,7 @@ export default async function loadRoles(dir: string) {
       await api.client.request(updateRole(role.id, simplifiedRole))
       ux.log(`Updated parent for role: ${role.name}`)
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 
