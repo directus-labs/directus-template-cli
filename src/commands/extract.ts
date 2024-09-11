@@ -1,73 +1,149 @@
-import {Command, ux} from '@oclif/core'
+import {readMe} from '@directus/sdk'
+import {Command, Flags, ux} from '@oclif/core'
 import fs from 'node:fs'
 import path from 'node:path'
 import slugify from 'slugify'
 
 import extract from '../lib/extract/'
+import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import {
   generatePackageJsonContent,
   generateReadmeContent,
 } from '../lib/utils/template-defaults'
 
+interface ExtractFlags {
+  directusToken: string;
+  directusUrl: string;
+  programmatic: boolean;
+  templateLocation: string;
+  templateName: string;
+}
+
 const separator = '------------------'
 
 export default class ExtractCommand extends Command {
   static description = 'Extract a template from a Directus instance.'
 
-  static examples = ['$ directus-template-cli extract']
+  static examples = [
+    '$ directus-template-cli extract',
+    '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
+  ]
+
+  static flags = {
+    directusToken: Flags.string({
+      description: 'Token to use for the Directus instance',
+      env: 'SOURCE_DIRECTUS_TOKEN',
+    }),
+    directusUrl: Flags.string({
+      description: 'URL of the Directus instance to extract the template from',
+      env: 'SOURCE_DIRECTUS_URL',
+    }),
+    programmatic: Flags.boolean({
+      char: 'p',
+      default: false,
+      description: 'Run in programmatic mode (non-interactive) for use cases such as CI/CD pipelines.',
+      summary: 'Run in programmatic mode',
+    }),
+    templateLocation: Flags.string({
+      dependsOn: ['programmatic'],
+      description: 'Directory to extract the template to',
+      env: 'TEMPLATE_LOCATION',
+    }),
+    templateName: Flags.string({
+      dependsOn: ['programmatic'],
+      description: 'Name of the template',
+      env: 'TEMPLATE_NAME',
+    }),
+  }
 
   public async run(): Promise<void> {
-    const templateName = await ux.prompt('What is the name of the template?.')
+    const {flags} = await this.parse(ExtractCommand)
+    const typedFlags = flags as unknown as ExtractFlags
 
-    const directory = await ux.prompt(
-      "What directory would you like to extract the template to? If it doesn't exist, it will be created.", {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
-    )
+    await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags))
+  }
 
-    this.log(`You selected ${directory}`)
-
+  private async extractTemplate(templateName: string, directory: string, flags: ExtractFlags): Promise<void> {
     try {
-      // Check if directory exists, if not, then create it.
       if (!fs.existsSync(directory)) {
         fs.mkdirSync(directory, {recursive: true})
       }
 
-      // Create package.json and README.md
       const packageJSONContent = generatePackageJsonContent(templateName)
       const readmeContent = generateReadmeContent(templateName)
 
-      // Write the content to the specified directory
       const packageJSONPath = path.join(directory, 'package.json')
       const readmePath = path.join(directory, 'README.md')
 
       fs.writeFileSync(packageJSONPath, packageJSONContent)
       fs.writeFileSync(readmePath, readmeContent)
     } catch (error) {
-      console.error(
-        `Failed to create directory or write files: ${error.message}`,
-      )
+      ux.error(`Failed to create directory or write files: ${error.message}`)
     }
 
-    this.log(separator)
+    ux.log(separator)
 
-    const directusUrl = await getDirectusUrl()
-    await getDirectusToken(directusUrl)
-
-    this.log(separator)
-
-    // Run the extract script
-    ux.action.start(
-      `Extracting template - from ${directusUrl} to ${directory}`,
-    )
+    ux.action.start(`Extracting template - from ${flags.directusUrl} to ${directory}`)
 
     await extract(directory)
 
     ux.action.stop()
 
-    this.log(separator)
-
-    this.log('Template extracted successfully.')
-
+    ux.log(separator)
+    ux.log('Template extracted successfully.')
     this.exit(0)
+  }
+
+  private async initializeDirectusApi(flags: ExtractFlags): Promise<void> {
+    api.initialize(flags.directusUrl)
+    try {
+      api.setAuthToken(flags.directusToken)
+      const response = await api.client.request(readMe())
+      ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
+    } catch {
+      throw new Error('Invalid Directus token. Please check your credentials.')
+    }
+  }
+
+  private async runInteractive(flags: ExtractFlags): Promise<void> {
+    const templateName = await ux.prompt('What is the name of the template?')
+
+    const directory = await ux.prompt(
+      "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
+      {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
+    )
+
+    ux.log(`You selected ${directory}`)
+
+    // Get Directus URL and token
+    const directusUrl = await getDirectusUrl()
+    await getDirectusToken(directusUrl)
+
+    await this.extractTemplate(templateName, directory, flags)
+  }
+
+  private async runProgrammatic(flags: ExtractFlags): Promise<void> {
+    this.validateProgrammaticFlags(flags)
+
+    const {templateLocation, templateName} = flags
+
+    await this.initializeDirectusApi(flags)
+
+    await this.extractTemplate(templateName, templateLocation, flags)
+  }
+
+  private validateProgrammaticFlags(flags: ExtractFlags): void {
+    if (!flags.directusUrl || !flags.directusToken) {
+      ux.error('Directus URL and token are required for programmatic mode.')
+    }
+
+    if (!flags.templateLocation) {
+      ux.error('Template location is required for programmatic mode.')
+    }
+
+    if (!flags.templateName) {
+      ux.error('Template name is required for programmatic mode.')
+    }
   }
 }
