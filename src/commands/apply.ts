@@ -155,6 +155,8 @@ export default class ApplyCommand extends Command {
   }
 
   private async runInteractive(flags: ApplyFlags): Promise<void> {
+    const validatedFlags = this.validateFlags(flags)
+
     const templateType = await inquirer.prompt([
       {
         choices: [
@@ -211,8 +213,8 @@ export default class ApplyCommand extends Command {
     await getDirectusToken(directusUrl)
 
     if (template) {
-      ux.log(`Applying template - ${template.templateName} to ${flags.directusUrl}`)
-      await apply(template.directoryPath, flags)
+      ux.log(`Applying template - ${template.templateName} to ${directusUrl}`)
+      await apply(template.directoryPath, validatedFlags)
 
       ux.action.stop()
       ux.log(separator)
@@ -222,7 +224,7 @@ export default class ApplyCommand extends Command {
   }
 
   private async runProgrammatic(flags: ApplyFlags): Promise<void> {
-    const validatedFlags = this.validateProgrammaticFlags(flags)
+    const validatedFlags = this.validateFlags(flags)
 
     let template: Template
 
@@ -258,13 +260,15 @@ export default class ApplyCommand extends Command {
     ux.exit(0)
   }
 
-  private validateProgrammaticFlags(flags: ApplyFlags): ApplyFlags {
-    if (!flags.directusUrl || !flags.directusToken) {
-      ux.error('Directus URL and token are required for programmatic mode.')
-    }
+  private validateFlags(flags: ApplyFlags): ApplyFlags {
+    if (flags.programmatic) {
+      if (!flags.directusUrl || !flags.directusToken) {
+        ux.error('Directus URL and token are required for programmatic mode.')
+      }
 
-    if (!flags.templateLocation) {
-      ux.error('Template location is required for programmatic mode.')
+      if (!flags.templateLocation) {
+        ux.error('Template location is required for programmatic mode.')
+      }
     }
 
     const loadFlags = [
