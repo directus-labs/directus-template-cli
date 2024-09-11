@@ -52,8 +52,6 @@ export default async function loadAccess(dir: string) {
         path: '/access',
       }))
 
-      ux.log(`Created new access: ${acc.id}`)
-
       // Add the new access to our maps
       existingAccessById.set(acc.id, acc)
       existingAccessByCompositeKey.set(compositeKey, acc)

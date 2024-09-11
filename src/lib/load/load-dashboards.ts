@@ -31,7 +31,6 @@ export default async function loadDashboards(dir: string) {
   await Promise.all(filteredDashboards.map(async dashboard => {
     try {
       await api.client.request(createDashboard(dashboard))
-      ux.log(`Created new dashboard: ${dashboard.name}`)
     } catch (error) {
       catchError(error)
     }
@@ -65,7 +64,6 @@ export async function loadPanels(dir: string) {
   await Promise.all(filteredPanels.map(async panel => {
     try {
       await api.client.request(createPanel(panel))
-      ux.log(`Created new panel: ${panel.id}`)
     } catch (error) {
       catchError(error)
     }

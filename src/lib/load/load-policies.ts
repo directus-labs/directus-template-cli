@@ -27,7 +27,6 @@ export default async function loadPolicies(dir: string) {
 
       // Create new policy
       await api.client.request(createPolicy(policy))
-      ux.log(`Created new policy: ${policy.name}`)
 
       // Add the new policy ID to our set of existing policies
       existingPolicyIds.add(policy.id)

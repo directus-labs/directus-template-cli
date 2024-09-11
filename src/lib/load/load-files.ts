@@ -59,7 +59,6 @@ export default async function loadFiles(dir: string) {
 
       try {
         await api.client.request(uploadFiles(form))
-        ux.log(`Uploaded file: ${fileName}`)
       } catch (error) {
         catchError(error)
       }

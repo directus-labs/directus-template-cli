@@ -37,7 +37,6 @@ export default async function loadRoles(dir: string) {
 
       // Create new role
       await api.client.request(createRole(role))
-      ux.log(`Created new role: ${role.name}`)
       // Add the new role ID and name to our sets of existing roles
       existingRoleIds.add(role.id)
       existingRoleNames.add(role.name.toLowerCase())

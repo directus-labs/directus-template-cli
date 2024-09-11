@@ -43,7 +43,6 @@ async function addRelations(relations: any[]) {
   for await (const relation of relations) {
     try {
       await api.client.request(createRelation(relation))
-      ux.log(`Created new relation: ${relation.collection}:${relation.field}:${relation.related_collection}`)
     } catch (error) {
       catchError(error)
     }
