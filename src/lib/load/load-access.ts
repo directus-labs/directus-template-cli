@@ -59,6 +59,7 @@ export default async function loadAccess(dir: string) {
       catchError(error, {
         context: {
           access: acc,
+          operation: 'createAccess',
         },
       })
     }

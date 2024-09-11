@@ -33,7 +33,7 @@ export async function getDirectusToken(directusUrl: string) {
       context: {
         directusUrl,
         message: 'Invalid token. Please try again.',
-        operation: 'Validating Directus token',
+        operation: 'getDirectusToken',
       },
     })
     return getDirectusToken(directusUrl)
