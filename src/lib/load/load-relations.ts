@@ -1,8 +1,8 @@
-import {createRelation} from '@directus/sdk'
+import {createRelation, readRelations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 /**
@@ -13,9 +13,24 @@ export default async function loadRelations(dir: string) {
   const relations = readFile('relations', dir)
   ux.action.start(`Loading ${relations.length} relations`)
 
-  const relationsToAdd = relations.map(i => {
-    delete i.meta.id
-    return i
+  // Fetch existing relations
+  const existingRelations = await api.client.request(readRelations())
+  const existingRelationKeys = new Set(existingRelations.map(relation =>
+    `${relation.collection}:${relation.field}:${relation.related_collection}`,
+  ))
+
+  const relationsToAdd = relations.filter(relation => {
+    const key = `${relation.collection}:${relation.field}:${relation.related_collection}`
+    if (existingRelationKeys.has(key)) {
+      ux.log(`Skipping existing relation: ${key}`)
+      return false
+    }
+
+    return true
+  }).map(relation => {
+    const cleanRelation = {...relation}
+    delete cleanRelation.meta.id
+    return cleanRelation
   })
 
   await addRelations(relationsToAdd)
@@ -28,8 +43,9 @@ async function addRelations(relations: any[]) {
   for await (const relation of relations) {
     try {
       await api.client.request(createRelation(relation))
+      ux.log(`Created new relation: ${relation.collection}:${relation.field}:${relation.related_collection}`)
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 }
