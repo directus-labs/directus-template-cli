@@ -5,6 +5,7 @@ import * as inquirer from 'inquirer'
 import apply from '../lib/load/index.js'
 import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
+import catchError from '../lib/utils/catch-error'
 import {getCommunityTemplates, getGithubTemplate, getLocalTemplate} from '../lib/utils/get-template'
 import openUrl from '../lib/utils/open-url'
 
@@ -144,7 +145,9 @@ export default class ApplyCommand extends Command {
       const response = await api.client.request(readMe())
       ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
-      throw new Error('Invalid Directus token. Please check your credentials.')
+      catchError('Invalid Directus token. Please check your credentials.', {
+        fatal: true,
+      })
     }
   }
 
@@ -249,7 +252,9 @@ export default class ApplyCommand extends Command {
     }
 
     default: {
-      throw new Error('Invalid template type')
+      catchError('Invalid template type. Please check your template type.', {
+        fatal: true,
+      })
     }
     }
 

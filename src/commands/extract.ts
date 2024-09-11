@@ -7,6 +7,7 @@ import slugify from 'slugify'
 import extract from '../lib/extract/'
 import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
+import catchError from '../lib/utils/catch-error'
 import {
   generatePackageJsonContent,
   generateReadmeContent,
@@ -102,7 +103,9 @@ export default class ExtractCommand extends Command {
       const response = await api.client.request(readMe())
       ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
-      throw new Error('Invalid Directus token. Please check your credentials.')
+      catchError('Invalid Directus token. Please check your credentials.', {
+        fatal: true,
+      })
     }
   }
 

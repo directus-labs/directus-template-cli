@@ -114,7 +114,7 @@ async function getCollectionPrimaryKeys(dir: string) {
 
 function getPrimaryKey(collectionsMap: any, collection: string) {
   if (!collectionsMap[collection]) {
-    throw new Error(`Collection ${collection} not found in collections map`)
+    catchError(`Collection ${collection} not found in collections map`)
   }
 
   return collectionsMap[collection]

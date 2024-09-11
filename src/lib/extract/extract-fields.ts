@@ -2,8 +2,8 @@ import {readFields} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
-
 /**
  * Extract fields from the Directus instance
  */
@@ -32,8 +32,6 @@ export default async function extractFields(dir: string) {
     await writeToFile('fields', fields, dir)
     ux.log('Extracted fields')
   } catch (error) {
-    ux.warn('Error extracting Fields:')
-    ux.warn(error.message)
-    console.error(error)
+    catchError(error.message)
   }
 }
