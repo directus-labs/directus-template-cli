@@ -40,6 +40,7 @@ export default function catchError(error: unknown, options: Options = {}, logToF
 }
 
 function isDirectusError(error: unknown): error is DirectusError {
+  // @ts-ignore
   return error && Array.isArray(error.errors) && error.errors.length > 0
 }
 
