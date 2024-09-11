@@ -29,7 +29,6 @@ export default async function loadFlows(dir: string) {
       }
 
       await api.client.request(createFlow(flow))
-      ux.log(`Created new flow: ${flow.name}`)
       existingFlowIds.add(flow.id)
     } catch (error) {
       catchError(error)
