@@ -2,8 +2,8 @@ import {createUser, readUsers} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import getRoleIds from '../utils/get-role-ids'
 import catchError from '../utils/catch-error'
+import getRoleIds from '../utils/get-role-ids'
 import readFile from '../utils/read-file'
 
 export default async function loadUsers(
@@ -22,6 +22,7 @@ export default async function loadUsers(
         _in: incomingUserEmails,
       },
     },
+    limit: -1,
   }))
 
   const filteredUsers = users.map(user => {

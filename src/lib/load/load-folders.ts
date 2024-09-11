@@ -1,4 +1,4 @@
-import {createFolders, updateFolder} from '@directus/sdk'
+import {createFolders, readFolders, updateFolder} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
@@ -10,16 +10,41 @@ export default async function loadFolders(dir: string) {
   ux.action.start(`Loading ${folders.length} folders`)
 
   try {
-    const folderSkeleton = folders.map(folder => ({id: folder.id, name: folder.name}))
-
-    // Create the folders
-    await api.client.request(createFolders(folderSkeleton))
-
-    // Update the folders with relationships concurrently
-    await Promise.all(folders.map(async folder => {
-      const {id, ...rest} = folder
-      await api.client.request(updateFolder(id, rest))
+    // Fetch existing folders
+    const existingFolders = await api.client.request(readFolders({
+      limit: -1,
     }))
+    const existingFolderIds = new Set(existingFolders.map(folder => folder.id))
+
+    const foldersToAdd = folders.filter(folder => {
+      if (existingFolderIds.has(folder.id)) {
+        ux.log(`Skipping existing folder: ${folder.name}`)
+        return false
+      }
+
+      return true
+    })
+
+    if (foldersToAdd.length > 0) {
+      const folderSkeleton = foldersToAdd.map(folder => ({id: folder.id, name: folder.name}))
+
+      // Create the folders
+      await api.client.request(createFolders(folderSkeleton))
+      ux.log(`Created ${foldersToAdd.length} new folders`)
+
+      // Update the folders with relationships concurrently
+      await Promise.all(foldersToAdd.map(async folder => {
+        const {id, ...rest} = folder
+        try {
+          await api.client.request(updateFolder(id, rest))
+          ux.log(`Updated relationships for folder: ${folder.name}`)
+        } catch (error) {
+          catchError(error)
+        }
+      }))
+    } else {
+      ux.log('No new folders to create')
+    }
   } catch (error) {
     catchError(error)
   }
