@@ -37,7 +37,6 @@ export default async function loadFolders(dir: string) {
         const {id, ...rest} = folder
         try {
           await api.client.request(updateFolder(id, rest))
-          ux.log(`Updated relationships for folder: ${folder.name}`)
         } catch (error) {
           catchError(error)
         }
