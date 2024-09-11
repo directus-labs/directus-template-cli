@@ -54,8 +54,8 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   }
 
   if (flags.files) {
-    await loadFiles(source)
     await loadFolders(source)
+    await loadFiles(source)
   }
 
   if (flags.content) {
