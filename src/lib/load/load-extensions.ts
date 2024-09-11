@@ -18,6 +18,8 @@ async function installExtension(extension: any): Promise<void> {
 }
 
 export default async function loadExtensions(dir: string): Promise<void> {
+  ux.action.start('Loading extensions')
+
   const extensions: Extension[] = readFile('extensions', dir)
 
   if (extensions && extensions.length > 0) {
@@ -71,4 +73,6 @@ export default async function loadExtensions(dir: string): Promise<void> {
   } else {
     ux.log('No extensions found or extensions file is empty. Skipping extension installation.')
   }
+
+  ux.action.stop()
 }
