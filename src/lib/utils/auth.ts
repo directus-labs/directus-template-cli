@@ -35,7 +35,6 @@ export async function getDirectusToken(directusUrl: string) {
         message: 'Invalid token. Please try again.',
         operation: 'Validating Directus token',
       },
-      logToFile: true,
     })
     return getDirectusToken(directusUrl)
   }

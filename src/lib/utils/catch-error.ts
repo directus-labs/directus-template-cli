@@ -15,10 +15,9 @@ interface DirectusError {
 interface Options {
     context?: Record<string, any>
     fatal?: boolean
-    logToFile?: boolean
 }
 
-export default function catchError(error: unknown, options: Options = {}) {
+export default function catchError(error: unknown, options: Options = {}, logToFile = true) {
   const errorMessage = isDirectusError(error) ? formatDirectusError(error)
     : (error instanceof Error ? formatGenericError(error)
       : `Unknown error: ${JSON.stringify(error)}`)
@@ -35,12 +34,12 @@ export default function catchError(error: unknown, options: Options = {}) {
 
   options.fatal ? ux.error(formattedMessage) : ux.warn(formattedMessage)
 
-  if (options.logToFile) {
+  if (logToFile) {
     logger.log('error', errorMessage, options.context)
   }
 }
 
-function isDirectusError(error: any): error is DirectusError {
+function isDirectusError(error: unknown): error is DirectusError {
   return error && Array.isArray(error.errors) && error.errors.length > 0
 }
 
