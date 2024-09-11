@@ -2,7 +2,7 @@ import {createPolicy, readPolicies} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadPolicies(dir: string) {
@@ -32,7 +32,7 @@ export default async function loadPolicies(dir: string) {
       // Add the new policy ID to our set of existing policies
       existingPolicyIds.add(policy.id)
     } catch (error) {
-      logError(error)
+      catchError(error)
     }
   }
 

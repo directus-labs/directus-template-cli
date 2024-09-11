@@ -5,7 +5,7 @@ import {readSettings, updateSettings} from '@directus/sdk'
 import {defu} from 'defu'
 
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadSettings(dir: string) {
@@ -17,6 +17,6 @@ export default async function loadSettings(dir: string) {
     const mergedSettings = defu(currentSettings, settings) as DirectusSettings
     await api.client.request(updateSettings(mergedSettings))
   } catch (error) {
-    logError(error)
+    catchError(error)
   }
 }
