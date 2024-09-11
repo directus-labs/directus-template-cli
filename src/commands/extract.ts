@@ -118,7 +118,10 @@ export default class ExtractCommand extends Command {
 
     // Get Directus URL and token
     const directusUrl = await getDirectusUrl()
-    await getDirectusToken(directusUrl)
+    const directusToken = await getDirectusToken(directusUrl)
+
+    flags.directusUrl = directusUrl
+    flags.directusToken = directusToken
 
     await this.extractTemplate(templateName, directory, flags)
   }

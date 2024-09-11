@@ -39,7 +39,7 @@ export default class ApplyCommand extends Command {
   static examples = [
     '$ directus-template-cli apply',
     '$ directus-template-cli apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local"',
-    '$ directus-template-cli apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --no-content --no-users',
+    '$ directus-template-cli@beta apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --no-content --no-users',
   ]
 
   static flags = {
@@ -210,7 +210,10 @@ export default class ApplyCommand extends Command {
 
     // Get Directus URL and token
     const directusUrl = await getDirectusUrl()
-    await getDirectusToken(directusUrl)
+    const directusToken = await getDirectusToken(directusUrl)
+
+    flags.directusUrl = directusUrl
+    flags.directusToken = directusToken
 
     if (template) {
       ux.log(`Applying template - ${template.templateName} to ${directusUrl}`)
