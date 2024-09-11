@@ -14,49 +14,71 @@ import loadPolicies from './load-policies'
 import loadPresets from './load-presets'
 import loadRelations from './load-relations'
 import loadRoles from './load-roles'
-// import loadSchema from './load-schema'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
 import loadUsers from './load-users'
 
-export default async function apply(dir: string) {
-  // Get the source directory for the actual files
+interface ApplyFlags {
+  content: boolean;
+  dashboards: boolean;
+  extensions: boolean;
+  files: boolean;
+  flows: boolean;
+  permissions: boolean;
+  schema: boolean;
+  settings: boolean;
+  users: boolean;
+}
+
+export default async function apply(dir: string, flags: ApplyFlags) {
   const source = dir + '/src'
-
   const isTemplateOk = await checkTemplate(source)
-
   if (!isTemplateOk) {
     ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
   }
 
-  await loadCollections(source)
-  await loadRelations(source)
+  if (flags.schema) {
+    await loadCollections(source)
+    await loadRelations(source)
+  }
 
-  await loadRoles(source)
-  await loadPolicies(source)
+  if (flags.permissions) {
+    await loadRoles(source)
+    await loadPolicies(source)
+    await loadAccess(source)
+    await loadPermissions(source)
+  }
 
-  await loadFolders(source)
-  await loadFiles(source)
+  if (flags.users) {
+    await loadUsers(source)
+  }
 
-  await loadUsers(source)
+  if (flags.files) {
+    await loadFiles(source)
+    await loadFolders(source)
+  }
 
-  await loadAccess(source)
+  if (flags.content) {
+    await loadData(source)
+  }
 
-  await loadDashboards(source)
+  if (flags.dashboards) {
+    await loadDashboards(source)
+  }
 
-  await loadData(source)
+  if (flags.flows) {
+    await loadFlows(source)
+  }
 
-  await loadFlows(source)
+  if (flags.settings) {
+    await loadSettings(source)
+    await loadTranslations(source)
+    await loadPresets(source)
+  }
 
-  await loadPresets(source)
-
-  await loadTranslations(source)
-
-  await loadSettings(source)
-
-  await loadPermissions(source)
-
-  await loadExtensions(source)
+  if (flags.extensions) {
+    await loadExtensions(source)
+  }
 
   return {}
 }
