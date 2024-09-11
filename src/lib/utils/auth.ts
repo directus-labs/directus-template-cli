@@ -2,6 +2,7 @@ import {readMe} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk'
+import catchError from './catch-error'
 import validateUrl from './validate-url'
 
 export async function getDirectusUrl() {
@@ -28,8 +29,14 @@ export async function getDirectusToken(directusUrl: string) {
     ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
     return directusToken
   } catch (error) {
-    console.log(error)
-    ux.warn('Invalid token. Please try again.')
+    catchError(error, {
+      context: {
+        directusUrl,
+        message: 'Invalid token. Please try again.',
+        operation: 'Validating Directus token',
+      },
+      logToFile: true,
+    })
     return getDirectusToken(directusUrl)
   }
 }
