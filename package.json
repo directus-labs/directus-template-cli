@@ -12,7 +12,6 @@
   "repository": "directus-community/directus-template-cli",
   "files": [
     "/bin",
-    "/templates",
     "/dist",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
