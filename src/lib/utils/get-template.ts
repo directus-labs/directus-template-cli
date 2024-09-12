@@ -1,4 +1,5 @@
 import {downloadTemplate} from 'giget'
+import fs from 'node:fs'
 import path from 'node:path'
 
 import resolvePathAndCheckExistence from './path'
@@ -38,6 +39,57 @@ export async function getLocalTemplate(localTemplateDir: string): Promise<Templa
   }
 
   return readTemplate(resolvedDir)
+}
+
+export async function getInteractiveLocalTemplate(localTemplateDir: string): Promise<Template[]> {
+  const resolvedDir = resolvePathAndCheckExistence(localTemplateDir)
+
+  if (!resolvedDir) {
+    throw new Error('Directory does not exist.')
+  }
+
+  const directTemplate = await readTemplate(resolvedDir)
+  if (directTemplate) {
+    return [directTemplate]
+  }
+
+  const templates = await readAllTemplates(resolvedDir)
+
+  if (templates.length === 0) {
+    // If no templates found, search nested directories
+    const nestedTemplates = await findNestedTemplates(resolvedDir, 2)
+
+    if (nestedTemplates.length === 0) {
+      throw new Error('No valid templates found in the specified directory or its subdirectories.')
+    }
+
+    return nestedTemplates
+  }
+
+  return templates
+}
+
+async function findNestedTemplates(dir: string, depth: number): Promise<Template[]> {
+  if (depth === 0) return []
+
+  const templates: Template[] = []
+  const entries = await fs.promises.readdir(dir, {withFileTypes: true})
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const fullPath = path.join(dir, entry.name)
+      const dirTemplates = await readAllTemplates(fullPath)
+      templates.push(...dirTemplates)
+
+      if (dirTemplates.length === 0 && depth > 1) {
+        // If no templates found and we can go deeper, search subdirectories
+        const nestedTemplates = await findNestedTemplates(fullPath, depth - 1)
+        templates.push(...nestedTemplates)
+      }
+    }
+  }
+
+  return templates
 }
 
 export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template> {

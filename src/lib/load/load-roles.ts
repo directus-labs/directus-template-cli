@@ -1,6 +1,7 @@
 import {createRole, readRoles, updateRole} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import getRoleIds from '../utils/get-role-ids'
@@ -8,7 +9,7 @@ import readFile from '../utils/read-file'
 
 export default async function loadRoles(dir: string) {
   const roles = readFile('roles', dir)
-  ux.action.start(`Loading ${roles.length} roles`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${roles.length} roles`))
   const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
   // Fetch existing roles
@@ -31,7 +32,6 @@ export default async function loadRoles(dir: string) {
   for await (const role of cleanedUpRoles) {
     try {
       if (existingRoleIds.has(role.id)) {
-        ux.log(`Skipping existing role: ${role.name}`)
         continue
       }
 
@@ -56,12 +56,10 @@ export default async function loadRoles(dir: string) {
 
       const simplifiedRole = {parent: role.parent}
       await api.client.request(updateRole(role.id, simplifiedRole))
-      ux.log(`Updated parent for role: ${role.name}`)
     } catch (error) {
       catchError(error)
     }
   }
 
   ux.action.stop()
-  ux.log('Loaded roles')
 }

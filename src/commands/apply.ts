@@ -2,11 +2,13 @@ import {readMe} from '@directus/sdk'
 import {Command, Flags, ux} from '@oclif/core'
 import * as inquirer from 'inquirer'
 
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
 import apply from '../lib/load/index.js'
 import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
 import catchError from '../lib/utils/catch-error'
-import {getCommunityTemplates, getGithubTemplate, getLocalTemplate} from '../lib/utils/get-template'
+import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template'
+import {logger} from '../lib/utils/logger'
 import openUrl from '../lib/utils/open-url'
 
 interface Template {
@@ -31,8 +33,6 @@ interface ApplyFlags {
   templateType: 'community' | 'github' | 'local';
   users: boolean;
 }
-
-const separator = '------------------'
 
 export default class ApplyCommand extends Command {
   static description = 'Apply a template to a blank Directus instance.'
@@ -143,9 +143,9 @@ export default class ApplyCommand extends Command {
     try {
       api.setAuthToken(flags.directusToken)
       const response = await api.client.request(readMe())
-      ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
+      ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
-      catchError('Invalid Directus token. Please check your credentials.', {
+      catchError('-- Invalid Directus token. Please check your credentials.', {
         fatal: true,
       })
     }
@@ -159,6 +159,8 @@ export default class ApplyCommand extends Command {
 
   private async runInteractive(flags: ApplyFlags): Promise<void> {
     const validatedFlags = this.validateFlags(flags)
+
+    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Welcome to the Directus Template CLI'))
 
     const templateType = await inquirer.prompt([
       {
@@ -193,7 +195,7 @@ export default class ApplyCommand extends Command {
 
     case 'local': {
       const localTemplateDir = await ux.prompt('What is the local template directory?')
-      template = await getLocalTemplate(localTemplateDir)
+      template = await this.selectLocalTemplate(localTemplateDir)
       break
     }
 
@@ -208,8 +210,8 @@ export default class ApplyCommand extends Command {
     }
     }
 
-    ux.log(`You selected ${template.templateName}`)
-    ux.log(separator)
+    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
+    ux.log(SEPARATOR)
 
     // Get Directus URL and token
     const directusUrl = await getDirectusUrl()
@@ -219,12 +221,12 @@ export default class ApplyCommand extends Command {
     flags.directusToken = directusToken
 
     if (template) {
-      ux.log(`Applying template - ${template.templateName} to ${directusUrl}`)
+      ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, `Applying template - ${template.templateName} to ${directusUrl}`))
       await apply(template.directoryPath, validatedFlags)
 
       ux.action.stop()
-      ux.log(separator)
-      ux.log('Template applied successfully.')
+      ux.log(SEPARATOR)
+      ux.info('Template applied successfully.')
       ux.exit(0)
     }
   }
@@ -259,13 +261,43 @@ export default class ApplyCommand extends Command {
     }
 
     await this.initializeDirectusApi(validatedFlags)
-    ux.log(`Applying template - ${template.templateName} to ${validatedFlags.directusUrl}`)
+
+    const logMessage = `Applying template - ${template.templateName} to ${validatedFlags.directusUrl}`
+    ux.styledHeader(logMessage)
+    logger.log('info', logMessage)
+
     await apply(template.directoryPath, validatedFlags)
 
     ux.action.stop()
-    ux.log(separator)
-    ux.log('Template applied successfully.')
+    ux.log(SEPARATOR)
+    ux.info('Template applied successfully.')
     ux.exit(0)
+  }
+
+  private async selectLocalTemplate(localTemplateDir: string): Promise<Template> {
+    try {
+      const templates = await getInteractiveLocalTemplate(localTemplateDir)
+
+      if (templates.length === 1) {
+        return templates[0]
+      }
+
+      const {selectedTemplate} = await inquirer.prompt([
+        {
+          choices: templates.map(t => ({name: `${t.templateName} (${ux.colorize('dim', t.directoryPath)})`, value: t})),
+          message: 'Multiple templates found. Please select one:',
+          name: 'selectedTemplate',
+          type: 'list',
+        },
+      ])
+      return selectedTemplate
+    } catch (error) {
+      if (error instanceof Error) {
+        ux.error(error.message)
+      } else {
+        ux.error('An unknown error occurred while getting the local template.')
+      }
+    }
   }
 
   private validateFlags(flags: ApplyFlags): ApplyFlags {

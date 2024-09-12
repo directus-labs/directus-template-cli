@@ -1,13 +1,14 @@
 import {createPresets, readPresets} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadPresets(dir: string) {
   const presets = readFile('presets', dir)
-  ux.action.start(`Loading ${presets.length} presets`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${presets.length} presets`))
 
   // Fetch existing presets
   const existingPresets = await api.client.request(readPresets({
@@ -30,14 +31,12 @@ export default async function loadPresets(dir: string) {
   if (presetsToAdd.length > 0) {
     try {
       await api.client.request(createPresets(presetsToAdd))
-      ux.log(`Created ${presetsToAdd.length} new presets`)
     } catch (error) {
       catchError(error)
     }
   } else {
-    ux.log('No new presets to create')
+    // ux.info('-- No new presets to create')
   }
 
   ux.action.stop()
-  ux.log('Loaded presets')
 }

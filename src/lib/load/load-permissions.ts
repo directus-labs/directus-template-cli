@@ -1,6 +1,7 @@
 import {createPermissions, readPermissions} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
@@ -8,7 +9,7 @@ import readFile from '../utils/read-file'
 export default async function loadPermissions(
   dir: string) {
   const permissions = readFile('permissions', dir)
-  ux.action.start(`Loading ${permissions.length} permissions`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${permissions.length} permissions`))
 
   try {
     const existingPermissions = await api.client.request(readPermissions({
@@ -26,14 +27,10 @@ export default async function loadPermissions(
 
     if (newPermissions.length > 0) {
       await api.client.request(createPermissions(newPermissions))
-      ux.log(`Created ${newPermissions.length} new permissions`)
-    } else {
-      ux.log('No new permissions to create')
     }
   } catch (error) {
     catchError(error)
   }
 
   ux.action.stop()
-  ux.log('Loaded permissions')
 }

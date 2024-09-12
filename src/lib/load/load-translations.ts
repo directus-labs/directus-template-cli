@@ -1,13 +1,14 @@
 import {createTranslations, readTranslations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadTranslations(dir: string) {
-  ux.action.start('Loading translations')
   const translations = readFile('translations', dir)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${translations.length} translations`))
 
   // Fetch existing translations
   const existingTranslations = await api.client.request(readTranslations({
@@ -18,7 +19,6 @@ export default async function loadTranslations(dir: string) {
   const newTranslations = translations.filter(t => {
     const key = `${t.language}_${t.key}`
     if (existingTranslationKeys.has(key)) {
-      ux.log(`Skipping existing translation: ${key}`)
       return false
     }
 
@@ -28,14 +28,12 @@ export default async function loadTranslations(dir: string) {
   if (newTranslations.length > 0) {
     try {
       await api.client.request(createTranslations(newTranslations))
-      ux.log(`Created ${newTranslations.length} new translations`)
     } catch (error) {
       catchError(error)
     }
   } else {
-    ux.log('No new translations to create')
+    // ux.info('-- No new translations to create')
   }
 
   ux.action.stop()
-  ux.log('Loaded translations')
 }

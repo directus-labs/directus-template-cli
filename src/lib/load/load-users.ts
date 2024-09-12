@@ -1,6 +1,7 @@
 import {createUser, readUsers} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import getRoleIds from '../utils/get-role-ids'
@@ -10,17 +11,19 @@ export default async function loadUsers(
   dir: string,
 ) {
   const users = readFile('users', dir)
-  ux.action.start(`Loading ${users.length} users`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${users.length} users`))
 
   const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
   const incomingUserEmails = users.map(user => user.email)
+  const incomingUserIds = users.map(user => user.id).filter(Boolean)
 
   const existingUsers = await api.client.request(readUsers({
     filter: {
-      email: {
-        _in: incomingUserEmails,
-      },
+      _or: [
+        {email: {_in: incomingUserEmails}},
+        {id: {_in: incomingUserIds}},
+      ],
     },
     limit: -1,
   }))
@@ -41,9 +44,17 @@ export default async function loadUsers(
   })
 
   for await (const user of filteredUsers) {
-    // If user email is null or already in use, we just delete the email key to pass validation and retain the user and any realationship data
-    if (user.email === null || existingUsers.some(existingUser => existingUser.email === user.email)) {
+    const existingUser = existingUsers.find(
+      existing => existing.email === user.email || existing.id === user.id,
+    )
+
+    if (existingUser) {
+      // If user already exists, we'll skip creating a new one
       delete user.email
+      delete user.id
+      // You might want to update the existing user here instead
+      // await api.client.request(updateUser(existingUser.id, user))
+      continue
     }
 
     try {
@@ -54,5 +65,4 @@ export default async function loadUsers(
   }
 
   ux.action.stop()
-  ux.log('Loaded users')
 }

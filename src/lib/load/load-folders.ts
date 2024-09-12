@@ -1,13 +1,14 @@
 import {createFolders, readFolders, updateFolder} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFolders(dir: string) {
   const folders = readFile('folders', dir)
-  ux.action.start(`Loading ${folders.length} folders`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${folders.length} folders`))
 
   try {
     // Fetch existing folders
@@ -18,7 +19,6 @@ export default async function loadFolders(dir: string) {
 
     const foldersToAdd = folders.filter(folder => {
       if (existingFolderIds.has(folder.id)) {
-        ux.log(`Skipping existing folder: ${folder.name}`)
         return false
       }
 
@@ -30,7 +30,6 @@ export default async function loadFolders(dir: string) {
 
       // Create the folders
       await api.client.request(createFolders(folderSkeleton))
-      ux.log(`Created ${foldersToAdd.length} new folders`)
 
       // Update the folders with relationships concurrently
       await Promise.all(foldersToAdd.map(async folder => {
@@ -42,12 +41,11 @@ export default async function loadFolders(dir: string) {
         }
       }))
     } else {
-      ux.log('No new folders to create')
+      // ux.info('-- No new folders to create')
     }
   } catch (error) {
     catchError(error)
   }
 
   ux.action.stop()
-  ux.log('Loaded folders')
 }

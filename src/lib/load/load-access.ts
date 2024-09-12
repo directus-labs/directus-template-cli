@@ -1,5 +1,6 @@
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
@@ -14,7 +15,7 @@ interface Access {
 
 export default async function loadAccess(dir: string) {
   const access = readFile('access', dir) as Access[]
-  ux.action.start(`Loading ${access.length} accesses`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${access.length} accesses`))
 
   // Fetch existing accesses
   const existingAccesses = await api.client.request(() => ({
@@ -31,13 +32,11 @@ export default async function loadAccess(dir: string) {
   for await (const acc of access) {
     try {
       if (existingAccessById.has(acc.id)) {
-        ux.log(`Skipping existing access with ID: ${acc.id}`)
         continue
       }
 
       const compositeKey = getCompositeKey(acc)
       if (existingAccessByCompositeKey.has(compositeKey)) {
-        ux.log(`Skipping existing access with composite key: ${compositeKey}`)
         continue
       }
 
@@ -66,7 +65,6 @@ export default async function loadAccess(dir: string) {
   }
 
   ux.action.stop()
-  ux.log('Loaded Accesses')
 }
 
 // Helper function to generate a composite key for each access

@@ -1,6 +1,7 @@
-import {createCollection, createField, updateCollection} from '@directus/sdk'
+import {createCollection, createField, readCollections, readFields, updateCollection} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
@@ -10,33 +11,56 @@ import readFile from '../utils/read-file'
  */
 
 export default async function loadCollections(dir: string) {
-  const collections = readFile('collections', dir)
-  const fields = readFile('fields', dir)
-  ux.action.start(`Loading ${collections.length} collections and ${fields.length} fields.`)
+  const collectionsToAdd = readFile('collections', dir)
+  const fieldsToAdd = readFile('fields', dir)
 
-  // Remove the group so that we can create the collections
-  const removedGroupKey = structuredClone(collections).map(col => {
-    delete col.meta.group
-    return col
-  })
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${collectionsToAdd.length} collections and ${fieldsToAdd.length} fields`))
 
-  await addCollections(removedGroupKey, fields)
-  await updateCollections(collections)
-  await addCustomFieldsOnSystemCollections(fields)
+  await processCollections(collectionsToAdd, fieldsToAdd)
+  await updateCollections(collectionsToAdd)
+  await addCustomFieldsOnSystemCollections(fieldsToAdd)
 
   ux.action.stop()
-  ux.log('Loaded collections and fields.')
 }
 
-async function addCollections(collections: any[], fields: any[]) {
-  for await (const collection of collections) {
+async function processCollections(collectionsToAdd: any[], fieldsToAdd: any[]) {
+  const existingCollections = await api.client.request(readCollections())
+  const existingFields = await api.client.request(readFields())
+
+  for await (const collection of collectionsToAdd) {
     try {
-      collection.fields = fields.filter(
-        (field: any) => field.collection === collection.collection,
-      )
-      await api.client.request(createCollection(collection))
+      const existingCollection = existingCollections.find((c: any) => c.collection === collection.collection)
+
+      await (existingCollection ? addNewFieldsToExistingCollection(collection.collection, fieldsToAdd, existingFields) : addNewCollectionWithFields(collection, fieldsToAdd))
     } catch (error) {
       catchError(error)
+    }
+  }
+}
+
+async function addNewCollectionWithFields(collection: any, allFields: any[]) {
+  const collectionFields = allFields.filter(field => field.collection === collection.collection)
+  const collectionWithoutGroup = {
+    ...collection,
+    fields: collectionFields,
+    meta: {...collection.meta},
+  }
+  delete collectionWithoutGroup.meta.group
+  await api.client.request(createCollection(collectionWithoutGroup))
+}
+
+async function addNewFieldsToExistingCollection(collectionName: string, fieldsToAdd: any[], existingFields: any[]) {
+  const collectionFieldsToAdd = fieldsToAdd.filter(field => field.collection === collectionName)
+  const existingCollectionFields = existingFields.filter((field: any) => field.collection === collectionName)
+
+  for await (const field of collectionFieldsToAdd) {
+    if (!existingCollectionFields.some((existingField: any) => existingField.field === field.field)) {
+      try {
+        // @ts-ignore
+        await api.client.request(createField(collectionName, field))
+      } catch (error) {
+        catchError(error)
+      }
     }
   }
 }
@@ -63,9 +87,17 @@ async function addCustomFieldsOnSystemCollections(fields: any[]) {
     (field: any) => field.collection.startsWith('directus_'),
   )
 
+  const existingFields = await api.client.request(readFields())
+
   for await (const field of customFields) {
     try {
-      await api.client.request(createField(field.collection, field))
+      const fieldExists = existingFields.some((existingField: any) =>
+        existingField.collection === field.collection && existingField.field === field.field,
+      )
+
+      if (!fieldExists) {
+        await api.client.request(createField(field.collection, field))
+      }
     } catch (error) {
       catchError(error)
     }

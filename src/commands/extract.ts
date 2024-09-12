@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import slugify from 'slugify'
 
+import {SEPARATOR} from '../lib/constants'
 import extract from '../lib/extract/'
 import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
@@ -20,8 +21,6 @@ interface ExtractFlags {
   templateLocation: string;
   templateName: string;
 }
-
-const separator = '------------------'
 
 export default class ExtractCommand extends Command {
   static description = 'Extract a template from a Directus instance.'
@@ -83,7 +82,7 @@ export default class ExtractCommand extends Command {
       ux.error(`Failed to create directory or write files: ${error.message}`)
     }
 
-    ux.log(separator)
+    ux.log(SEPARATOR)
 
     ux.action.start(`Extracting template - from ${flags.directusUrl} to ${directory}`)
 
@@ -91,7 +90,7 @@ export default class ExtractCommand extends Command {
 
     ux.action.stop()
 
-    ux.log(separator)
+    ux.log(SEPARATOR)
     ux.log('Template extracted successfully.')
     this.exit(0)
   }
@@ -101,7 +100,7 @@ export default class ExtractCommand extends Command {
     try {
       api.setAuthToken(flags.directusToken)
       const response = await api.client.request(readMe())
-      ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
+      ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
       catchError('Invalid Directus token. Please check your credentials.', {
         fatal: true,

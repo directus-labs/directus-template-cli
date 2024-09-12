@@ -1,13 +1,13 @@
 import {createPolicy, readPolicies} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
-
 export default async function loadPolicies(dir: string) {
   const policies = readFile('policies', dir)
-  ux.action.start(`Loading ${policies.length} policies`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${policies.length} policies`))
 
   // Fetch existing policies
   const existingPolicies = await api.client.request(readPolicies({
@@ -21,7 +21,7 @@ export default async function loadPolicies(dir: string) {
   for await (const policy of policiesWithoutPublic) {
     try {
       if (existingPolicyIds.has(policy.id)) {
-        ux.log(`Skipping existing policy: ${policy.name}`)
+        ux.action.status = `Skipping existing policy: ${policy.name}`
         continue
       }
 
@@ -36,5 +36,4 @@ export default async function loadPolicies(dir: string) {
   }
 
   ux.action.stop()
-  ux.log('Loaded policies')
 }

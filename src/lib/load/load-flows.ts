@@ -1,69 +1,77 @@
 import {createFlow, createOperations, readFlows, updateOperation} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFlows(dir: string) {
   const flows = readFile('flows', dir)
-  ux.action.start(`Loading ${flows.length} flows`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${flows.length} flows`))
 
-  // Fetch existing flows
-  const existingFlows = await api.client.request(readFlows({
-    limit: -1,
-  }))
-  const existingFlowIds = new Set(existingFlows.map(flow => flow.id))
+  try {
+    // Fetch existing flows
+    const existingFlows = await api.client.request(readFlows({
+      limit: -1,
+    }))
+    const existingFlowIds = new Set(existingFlows.map(flow => flow.id))
 
-  const cleanedUpFlows = flows.map(flow => {
-    const cleanFlow = {...flow}
-    delete cleanFlow.operations
-    return cleanFlow
-  })
+    const cleanedUpFlows = flows.map(flow => {
+      const {operations, ...cleanFlow} = flow
+      return {cleanFlow, operations}
+    })
 
-  for (const flow of cleanedUpFlows) {
-    try {
-      if (existingFlowIds.has(flow.id)) {
-        ux.log(`Skipping existing flow: ${flow.name}`)
-        continue
+    const newFlows = cleanedUpFlows.filter(({cleanFlow}) => !existingFlowIds.has(cleanFlow.id))
+
+    const results = await Promise.allSettled(newFlows.map(({cleanFlow}) =>
+      api.client.request(createFlow(cleanFlow)),
+    ))
+
+    const createdFlowIds = new Set<string>()
+    for (const [index, result] of results.entries()) {
+      if (result.status === 'fulfilled') {
+        createdFlowIds.add(newFlows[index].cleanFlow.id)
+      } else {
+        catchError(result.reason)
       }
-
-      await api.client.request(createFlow(flow))
-      existingFlowIds.add(flow.id)
-    } catch (error) {
-      catchError(error)
     }
+
+    // Only load operations for newly created flows
+    const newOperations: any[] = newFlows
+    .filter(({cleanFlow}) => createdFlowIds.has(cleanFlow.id))
+    .flatMap(({operations}) => operations)
+
+    await loadOperations(newOperations)
+  } catch (error) {
+    catchError(error)
+  } finally {
+    ux.action.stop()
   }
-
-  await loadOperations(dir)
-
-  ux.action.stop()
-  ux.log('Loaded Flows')
 }
 
-export async function loadOperations(dir: string) {
-  const operations = readFile('operations', dir)
-  ux.log(`Loading ${operations.length} operations`)
+export async function loadOperations(operations: any[]) {
+  ux.action.status = `Loading ${operations.length} operations`
 
-  const opsIds = operations.map(i => {
-    const del = {...i}
-    delete del.resolve
-    delete del.reject
-    return del
-  })
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const opsIds = operations.map(({reject, resolve, ...rest}) => rest)
 
-  await api.client.request(createOperations(opsIds))
+    await api.client.request(createOperations(opsIds))
 
-  for (const operation of operations) {
-    const pl = {
-      reject: operation.reject,
-      resolve: operation.resolve,
+    const results = await Promise.allSettled(operations.map(operation =>
+      api.client.request(updateOperation(operation.id, {
+        reject: operation.reject,
+        resolve: operation.resolve,
+      })),
+    ))
+
+    for (const [index, result] of results.entries()) {
+      if (result.status === 'rejected') {
+        catchError(result.reason)
+      }
     }
-
-    try {
-      await api.client.request(updateOperation(operation.id, pl))
-    } catch (error) {
-      catchError(error)
-    }
+  } catch (error) {
+    catchError(error)
   }
 }

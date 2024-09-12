@@ -4,13 +4,14 @@ import {FormData} from 'formdata-node'
 import {readFileSync} from 'node:fs'
 import path from 'node:path'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFiles(dir: string) {
   const files = readFile('files', dir)
-  ux.action.start(`Loading ${files.length} files`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${files.length} files`))
 
   try {
     const fileIds = files.map(file => file.id)
@@ -31,12 +32,10 @@ export default async function loadFiles(dir: string) {
 
     const filesToUpload = files.filter(file => {
       if (existingFileIds.has(file.id)) {
-        ux.log(`Skipping existing file with ID: ${file.id}`)
         return false
       }
 
       if (existingFileNames.has(file.filename_disk)) {
-        ux.log(`Skipping existing file with name: ${file.filename_disk}`)
         return false
       }
 
@@ -63,12 +62,9 @@ export default async function loadFiles(dir: string) {
         catchError(error)
       }
     }))
-
-    ux.log(`Uploaded ${filesToUpload.length} new files`)
   } catch (error) {
     catchError(error)
   }
 
   ux.action.stop()
-  ux.log('Finished loading files')
 }

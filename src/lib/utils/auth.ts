@@ -26,7 +26,7 @@ export async function getDirectusToken(directusUrl: string) {
   try {
     api.setAuthToken(directusToken)
     const response = await api.client.request(readMe())
-    ux.log(`Logged in as ${response.first_name} ${response.last_name}`)
+    ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
     return directusToken
   } catch (error) {
     catchError(error, {

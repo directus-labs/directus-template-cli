@@ -20,7 +20,7 @@ interface Options {
 export default function catchError(error: unknown, options: Options = {}, logToFile = true) {
   const errorMessage = isDirectusError(error) ? formatDirectusError(error)
     : (error instanceof Error ? formatGenericError(error)
-      : `Unknown error: ${JSON.stringify(error)}`)
+      : `${JSON.stringify(error)}`)
 
   const contextString = options.context
     ? Object.entries(options.context)
@@ -28,8 +28,8 @@ export default function catchError(error: unknown, options: Options = {}, logToF
     .join(', ') : ''
 
   const formattedMessage = [
-    contextString && `Context: ${contextString}`,
     errorMessage,
+    contextString && `Context: ${contextString}`,
   ].filter(Boolean).join('\n')
 
   options.fatal ? ux.error(formattedMessage) : ux.warn(formattedMessage)
