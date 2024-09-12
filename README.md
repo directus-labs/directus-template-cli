@@ -160,8 +160,6 @@ Available flags for programmatic mode:
 
 The Directus Template CLI logs information to a file in the `.directus-template-cli/logs` directory.
 
-### Log Generation
-
 Logs are automatically generated for each run of the CLI. Here's how the logging system works:
    - A new log file is created for each CLI run.
    - Log files are stored in the `.directus-template-cli/logs` directory within your current working directory.
