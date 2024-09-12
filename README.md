@@ -33,7 +33,7 @@ You can choose from our community maintained templates or you can also choose a 
 
 ### Programmatic Mode
 
-For CI/CD pipelines or automated scripts, you can use the programmatic mode:
+By default, the CLI will run in interactive mode. For CI/CD pipelines or automated scripts, you can use the programmatic mode:
 
 
 Using a token:
@@ -62,7 +62,7 @@ Available flags for programmatic mode:
 - `--userEmail`: Email for Directus authentication (required if not using token)
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Location of the template to apply (required)
-- `--templateType`: Type of template to apply. Options: community, local, github (required)
+- `--templateType`: Type of template to apply. Options: community, local, github. Defaults to `local`.
 - `--partial`: Enable partial template application
 - `--content`: Load Content (data)
 - `--dashboards`: Load Dashboards
@@ -133,7 +133,7 @@ npx directus-template-cli@latest extract
 
 ### Programmatic Mode
 
-For CI/CD pipelines or automated scripts, you can use the programmatic mode:
+By default, the CLI will run in interactive mode. For CI/CD pipelines or automated scripts, you can use the programmatic mode:
 
 Using a token:
 
