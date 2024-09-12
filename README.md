@@ -112,6 +112,17 @@ This command will automatically include `--permissions` and `--schema` along wit
 
 If you use `--no-` flags, be cautious about excluding dependencies. For instance, using `--no-schema` while including `--content` may lead to errors or incomplete application of the template.
 
+#### Using Environment Variables
+
+You can also pass flags as environment variables. This can be useful for CI/CD pipelines or when you want to avoid exposing sensitive information in command-line arguments. Here are the available environment variables:
+
+- `TARGET_DIRECTUS_URL`: Equivalent to `--directusUrl`
+- `TARGET_DIRECTUS_TOKEN`: Equivalent to `--directusToken`
+- `TARGET_DIRECTUS_EMAIL`: Equivalent to `--userEmail`
+- `TARGET_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
+- `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
+- `TEMPLATE_TYPE`: Equivalent to `--templateType`
+-
 
 ### Existing Data
 
@@ -170,6 +181,16 @@ Available flags for programmatic mode:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Directory to extract the template to (required)
 - `--templateName`: Name of the template (required)
+
+#### Using Environment Variables
+
+Similar to the Apply command, you can use environment variables for the Extract command as well:
+
+- `SOURCE_DIRECTUS_URL`: Equivalent to `--directusUrl`
+- `SOURCE_DIRECTUS_TOKEN`: Equivalent to `--directusToken`
+- `SOURCE_DIRECTUS_EMAIL`: Equivalent to `--userEmail`
+- `SOURCE_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
+- `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 
 ## Logs
 
