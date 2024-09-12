@@ -54,8 +54,12 @@ export async function loadOperations(operations: any[]) {
   ux.action.status = `Loading ${operations.length} operations`
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const opsIds = operations.map(({reject, resolve, ...rest}) => rest)
+    const opsIds = operations.map(operation => {
+      const opCopy = {...operation}
+      delete opCopy.reject
+      delete opCopy.resolve
+      return opCopy
+    })
 
     await api.client.request(createOperations(opsIds))
 
