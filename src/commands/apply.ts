@@ -31,6 +31,8 @@ interface ApplyFlags {
   settings: boolean;
   templateLocation: string;
   templateType: 'community' | 'github' | 'local';
+  userEmail: string;
+  userPassword: string;
   users: boolean;
 }
 
@@ -46,20 +48,18 @@ export default class ApplyCommand extends Command {
   static flags = {
     content: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load Content (data)',
-      relationships: [
-        {flags: ['schema', 'files'], type: 'all'},
-      ],
     }),
     dashboards: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load Dashboards (dashboards, panels)',
     }),
     directusToken: Flags.string({
       description: 'Token to use for the Directus instance',
       env: 'TARGET_DIRECTUS_TOKEN',
+      exclusive: ['userEmail', 'userPassword'],
     }),
     directusUrl: Flags.string({
       description: 'URL of the Directus instance to apply the template to',
@@ -67,17 +67,17 @@ export default class ApplyCommand extends Command {
     }),
     extensions: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load Extensions',
     }),
     files: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load Files (files, folders)',
     }),
     flows: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load Flows (operations, flows)',
     }),
     partial: Flags.boolean({
@@ -87,7 +87,7 @@ export default class ApplyCommand extends Command {
     }),
     permissions: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Loads permissions data. Collections include: directus_roles, directus_policies, directus_access, directus_permissions.',
       summary: 'Load permissions (roles, policies, access, permissions)',
     }),
@@ -99,12 +99,12 @@ export default class ApplyCommand extends Command {
     }),
     schema: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load schema (collections, relations)',
     }),
     settings: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load settings (project settings, translations, presets)',
     }),
     templateLocation: Flags.string({
@@ -120,13 +120,22 @@ export default class ApplyCommand extends Command {
       options: ['community', 'local', 'github'],
       summary: 'Type of template to apply. Options: community, local, github.',
     }),
+    userEmail: Flags.string({
+      dependsOn: ['userPassword'],
+      description: 'Email for Directus authentication',
+      env: 'TARGET_DIRECTUS_EMAIL',
+      exclusive: ['directusToken'],
+    }),
+    userPassword: Flags.string({
+      dependsOn: ['userEmail'],
+      description: 'Password for Directus authentication',
+      env: 'TARGET_DIRECTUS_PASSWORD',
+      exclusive: ['directusToken'],
+    }),
     users: Flags.boolean({
       allowNo: true,
-      default: templateFlagsDefault as unknown as boolean,
+      default: undefined,
       description: 'Load users',
-      relationships: [
-        {flags: ['permissions'], type: 'all'},
-      ],
     }),
   }
 
@@ -138,14 +147,60 @@ export default class ApplyCommand extends Command {
     await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags))
   }
 
+  private checkAtLeastOneFlagEnabled(validatedFlags: ApplyFlags, loadFlags: readonly string[]): void {
+    const enabledFlags = loadFlags.filter(flag => validatedFlags[flag] === true)
+    if (enabledFlags.length === 0) {
+      ux.error('When using --partial, at least one component must be loaded.')
+    }
+  }
+
+  private handleDependencies(validatedFlags: ApplyFlags, flags: ApplyFlags): void {
+    if (validatedFlags.content) {
+      validatedFlags.schema = true
+      validatedFlags.files = true
+      if (!flags.schema || !flags.files) {
+        ux.warn('Content loading requires schema and files. Enabling schema and files flags.')
+      }
+    }
+
+    if (validatedFlags.users) {
+      validatedFlags.permissions = true
+      if (!flags.permissions) {
+        ux.warn('User loading requires permissions. Enabling permissions flag.')
+      }
+    }
+  }
+
+  private handlePartialFlags(validatedFlags: ApplyFlags, flags: ApplyFlags, loadFlags: readonly string[]): void {
+    const explicitlyEnabledFlags = loadFlags.filter(flag => flags[flag] === true)
+    const explicitlyDisabledFlags = loadFlags.filter(flag => flags[flag] === false)
+
+    if (explicitlyEnabledFlags.length > 0) {
+      this.setSpecificFlags(validatedFlags, loadFlags, explicitlyEnabledFlags, true)
+    } else if (explicitlyDisabledFlags.length > 0) {
+      this.setSpecificFlags(validatedFlags, loadFlags, explicitlyDisabledFlags, false)
+    } else {
+      this.setAllFlagsTrue(validatedFlags, loadFlags)
+    }
+
+    this.handleDependencies(validatedFlags, flags)
+    this.checkAtLeastOneFlagEnabled(validatedFlags, loadFlags)
+  }
+
   private async initializeDirectusApi(flags: ApplyFlags): Promise<void> {
     api.initialize(flags.directusUrl)
+
     try {
-      api.setAuthToken(flags.directusToken)
+      if (flags.directusToken) {
+        await api.loginWithToken(flags.directusToken)
+      } else if (flags.userEmail && flags.userPassword) {
+        await api.login(flags.userEmail, flags.userPassword)
+      }
+
       const response = await api.client.request(readMe())
       ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
-      catchError('-- Invalid Directus token. Please check your credentials.', {
+      catchError('-- Unable to authenticate with the provided credentials. Please check your credentials.', {
         fatal: true,
       })
     }
@@ -160,7 +215,7 @@ export default class ApplyCommand extends Command {
   private async runInteractive(flags: ApplyFlags): Promise<void> {
     const validatedFlags = this.validateFlags(flags)
 
-    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Welcome to the Directus Template CLI'))
+    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Apply'))
 
     const templateType = await inquirer.prompt([
       {
@@ -213,12 +268,35 @@ export default class ApplyCommand extends Command {
     ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
     ux.log(SEPARATOR)
 
-    // Get Directus URL and token
+    // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    const directusToken = await getDirectusToken(directusUrl)
+    validatedFlags.directusUrl = directusUrl
 
-    flags.directusUrl = directusUrl
-    flags.directusToken = directusToken
+    // Prompt for login method
+    const loginMethod = await inquirer.prompt([
+      {
+        choices: [
+          {name: 'Directus Access Token', value: 'token'},
+          {name: 'Email and Password', value: 'email'},
+        ],
+        default: 'token',
+        message: 'How do you want to log in?',
+        name: 'loginMethod',
+        type: 'list',
+      },
+    ])
+
+    if (loginMethod.loginMethod === 'token') {
+      const directusToken = await getDirectusToken(directusUrl)
+      validatedFlags.directusToken = directusToken
+    } else {
+      const userEmail = await ux.prompt('What is your email?')
+      validatedFlags.userEmail = userEmail
+      const userPassword = await ux.prompt('What is your password?')
+      validatedFlags.userPassword = userPassword
+    }
+
+    await this.initializeDirectusApi(validatedFlags)
 
     if (template) {
       ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, `Applying template - ${template.templateName} to ${directusUrl}`))
@@ -300,16 +378,22 @@ export default class ApplyCommand extends Command {
     }
   }
 
-  private validateFlags(flags: ApplyFlags): ApplyFlags {
-    if (flags.programmatic) {
-      if (!flags.directusUrl || !flags.directusToken) {
-        ux.error('Directus URL and token are required for programmatic mode.')
-      }
-
-      if (!flags.templateLocation) {
-        ux.error('Template location is required for programmatic mode.')
-      }
+  private setAllFlagsTrue(flags: ApplyFlags, loadFlags: readonly string[]): ApplyFlags {
+    for (const flag of loadFlags) {
+      flags[flag] = true
     }
+
+    return flags
+  }
+
+  private setSpecificFlags(flags: ApplyFlags, allFlags: readonly string[], specificFlags: string[], value: boolean): void {
+    for (const flag of allFlags) {
+      flags[flag] = specificFlags.includes(flag) === value
+    }
+  }
+
+  private validateFlags(flags: ApplyFlags): ApplyFlags {
+    this.validateProgrammaticFlags(flags)
 
     const loadFlags = [
       'content',
@@ -325,44 +409,32 @@ export default class ApplyCommand extends Command {
 
     const validatedFlags = {...flags}
 
+    if (flags.programmatic && !flags.partial) {
+      return this.setAllFlagsTrue(validatedFlags, loadFlags)
+    }
+
     if (flags.partial) {
-      const enabledFlags = loadFlags.filter(flag => flags[flag] === true)
-
-      if (enabledFlags.length === 0) {
-        ux.error('When using --partial, at least one component flag must be set to true.')
-      }
-
-      // Handle dependencies
-      if (flags.content) {
-        validatedFlags.schema = true
-        validatedFlags.files = true
-        if (!flags.schema || !flags.files) {
-          ux.warn('Content loading requires schema and files. Enabling schema and files flags.')
-        }
-      }
-
-      if (flags.users) {
-        validatedFlags.permissions = true
-        if (!flags.permissions) {
-          ux.warn('User loading requires permissions. Enabling permissions flag.')
-        }
-      }
+      this.handlePartialFlags(validatedFlags, flags, loadFlags)
     } else {
-      // If not partial, set all flags to true
-      for (const flag of loadFlags) {
-        validatedFlags[flag] = true
-      }
+      this.setAllFlagsTrue(validatedFlags, loadFlags)
     }
 
     return validatedFlags
   }
-}
 
-function templateFlagsDefault({flags}: {flags: ApplyFlags}) {
-  // If programmatic is true, and partial is not set, return true
-  if (flags.programmatic && !flags.partial) {
-    return true
+  private validateProgrammaticFlags(flags: ApplyFlags): void {
+    if (!flags.programmatic) return
+
+    if (!flags.directusUrl) {
+      ux.error('Directus URL is required for programmatic mode.')
+    }
+
+    if (!flags.directusToken && (!flags.userEmail || !flags.userPassword)) {
+      ux.error('Either Directus token or email and password are required for programmatic mode.')
+    }
+
+    if (!flags.templateLocation) {
+      ux.error('Template location is required for programmatic mode.')
+    }
   }
-
-  return false
 }
