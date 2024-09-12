@@ -116,6 +116,25 @@ This command will automatically include `--permissions` and `--schema` along wit
 
 If you use `--no-` flags, be cautious about excluding dependencies. For instance, using `--no-schema` while including `--content` may lead to errors or incomplete application of the template.
 
+
+### Existing Data
+
+You can apply a template to an existing Directus instance. This is nice because you can have smaller templates that you can "compose" for various use cases. The CLI tries to be smart about existing items in the target Directus instance. But mileage may vary depending on the size and complexity of the template and the existing instance.
+
+**System Collections**
+
+In most of the system collections (collections,roles, permissions, etc.), if an item with the same identifier already exists, it will be typically be SKIPPED vs overwritten.
+
+Exceptions:
+
+- directus_settings: The CLI attempts to merge the template's project settings with the existing settings in the target instance. Using the existing settings as a base and updating them with the values from the template. This should prevent overwriting branding, themes, and other customizations.
+
+**Your Collections:**
+
+For data in your own user-created collections, if an item has the same primary key, the data will be overwritten with the incoming data from the template.
+
+---
+
 ## Extracting a Template
 
 The CLI can also extract a template from a Directus instance so that it can be applied to other instances.
