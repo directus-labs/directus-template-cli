@@ -13,54 +13,66 @@ export default async function loadUsers(
   const users = readFile('users', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${users.length} users`))
 
-  const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
+  if (users && users.length > 0) {
+    const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
-  const incomingUserEmails = users.map(user => user.email)
-  const incomingUserIds = users.map(user => user.id).filter(Boolean)
+    const incomingUserEmails = users.map(user => user.email)
+    const incomingUserIds = users.map(user => user.id).filter(Boolean)
 
-  const existingUsers = await api.client.request(readUsers({
-    filter: {
-      _or: [
-        {email: {_in: incomingUserEmails}},
-        {id: {_in: incomingUserIds}},
-      ],
-    },
-    limit: -1,
-  }))
+    const existingUsers = await api.client.request(readUsers({
+      filter: {
+        _or: [
+          {email: {_in: incomingUserEmails}},
+          {id: {_in: incomingUserIds}},
+        ],
+      },
+      limit: -1,
+    }))
 
-  const filteredUsers = users.map(user => {
+    const filteredUsers = users.map(user => {
     // If the user is an admin, we need to change their role to the new admin role
-    const isAdmin = user.role === legacyAdminRoleId
-    user.role = isAdmin ? newAdminRoleId : user.role
+      const isAdmin = user.role === legacyAdminRoleId
+      user.role = isAdmin ? newAdminRoleId : user.role
 
-    // Delete the unneeded fields
-    delete user.last_page
-    delete user.token
-    delete user.policies
-    // Delete passwords to prevent setting to *******
-    delete user.password
+      // Delete the unneeded fields
+      delete user.last_page
+      delete user.token
+      delete user.policies
+      // Delete passwords to prevent setting to *******
+      delete user.password
 
-    return user
-  })
+      return user
+    })
 
-  for await (const user of filteredUsers) {
-    const existingUser = existingUsers.find(
-      existing => existing.email === user.email || existing.id === user.id,
-    )
+    for await (const user of filteredUsers) {
+      const existingUserWithSameId = existingUsers && Array.isArray(existingUsers)
+        ? existingUsers.find(existing => existing.id === user.id)
+        : undefined
 
-    if (existingUser) {
-      // If user already exists, we'll skip creating a new one
-      delete user.email
-      delete user.id
-      // You might want to update the existing user here instead
-      // await api.client.request(updateUser(existingUser.id, user))
-      continue
-    }
+      const existingUserWithSameEmail = existingUsers && Array.isArray(existingUsers)
+        ? existingUsers.find(existing => existing.email === user.email)
+        : undefined
 
-    try {
-      await api.client.request(createUser(user))
-    } catch (error) {
-      catchError(error)
+      if (existingUserWithSameId) {
+        // Skip if there's an existing user with the same id
+        continue
+      }
+
+      if (existingUserWithSameEmail) {
+        // Delete email if there's an existing user with the same email but different id
+        delete user.email
+      }
+
+      if (user.email === null) {
+        // Delete email if it's null
+        delete user.email
+      }
+
+      try {
+        await api.client.request(createUser(user))
+      } catch (error) {
+        catchError(error)
+      }
     }
   }
 

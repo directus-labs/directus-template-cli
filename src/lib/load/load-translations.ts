@@ -10,29 +10,31 @@ export default async function loadTranslations(dir: string) {
   const translations = readFile('translations', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${translations.length} translations`))
 
+  if (translations && translations.length > 0) {
   // Fetch existing translations
-  const existingTranslations = await api.client.request(readTranslations({
-    limit: -1,
-  }))
-  const existingTranslationKeys = new Set(existingTranslations.map(t => `${t.language}_${t.key}`))
+    const existingTranslations = await api.client.request(readTranslations({
+      limit: -1,
+    }))
+    const existingTranslationKeys = new Set(existingTranslations.map(t => `${t.language}_${t.key}`))
 
-  const newTranslations = translations.filter(t => {
-    const key = `${t.language}_${t.key}`
-    if (existingTranslationKeys.has(key)) {
-      return false
-    }
+    const newTranslations = translations.filter(t => {
+      const key = `${t.language}_${t.key}`
+      if (existingTranslationKeys.has(key)) {
+        return false
+      }
 
-    return true
-  })
+      return true
+    })
 
-  if (newTranslations.length > 0) {
-    try {
-      await api.client.request(createTranslations(newTranslations))
-    } catch (error) {
-      catchError(error)
-    }
-  } else {
+    if (newTranslations.length > 0) {
+      try {
+        await api.client.request(createTranslations(newTranslations))
+      } catch (error) {
+        catchError(error)
+      }
+    } else {
     // ux.info('-- No new translations to create')
+    }
   }
 
   ux.action.stop()

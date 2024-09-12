@@ -11,25 +11,27 @@ export default async function loadPermissions(
   const permissions = readFile('permissions', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${permissions.length} permissions`))
 
-  try {
-    const existingPermissions = await api.client.request(readPermissions({
-      limit: -1,
-    }))
+  if (permissions && permissions.length > 0) {
+    try {
+      const existingPermissions = await api.client.request(readPermissions({
+        limit: -1,
+      }))
 
-    const existingPermissionKeys = new Set(
-      existingPermissions.map(p => `${p.collection}:${p.action}:${p.policy}`),
-    )
+      const existingPermissionKeys = new Set(
+        existingPermissions.map(p => `${p.collection}:${p.action}:${p.policy}`),
+      )
 
-    // Filter out duplicates
-    const newPermissions = permissions.filter(newPerm =>
-      !existingPermissionKeys.has(`${newPerm.collection}:${newPerm.action}:${newPerm.policy}`),
-    )
+      // Filter out duplicates
+      const newPermissions = permissions.filter(newPerm =>
+        !existingPermissionKeys.has(`${newPerm.collection}:${newPerm.action}:${newPerm.policy}`),
+      )
 
-    if (newPermissions.length > 0) {
-      await api.client.request(createPermissions(newPermissions))
+      if (newPermissions.length > 0) {
+        await api.client.request(createPermissions(newPermissions))
+      }
+    } catch (error) {
+      catchError(error)
     }
-  } catch (error) {
-    catchError(error)
   }
 
   ux.action.stop()

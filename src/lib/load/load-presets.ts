@@ -10,32 +10,34 @@ export default async function loadPresets(dir: string) {
   const presets = readFile('presets', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${presets.length} presets`))
 
-  // Fetch existing presets
-  const existingPresets = await api.client.request(readPresets({
-    limit: -1,
-  }))
-  const existingPresetIds = new Set(existingPresets.map(preset => preset.id))
+  if (presets && presets.length > 0) {
+    // Fetch existing presets
+    const existingPresets = await api.client.request(readPresets({
+      limit: -1,
+    }))
+    const existingPresetIds = new Set(existingPresets.map(preset => preset.id))
 
-  const presetsToAdd = presets.filter(preset => {
-    if (existingPresetIds.has(preset.id)) {
-      return false
-    }
+    const presetsToAdd = presets.filter(preset => {
+      if (existingPresetIds.has(preset.id)) {
+        return false
+      }
 
-    return true
-  }).map(preset => {
-    const cleanPreset = {...preset}
-    cleanPreset.user = null
-    return cleanPreset
-  })
+      return true
+    }).map(preset => {
+      const cleanPreset = {...preset}
+      cleanPreset.user = null
+      return cleanPreset
+    })
 
-  if (presetsToAdd.length > 0) {
-    try {
-      await api.client.request(createPresets(presetsToAdd))
-    } catch (error) {
-      catchError(error)
-    }
-  } else {
+    if (presetsToAdd.length > 0) {
+      try {
+        await api.client.request(createPresets(presetsToAdd))
+      } catch (error) {
+        catchError(error)
+      }
+    } else {
     // ux.info('-- No new presets to create')
+    }
   }
 
   ux.action.stop()

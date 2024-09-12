@@ -17,50 +17,52 @@ export default async function loadAccess(dir: string) {
   const access = readFile('access', dir) as Access[]
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${access.length} accesses`))
 
-  // Fetch existing accesses
-  const existingAccesses = await api.client.request(() => ({
-    method: 'GET',
-    params: {
-      limit: -1,
-    },
-    path: '/access',
-  })) as Access[]
+  if (access && access.length > 0) {
+    // Fetch existing accesses
+    const existingAccesses = await api.client.request(() => ({
+      method: 'GET',
+      params: {
+        limit: -1,
+      },
+      path: '/access',
+    })) as Access[]
 
-  const existingAccessById = new Map(existingAccesses.map(acc => [acc.id, acc]))
-  const existingAccessByCompositeKey = new Map(existingAccesses.map(acc => [getCompositeKey(acc), acc]))
+    const existingAccessById = new Map(existingAccesses.map(acc => [acc.id, acc]))
+    const existingAccessByCompositeKey = new Map(existingAccesses.map(acc => [getCompositeKey(acc), acc]))
 
-  for await (const acc of access) {
-    try {
-      if (existingAccessById.has(acc.id)) {
-        continue
+    for await (const acc of access) {
+      try {
+        if (existingAccessById.has(acc.id)) {
+          continue
+        }
+
+        const compositeKey = getCompositeKey(acc)
+        if (existingAccessByCompositeKey.has(compositeKey)) {
+          continue
+        }
+
+        // If the role is null, delete the role key to avoid errors
+        if (acc.role === null) {
+          delete acc.role
+        }
+
+        await api.client.request(() => ({
+          body: JSON.stringify(acc),
+          method: 'POST',
+          path: '/access',
+        }))
+
+        // Add the new access to our maps
+        existingAccessById.set(acc.id, acc)
+        existingAccessByCompositeKey.set(compositeKey, acc)
+      } catch (error) {
+        catchError(error, {
+          context: {
+            access: acc,
+            operation: 'createAccess',
+          },
+        })
       }
-
-      const compositeKey = getCompositeKey(acc)
-      if (existingAccessByCompositeKey.has(compositeKey)) {
-        continue
-      }
-
-      // If the role is null, delete the role key to avoid errors
-      if (acc.role === null) {
-        delete acc.role
-      }
-
-      await api.client.request(() => ({
-        body: JSON.stringify(acc),
-        method: 'POST',
-        path: '/access',
-      }))
-
-      // Add the new access to our maps
-      existingAccessById.set(acc.id, acc)
-      existingAccessByCompositeKey.set(compositeKey, acc)
-    } catch (error) {
-      catchError(error, {
-        context: {
-          access: acc,
-          operation: 'createAccess',
-        },
-      })
     }
   }
 

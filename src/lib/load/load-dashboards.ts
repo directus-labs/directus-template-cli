@@ -10,35 +10,37 @@ export default async function loadDashboards(dir: string) {
   const dashboards = readFile('dashboards', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${dashboards.length} dashboards`))
 
-  // Fetch existing dashboards
-  const existingDashboards = await api.client.request(readDashboards({
-    limit: -1,
-  }))
-  const existingDashboardIds = new Set(existingDashboards.map(dashboard => dashboard.id))
+  if (dashboards && dashboards.length > 0) {
+    // Fetch existing dashboards
+    const existingDashboards = await api.client.request(readDashboards({
+      limit: -1,
+    }))
+    const existingDashboardIds = new Set(existingDashboards.map(dashboard => dashboard.id))
 
-  const filteredDashboards = dashboards.filter(dashboard => {
-    if (existingDashboardIds.has(dashboard.id)) {
-      return false
-    }
+    const filteredDashboards = dashboards.filter(dashboard => {
+      if (existingDashboardIds.has(dashboard.id)) {
+        return false
+      }
 
-    return true
-  }).map(dash => {
-    const newDash = {...dash}
-    delete newDash.panels
-    return newDash
-  })
+      return true
+    }).map(dash => {
+      const newDash = {...dash}
+      delete newDash.panels
+      return newDash
+    })
 
-  await Promise.all(filteredDashboards.map(async dashboard => {
-    try {
-      await api.client.request(createDashboard(dashboard))
-    } catch (error) {
-      catchError(error)
-    }
-  }))
+    await Promise.all(filteredDashboards.map(async dashboard => {
+      try {
+        await api.client.request(createDashboard(dashboard))
+      } catch (error) {
+        catchError(error)
+      }
+    }))
 
-  await loadPanels(dir)
+    await loadPanels(dir)
 
-  ux.action.stop()
+    ux.action.stop()
+  }
 }
 
 export async function loadPanels(dir: string) {
