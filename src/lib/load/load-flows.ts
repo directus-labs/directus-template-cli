@@ -8,6 +8,7 @@ import readFile from '../utils/read-file'
 
 export default async function loadFlows(dir: string) {
   const flows = readFile('flows', dir)
+  const allOperations = readFile('operations', dir)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${flows.length} flows`))
 
   try {
@@ -17,30 +18,23 @@ export default async function loadFlows(dir: string) {
     }))
     const existingFlowIds = new Set(existingFlows.map(flow => flow.id))
 
-    const cleanedUpFlows = flows.map(flow => {
-      const {operations, ...cleanFlow} = flow
-      return {cleanFlow, operations}
-    })
+    const newFlows = flows.filter(flow => !existingFlowIds.has(flow.id))
 
-    const newFlows = cleanedUpFlows.filter(({cleanFlow}) => !existingFlowIds.has(cleanFlow.id))
-
-    const results = await Promise.allSettled(newFlows.map(({cleanFlow}) =>
-      api.client.request(createFlow(cleanFlow)),
+    const results = await Promise.allSettled(newFlows.map(flow =>
+      api.client.request(createFlow(flow)),
     ))
 
     const createdFlowIds = new Set<string>()
     for (const [index, result] of results.entries()) {
       if (result.status === 'fulfilled') {
-        createdFlowIds.add(newFlows[index].cleanFlow.id)
+        createdFlowIds.add(newFlows[index].id)
       } else {
         catchError(result.reason)
       }
     }
 
-    // Only load operations for newly created flows
-    const newOperations: any[] = newFlows
-    .filter(({cleanFlow}) => createdFlowIds.has(cleanFlow.id))
-    .flatMap(({operations}) => operations)
+    // Filter operations for newly created flows
+    const newOperations = allOperations.filter(operation => createdFlowIds.has(operation.flow))
 
     await loadOperations(newOperations)
   } catch (error) {
