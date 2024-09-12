@@ -43,7 +43,7 @@ async function loadSkeletonRecords(dir: string) {
     const newData = data.filter(entry => !existingPrimaryKeys.has(entry[primaryKeyField]))
 
     if (newData.length === 0) {
-      ux.log(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
+      // ux.log(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
       return
     }
 
@@ -52,7 +52,7 @@ async function loadSkeletonRecords(dir: string) {
     )
 
     await Promise.all(batches.map(batch => uploadBatch(name, batch, createItems)))
-    ux.log(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
+    // ux.log(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
   }))
 
   ux.action.status = 'Loaded skeleton records'
@@ -130,8 +130,8 @@ async function loadSingletons(dir:string) {
     const sourceDir = path.resolve(dir, 'content')
     const data = readFile(name, sourceDir)
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const {user_created, user_updated, ...cleanedData} = data as any
+      // @ts-expect-error
       await api.client.request(updateSingleton(name, cleanedData))
     } catch (error) {
       catchError(error)

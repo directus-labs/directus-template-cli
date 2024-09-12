@@ -1,10 +1,11 @@
 import {readMe} from '@directus/sdk'
 import {Command, Flags, ux} from '@oclif/core'
+import inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
 import slugify from 'slugify'
 
-import {SEPARATOR} from '../lib/constants'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
 import extract from '../lib/extract/'
 import {api} from '../lib/sdk'
 import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
@@ -20,6 +21,8 @@ interface ExtractFlags {
   programmatic: boolean;
   templateLocation: string;
   templateName: string;
+  userEmail: string;
+  userPassword: string;
 }
 
 export default class ExtractCommand extends Command {
@@ -34,6 +37,7 @@ export default class ExtractCommand extends Command {
     directusToken: Flags.string({
       description: 'Token to use for the Directus instance',
       env: 'SOURCE_DIRECTUS_TOKEN',
+      exclusive: ['userEmail', 'userPassword'],
     }),
     directusUrl: Flags.string({
       description: 'URL of the Directus instance to extract the template from',
@@ -54,6 +58,18 @@ export default class ExtractCommand extends Command {
       dependsOn: ['programmatic'],
       description: 'Name of the template',
       env: 'TEMPLATE_NAME',
+    }),
+    userEmail: Flags.string({
+      dependsOn: ['userPassword'],
+      description: 'Email for Directus authentication',
+      env: 'SOURCE_DIRECTUS_EMAIL',
+      exclusive: ['directusToken'],
+    }),
+    userPassword: Flags.string({
+      dependsOn: ['userEmail'],
+      description: 'Password for Directus authentication',
+      env: 'SOURCE_DIRECTUS_PASSWORD',
+      exclusive: ['directusToken'],
     }),
   }
 
@@ -84,7 +100,7 @@ export default class ExtractCommand extends Command {
 
     ux.log(SEPARATOR)
 
-    ux.action.start(`Extracting template - from ${flags.directusUrl} to ${directory}`)
+    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
     await extract(directory)
 
@@ -97,33 +113,65 @@ export default class ExtractCommand extends Command {
 
   private async initializeDirectusApi(flags: ExtractFlags): Promise<void> {
     api.initialize(flags.directusUrl)
+
     try {
-      api.setAuthToken(flags.directusToken)
+      if (flags.directusToken) {
+        await api.loginWithToken(flags.directusToken)
+      } else if (flags.userEmail && flags.userPassword) {
+        await api.login(flags.userEmail, flags.userPassword)
+      }
+
       const response = await api.client.request(readMe())
       ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
     } catch {
-      catchError('Invalid Directus token. Please check your credentials.', {
+      catchError('-- Unable to authenticate with the provided credentials. Please check your credentials.', {
         fatal: true,
       })
     }
   }
 
   private async runInteractive(flags: ExtractFlags): Promise<void> {
-    const templateName = await ux.prompt('What is the name of the template?')
+    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Extract'))
 
+    const templateName = await ux.prompt('What is the name of the template you would like to extract?')
     const directory = await ux.prompt(
       "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
       {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
     )
 
-    ux.log(`You selected ${directory}`)
+    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
-    // Get Directus URL and token
+    ux.log(SEPARATOR)
+
+    // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    const directusToken = await getDirectusToken(directusUrl)
-
     flags.directusUrl = directusUrl
-    flags.directusToken = directusToken
+
+    // Prompt for login method
+    const loginMethod = await inquirer.prompt([
+      {
+        choices: [
+          {name: 'Directus Access Token', value: 'token'},
+          {name: 'Email and Password', value: 'email'},
+        ],
+        default: 'token',
+        message: 'How do you want to log in?',
+        name: 'loginMethod',
+        type: 'list',
+      },
+    ])
+
+    if (loginMethod.loginMethod === 'token') {
+      const directusToken = await getDirectusToken(directusUrl)
+      flags.directusToken = directusToken
+    } else {
+      flags.userEmail = await ux.prompt('What is your email?')
+      flags.userPassword = await ux.prompt('What is your password?', {type: 'hide'})
+    }
+
+    ux.log(SEPARATOR)
+
+    await this.initializeDirectusApi(flags)
 
     await this.extractTemplate(templateName, directory, flags)
   }
@@ -139,8 +187,13 @@ export default class ExtractCommand extends Command {
   }
 
   private validateProgrammaticFlags(flags: ExtractFlags): void {
-    if (!flags.directusUrl || !flags.directusToken) {
-      ux.error('Directus URL and token are required for programmatic mode.')
+    if (!flags.directusUrl) {
+      ux.error('Directus URL is required for programmatic mode.')
+    }
+
+    // We need either a token or email/password
+    if (!flags.directusToken && (!flags.userEmail || !flags.userPassword)) {
+      ux.error('Either Directus token or email and password are required for programmatic mode.')
     }
 
     if (!flags.templateLocation) {

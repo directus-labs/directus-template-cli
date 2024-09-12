@@ -1,7 +1,9 @@
 import {readDashboards, readPanels} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import filterFields from '../utils/filter-fields'
 import {directusDashboardFields, directusPanelFields} from '../utils/system-fields'
 import writeToFile from '../utils/write-to-file'
@@ -11,19 +13,16 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export async function extractDashboards(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting dashboards'))
   try {
-    const response = await api.client.request(readDashboards(
-      {limit: -1},
-    ))
-
+    const response = await api.client.request(readDashboards({limit: -1}))
     const dashboards = filterFields(response, directusDashboardFields)
-
     await writeToFile('dashboards', dashboards, dir)
-    ux.log('Extracted dashboards')
   } catch (error) {
-    ux.warn('Error extracting Dashboards:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }
 
 /**
@@ -31,17 +30,14 @@ export async function extractDashboards(dir: string) {
  */
 
 export async function extractPanels(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting panels'))
   try {
-    const response = await api.client.request(readPanels(
-      {limit: -1},
-    ))
-
+    const response = await api.client.request(readPanels({limit: -1}))
     const panels = filterFields(response, directusPanelFields)
-
     await writeToFile('panels', panels, dir)
-    ux.log('Extracted panels')
   } catch (error) {
-    ux.warn('Error extracting Panels:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

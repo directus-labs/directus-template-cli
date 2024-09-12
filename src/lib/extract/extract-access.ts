@@ -1,6 +1,8 @@
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
 interface Access {
@@ -12,6 +14,7 @@ interface Access {
 }
 
 export default async function extractAccess(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting access'))
   try {
     const response = await api.client.request<Access[]>(() => ({
       method: 'GET',
@@ -24,9 +27,9 @@ export default async function extractAccess(dir: string) {
     // }
 
     await writeToFile('access', response, dir)
-    ux.log('Extracted access')
   } catch (error) {
-    ux.warn('Error extracting access:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

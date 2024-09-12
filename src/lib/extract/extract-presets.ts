@@ -1,7 +1,9 @@
 import {readPresets} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
 /**
@@ -9,6 +11,7 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export default async function extractPresets(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting presets'))
   try {
     const response = await api.client.request(readPresets(
       {
@@ -25,11 +28,10 @@ export default async function extractPresets(dir: string) {
       delete preset.id
       return preset
     })
-
     await writeToFile('presets', presets, dir)
-    ux.log('Extracted presets')
   } catch (error) {
-    ux.warn('Error extracting Users:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

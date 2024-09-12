@@ -1,23 +1,28 @@
-import type {AuthenticationClient, RestClient} from '@directus/sdk'
+import type {AuthenticationClient, AuthenticationData, RestClient} from '@directus/sdk'
 
-import {authentication, createDirectus, rest} from '@directus/sdk'
+import {authentication, createDirectus, login, logout, refresh, rest} from '@directus/sdk'
 import Bottleneck from 'bottleneck'
 
-export interface Schema{
-    any
+export interface Schema {
+  // Define your schema here
 }
 
 class Api {
   public client: (RestClient<Schema> & AuthenticationClient<Schema>) | undefined
+  private authData: AuthenticationData | null = null
   private limiter: Bottleneck
 
   constructor() {
     this.limiter = new Bottleneck({
-      maxConcurrent: 10, // Max 10 concurrent requests
-      minTime: 100, // 100ms between requests
-      retryCount: 3, // Retry failed requests up to 3 times
-      retryDelay: 3000, // Wait 3 seconds between retries
+      maxConcurrent: 10,
+      minTime: 100,
+      retryCount: 3,
+      retryDelay: 3000,
     })
+  }
+
+  public getToken(): null | string {
+    return this.authData?.access_token ?? null
   }
 
   public initialize(url: string): void {
@@ -27,15 +32,48 @@ class Api {
       },
     })
     .with(rest())
-    .with(authentication())
+    .with(authentication('json', {
+      autoRefresh: true,
+      storage: {
+        get: () => this.authData,
+        set: data => {
+          this.authData = data
+        },
+      },
+    }))
   }
 
-  public setAuthToken(token: string): void {
+  public async login(email: string, password: string): Promise<void> {
     if (!this.client) {
       throw new Error('API client is not initialized. Call initialize() first.')
     }
 
-    this.client.setToken(token)
+    await this.client.login(email, password)
+  }
+
+  public async loginWithToken(token: string): Promise<void> {
+    if (!this.client) {
+      throw new Error('API client is not initialized. Call initialize() first.')
+    }
+
+    await this.client.setToken(token)
+  }
+
+  public async logout(): Promise<void> {
+    if (!this.client) {
+      throw new Error('API client is not initialized. Call initialize() first.')
+    }
+
+    await this.client.logout()
+    this.authData = null
+  }
+
+  public async refreshToken(): Promise<void> {
+    if (!this.client) {
+      throw new Error('API client is not initialized. Call initialize() first.')
+    }
+
+    await this.client.refresh()
   }
 }
 

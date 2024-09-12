@@ -1,7 +1,9 @@
 import {readPermissions} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
 /**
@@ -9,6 +11,7 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export default async function extractPermissions(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting permissions'))
   try {
     let response = await api.client.request(readPermissions({
       limit: -1,
@@ -22,11 +25,10 @@ export default async function extractPermissions(dir: string) {
       delete i.id
       return i
     })
-
     await writeToFile('permissions', response, dir)
-    ux.log('Extracted permissions')
   } catch (error) {
-    ux.warn('Error extracting permissions:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

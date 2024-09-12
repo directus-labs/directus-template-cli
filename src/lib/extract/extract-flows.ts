@@ -1,7 +1,9 @@
 import {readFlows, readOperations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import filterFields from '../utils/filter-fields'
 import {directusFlowFields, directusOperationFields} from '../utils/system-fields'
 import writeToFile from '../utils/write-to-file'
@@ -11,19 +13,16 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export async function extractFlows(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting flows'))
   try {
-    const response = await api.client.request(readFlows(
-      {limit: -1},
-    ))
-
+    const response = await api.client.request(readFlows({limit: -1}))
     const flows = filterFields(response, directusFlowFields)
-
     await writeToFile('flows', flows, dir)
-    ux.log('Extracted flows')
   } catch (error) {
-    ux.warn('Error extracting Flows:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }
 
 /**
@@ -31,17 +30,14 @@ export async function extractFlows(dir: string) {
  */
 
 export async function extractOperations(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting operations'))
   try {
-    const response = await api.client.request(readOperations(
-      {limit: -1},
-    ))
-
+    const response = await api.client.request(readOperations({limit: -1}))
     const operations = filterFields(response, directusOperationFields)
-
     await writeToFile('operations', operations, dir)
-    ux.log('Extracted operations')
   } catch (error) {
-    ux.warn('Error extracting Operations:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

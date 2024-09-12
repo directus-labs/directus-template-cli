@@ -42,15 +42,16 @@ export default async function apply(dir: string, flags: ApplyFlags) {
     await loadRelations(source)
   }
 
-  if (flags.permissions) {
+  if (flags.permissions || flags.users) {
     await loadRoles(source)
     await loadPolicies(source)
-    await loadAccess(source)
     await loadPermissions(source)
-  }
 
-  if (flags.users) {
-    await loadUsers(source)
+    if (flags.users) {
+      await loadUsers(source)
+    }
+
+    await loadAccess(source)
   }
 
   if (flags.files) {

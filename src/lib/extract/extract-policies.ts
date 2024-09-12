@@ -1,7 +1,9 @@
 import {readPolicies} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
 /**
@@ -9,6 +11,7 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export default async function extractPolicies(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting policies'))
   try {
     const response = await api.client.request(readPolicies({limit: -1}))
 
@@ -20,9 +23,9 @@ export default async function extractPolicies(dir: string) {
     }
 
     await writeToFile('policies', response, dir)
-    ux.log('Extracted policies')
   } catch (error) {
-    ux.warn('Error extracting policies:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }

@@ -96,6 +96,7 @@ async function addCustomFieldsOnSystemCollections(fields: any[]) {
       )
 
       if (!fieldExists) {
+        // @ts-expect-error string
         await api.client.request(createField(field.collection, field))
       }
     } catch (error) {
