@@ -25,7 +25,7 @@ Using the @latest tag ensures you're receiving the latest version of the package
 4. Run the following command on the terminal and follow the prompts.
 
 ```
-$ npx directus-template-cli@latest apply
+npx directus-template-cli@latest apply
 ```
 
 You can choose from our community maintained templates or you can also choose a template from a local directory or a public GitHub repository.
@@ -39,7 +39,7 @@ For CI/CD pipelines or automated scripts, you can use the programmatic mode:
 Using a token:
 
 ```
-$ npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local"
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local"
 ```
 
 Using email/password:
@@ -77,7 +77,7 @@ Available flags for programmatic mode:
 When using `--partial`, you can also use `--no` flags to exclude specific components from being applied. For example:
 
 ```
-$ npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --partial --no-content --no-users
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --partial --no-content --no-users
 ```
 
 This command will apply the template but exclude content and users. Available `--no` flags include:
@@ -109,7 +109,7 @@ When applying templates, certain components have dependencies on others. Here ar
 When using the `--partial` flag, keep these dependencies in mind. For example:
 
 ```
-$ npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --users
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --users
 ```
 
 This command will automatically include `--permissions` and `--schema` along with `--users`, even if not explicitly specified.
