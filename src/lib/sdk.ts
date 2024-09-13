@@ -1,6 +1,7 @@
 import type {AuthenticationClient, AuthenticationData, RestClient} from '@directus/sdk'
 
 import {authentication, createDirectus, rest} from '@directus/sdk'
+import {ux} from '@oclif/core'
 import Bottleneck from 'bottleneck'
 
 export interface Schema {
@@ -73,13 +74,13 @@ class Api {
 
         if (statusCode === 429) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 60_000
-          console.log(`-- Rate limited. Retrying after ${delay}ms`)
+          ux.log(`${ux.colorize('dim', '--')} Rate limited. Retrying after ${delay}ms`)
           return delay
         }
 
         if (statusCode === 503) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 5000
-          console.log(`-- Server under pressure. Retrying after ${delay}ms`)
+          ux.log(`${ux.colorize('dim', '--')} Server under pressure. Retrying after ${delay}ms`)
           return delay
         }
 
@@ -91,20 +92,20 @@ class Api {
       // For other errors, use exponential backoff, but only if we haven't exceeded retryCount
       if (jobInfo.retryCount < 3) {
         const delay = Math.min(1000 * 2 ** jobInfo.retryCount, 30_000)
-        console.log(`Request failed. Retrying after ${delay}ms`)
+        ux.log(`${ux.colorize('dim', '--')} Request failed. Retrying after ${delay}ms`)
         return delay
       }
 
-      console.log('Max retries reached, not retrying further')
+      ux.log(`${ux.colorize('dim', '--')} Max retries reached, not retrying further`)
     })
 
     this.limiter.on('retry', (error, jobInfo) => {
-      console.log(`Retrying job (attempt ${jobInfo.retryCount + 1})`)
+      ux.log(`${ux.colorize('dim', '--')} Retrying job (attempt ${jobInfo.retryCount + 1})`)
     })
 
     this.limiter.on('depleted', empty => {
       if (empty) {
-        console.log('Rate limit quota depleted. Requests will be queued.')
+        ux.log(`${ux.colorize('dim', '--')} Rate limit quota depleted. Requests will be queued.`)
       }
     })
   }
