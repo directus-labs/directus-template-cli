@@ -1,10 +1,54 @@
 import type {AuthenticationClient, AuthenticationData, RestClient} from '@directus/sdk'
 
-import {authentication, createDirectus, login, logout, refresh, rest} from '@directus/sdk'
+import {authentication, createDirectus, rest} from '@directus/sdk'
 import Bottleneck from 'bottleneck'
 
 export interface Schema {
-  // Define your schema here
+
+}
+
+export class DirectusError extends Error {
+  errors: Array<{ extensions?: Record<string, unknown>; message: string }>
+  headers: Headers
+  message: string
+  response: Response
+  status: number
+  constructor(response: Response) {
+    super(response.statusText)
+    this.name = 'DirectusError'
+    this.headers = response.headers
+    this.status = response.status
+    this.response = response
+    this.errors = []
+    this.message = response.statusText
+  }
+
+  formatError(): string {
+    if (this.errors.length === 0) {
+      return `Directus Error: ${this.message} (Status: ${this.status})`
+    }
+
+    const {extensions, message} = this.errors[0]
+    let formattedError = `Directus Error: ${message.trim()} (Status: ${this.status})`
+
+    if (extensions) {
+      formattedError += ` ${JSON.stringify(extensions)}`
+    }
+
+    return formattedError
+  }
+
+  async parseErrors(): Promise<void> {
+    try {
+      const data = await this.response.json()
+      if (data && Array.isArray(data.errors)) {
+        this.errors = data.errors
+        this.message = this.formatError()
+      }
+    } catch {
+      // If parsing fails, keep the errors array empty
+    }
+  }
 }
 
 class Api {
@@ -15,9 +59,53 @@ class Api {
   constructor() {
     this.limiter = new Bottleneck({
       maxConcurrent: 10,
-      minTime: 100,
-      retryCount: 3,
-      retryDelay: 3000,
+      minTime: 100, // Ensure at least 100ms between requests
+      reservoir: 50,  // Reservoir to handle the default rate limiter of 50 requests per second
+      reservoirRefreshAmount: 50,
+      reservoirRefreshInterval: 1000, // Refill 50 requests every 1 second
+      retryCount: 3,  // Retry a maximum of 3 times
+    })
+
+    this.limiter.on('failed', async (error, jobInfo) => {
+      if (error instanceof DirectusError) {
+        const retryAfter = error.headers?.get('Retry-After')
+        const statusCode = error.status
+
+        if (statusCode === 429) {
+          const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 60_000
+          console.log(`-- Rate limited. Retrying after ${delay}ms`)
+          return delay
+        }
+
+        if (statusCode === 503) {
+          const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 5000
+          console.log(`-- Server under pressure. Retrying after ${delay}ms`)
+          return delay
+        }
+
+        if (statusCode === 400) {
+          return
+        }
+      }
+
+      // For other errors, use exponential backoff, but only if we haven't exceeded retryCount
+      if (jobInfo.retryCount < 3) {
+        const delay = Math.min(1000 * 2 ** jobInfo.retryCount, 30_000)
+        console.log(`Request failed. Retrying after ${delay}ms`)
+        return delay
+      }
+
+      console.log('Max retries reached, not retrying further')
+    })
+
+    this.limiter.on('retry', (error, jobInfo) => {
+      console.log(`Retrying job (attempt ${jobInfo.retryCount + 1})`)
+    })
+
+    this.limiter.on('depleted', empty => {
+      if (empty) {
+        console.log('Rate limit quota depleted. Requests will be queued.')
+      }
     })
   }
 
@@ -28,7 +116,7 @@ class Api {
   public initialize(url: string): void {
     this.client = createDirectus<Schema>(url, {
       globals: {
-        fetch: (...args) => this.limiter.schedule(() => fetch(...args)),
+        fetch: this.limiter.wrap(this.enhancedFetch),
       },
     })
     .with(rest())
@@ -74,6 +162,18 @@ class Api {
     }
 
     await this.client.refresh()
+  }
+
+  private async enhancedFetch(...args: Parameters<typeof fetch>): Promise<Response> {
+    const response = await fetch(...args)
+
+    if (!response.ok) {
+      const error = new DirectusError(response)
+      await error.parseErrors()
+      throw error
+    }
+
+    return response
   }
 }
 
