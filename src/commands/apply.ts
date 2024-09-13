@@ -1,5 +1,6 @@
 import {Command, Flags, ux} from '@oclif/core'
 import * as inquirer from 'inquirer'
+import * as path from 'node:path'
 
 import * as customFlags from '../flags/common'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
@@ -275,7 +276,10 @@ export default class ApplyCommand extends Command {
 
       const {selectedTemplate} = await inquirer.prompt([
         {
-          choices: templates.map(t => ({name: `${t.templateName} (${ux.colorize('dim', t.directoryPath)})`, value: t})),
+          choices: templates.map(t => ({
+            name: `${t.templateName} (${path.basename(t.directoryPath)})`,
+            value: t,
+          })),
           message: 'Multiple templates found. Please select one:',
           name: 'selectedTemplate',
           type: 'list',
