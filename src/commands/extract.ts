@@ -1,14 +1,13 @@
-import {readMe} from '@directus/sdk'
-import {Command, Flags, ux} from '@oclif/core'
+import {Command, ux} from '@oclif/core'
 import inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
 import slugify from 'slugify'
 
+import * as customFlags from '../flags/common'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
 import extract from '../lib/extract/'
-import {api} from '../lib/sdk'
-import {getDirectusToken, getDirectusUrl} from '../lib/utils/auth'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth'
 import catchError from '../lib/utils/catch-error'
 import {
   generatePackageJsonContent,
@@ -34,45 +33,19 @@ export default class ExtractCommand extends Command {
   ]
 
   static flags = {
-    directusToken: Flags.string({
-      description: 'Token to use for the Directus instance',
-      env: 'SOURCE_DIRECTUS_TOKEN',
-      exclusive: ['userEmail', 'userPassword'],
-    }),
-    directusUrl: Flags.string({
-      description: 'URL of the Directus instance to extract the template from',
-      env: 'SOURCE_DIRECTUS_URL',
-    }),
-    programmatic: Flags.boolean({
-      char: 'p',
-      default: false,
-      description: 'Run in programmatic mode (non-interactive) for use cases such as CI/CD pipelines.',
-      summary: 'Run in programmatic mode',
-    }),
-    templateLocation: Flags.string({
-      dependsOn: ['programmatic'],
-      description: 'Directory to extract the template to',
-      env: 'TEMPLATE_LOCATION',
-    }),
-    templateName: Flags.string({
-      dependsOn: ['programmatic'],
-      description: 'Name of the template',
-      env: 'TEMPLATE_NAME',
-    }),
-    userEmail: Flags.string({
-      dependsOn: ['userPassword'],
-      description: 'Email for Directus authentication',
-      env: 'SOURCE_DIRECTUS_EMAIL',
-      exclusive: ['directusToken'],
-    }),
-    userPassword: Flags.string({
-      dependsOn: ['userEmail'],
-      description: 'Password for Directus authentication',
-      env: 'SOURCE_DIRECTUS_PASSWORD',
-      exclusive: ['directusToken'],
-    }),
+    directusToken: customFlags.directusToken,
+    directusUrl: customFlags.directusUrl,
+    programmatic: customFlags.programmatic,
+    templateLocation: customFlags.templateLocation,
+    templateName: customFlags.templateName,
+    userEmail: customFlags.userEmail,
+    userPassword: customFlags.userPassword,
   }
 
+  /**
+   * Main run method for the ExtractCommand
+   * @returns {Promise<void>} - Returns nothing
+   */
   public async run(): Promise<void> {
     const {flags} = await this.parse(ExtractCommand)
     const typedFlags = flags as unknown as ExtractFlags
@@ -80,6 +53,13 @@ export default class ExtractCommand extends Command {
     await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags))
   }
 
+  /**
+   * Extracts the template to the specified directory
+   * @param {string} templateName - The name of the template to extract
+   * @param {string} directory - The directory to extract the template to
+   * @param {ExtractFlags} flags - The command flags
+   * @returns {Promise<void>} - Returns nothing
+   */
   private async extractTemplate(templateName: string, directory: string, flags: ExtractFlags): Promise<void> {
     try {
       if (!fs.existsSync(directory)) {
@@ -95,7 +75,11 @@ export default class ExtractCommand extends Command {
       fs.writeFileSync(packageJSONPath, packageJSONContent)
       fs.writeFileSync(readmePath, readmeContent)
     } catch (error) {
-      ux.error(`Failed to create directory or write files: ${error.message}`)
+      catchError(error, {
+        context: {function: 'extractTemplate'},
+        fatal: true,
+        logToFile: true,
+      })
     }
 
     ux.log(SEPARATOR)
@@ -111,25 +95,11 @@ export default class ExtractCommand extends Command {
     this.exit(0)
   }
 
-  private async initializeDirectusApi(flags: ExtractFlags): Promise<void> {
-    api.initialize(flags.directusUrl)
-
-    try {
-      if (flags.directusToken) {
-        await api.loginWithToken(flags.directusToken)
-      } else if (flags.userEmail && flags.userPassword) {
-        await api.login(flags.userEmail, flags.userPassword)
-      }
-
-      const response = await api.client.request(readMe())
-      ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
-    } catch {
-      catchError('-- Unable to authenticate with the provided credentials. Please check your credentials.', {
-        fatal: true,
-      })
-    }
-  }
-
+  /**
+   * Runs the interactive mode for template extraction
+   * @param {ExtractFlags} flags - The command flags
+   * @returns {Promise<void>} - Returns nothing
+   */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
     ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Extract'))
 
@@ -171,30 +141,34 @@ export default class ExtractCommand extends Command {
 
     ux.log(SEPARATOR)
 
-    await this.initializeDirectusApi(flags)
+    await initializeDirectusApi(flags)
 
     await this.extractTemplate(templateName, directory, flags)
   }
 
+  /**
+   * Runs the programmatic mode for template extraction
+   * @param {ExtractFlags} flags - The command flags
+   * @returns {Promise<void>} - Returns nothing
+   */
   private async runProgrammatic(flags: ExtractFlags): Promise<void> {
     this.validateProgrammaticFlags(flags)
 
     const {templateLocation, templateName} = flags
 
-    await this.initializeDirectusApi(flags)
+    await initializeDirectusApi(flags)
 
     await this.extractTemplate(templateName, templateLocation, flags)
   }
 
+  /**
+   * Validates the flags for programmatic mode
+   * @param {ExtractFlags} flags - The command flags to validate
+   * @throws {Error} If required flags are missing
+   * @returns {void}
+   */
   private validateProgrammaticFlags(flags: ExtractFlags): void {
-    if (!flags.directusUrl) {
-      ux.error('Directus URL is required for programmatic mode.')
-    }
-
-    // We need either a token or email/password
-    if (!flags.directusToken && (!flags.userEmail || !flags.userPassword)) {
-      ux.error('Either Directus token or email and password are required for programmatic mode.')
-    }
+    validateAuthFlags(flags)
 
     if (!flags.templateLocation) {
       ux.error('Template location is required for programmatic mode.')
