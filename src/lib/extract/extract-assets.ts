@@ -1,25 +1,29 @@
-import {readAssetRaw, readFiles} from '@directus/sdk'
-import {ux} from '@oclif/core'
+import { readFiles } from '@directus/sdk'
+import { ux } from '@oclif/core'
 import fs from 'node:fs'
 import path from 'node:path'
-import {pipeline} from 'node:stream/promises'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
+import { DIRECTUS_PINK } from '../constants'
+import { api } from '../sdk'
 import catchError from '../utils/catch-error'
 
 async function getAssetList() {
-  return api.client.request(readFiles({limit: -1}))
+  return api.client.request(readFiles({ limit: -1 }))
 }
 
 async function downloadFile(file: any, dir: string) {
-  const response = await api.client.request(readAssetRaw(file.id))
+  const response: Response | string = await api.client.request(() => ({
+    method: 'GET',
+    path: `/assets/${file.id}`,
+  }))
   const fullPath = path.join(dir, 'assets', file.filename_disk)
-  await pipeline(
-    // @ts-ignore
-    response,
-    fs.createWriteStream(fullPath),
-  )
+
+  if (typeof response === 'string') {
+    fs.writeFileSync(fullPath, response)
+  } else {
+    const data = await response.arrayBuffer()
+    fs.writeFileSync(fullPath, Buffer.from(data))
+  }
 }
 
 export async function downloadAllFiles(dir: string) {
@@ -27,7 +31,7 @@ export async function downloadAllFiles(dir: string) {
   try {
     const fullPath = path.join(dir, 'assets')
     if (path && !fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath, {recursive: true})
+      fs.mkdirSync(fullPath, { recursive: true })
     }
 
     const fileList = await getAssetList()
