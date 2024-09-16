@@ -1,14 +1,14 @@
-import { readFiles } from '@directus/sdk'
-import { ux } from '@oclif/core'
+import {readFiles} from '@directus/sdk'
+import {ux} from '@oclif/core'
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { DIRECTUS_PINK } from '../constants'
-import { api } from '../sdk'
+import {DIRECTUS_PINK} from '../constants'
+import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 
 async function getAssetList() {
-  return api.client.request(readFiles({ limit: -1 }))
+  return api.client.request(readFiles({limit: -1}))
 }
 
 async function downloadFile(file: any, dir: string) {
@@ -31,7 +31,7 @@ export async function downloadAllFiles(dir: string) {
   try {
     const fullPath = path.join(dir, 'assets')
     if (path && !fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath, { recursive: true })
+      fs.mkdirSync(fullPath, {recursive: true})
     }
 
     const fileList = await getAssetList()
