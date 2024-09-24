@@ -40,6 +40,13 @@ async function processCollections(collectionsToAdd: any[], fieldsToAdd: any[]) {
 
 async function addNewCollectionWithFields(collection: any, allFields: any[]) {
   const collectionFields = allFields.filter(field => field.collection === collection.collection)
+  .map(field => {
+    if (field.meta?.required) {
+      field.meta.reqiured = false
+    }
+
+    return field
+  })
   const collectionWithoutGroup = {
     ...collection,
     fields: collectionFields,

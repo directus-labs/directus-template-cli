@@ -17,6 +17,7 @@ import loadRoles from './load-roles'
 import loadSettings from './load-settings'
 import loadTranslations from './load-translations'
 import loadUsers from './load-users'
+import updateRequiredFields from './update-required-fields'
 
 interface ApplyFlags {
   content: boolean;
@@ -61,6 +62,10 @@ export default async function apply(dir: string, flags: ApplyFlags) {
 
   if (flags.content) {
     await loadData(source)
+  }
+
+  if (flags.schema) {
+    await updateRequiredFields(source)
   }
 
   if (flags.dashboards) {
