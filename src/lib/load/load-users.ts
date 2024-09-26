@@ -15,17 +15,7 @@ export default async function loadUsers(
 
   if (users && users.length > 0) {
     const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
-
-    const incomingUserEmails = users.map(user => user.email)
-    const incomingUserIds = users.map(user => user.id).filter(Boolean)
-
     const existingUsers = await api.client.request(readUsers({
-      filter: {
-        _or: [
-          {email: {_in: incomingUserEmails}},
-          {id: {_in: incomingUserIds}},
-        ],
-      },
       limit: -1,
     }))
 

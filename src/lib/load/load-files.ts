@@ -15,35 +15,28 @@ export default async function loadFiles(dir: string) {
 
   if (files && files.length > 0) {
     try {
-      // const fileIds = files.map(file => file.id)
-
       // Fetch only the files we're interested in
-      // const existingFiles = await api.client.request(readFiles({
-      //   fields: ['id', 'filename_disk'],
-      //   filter: {
-      //     id: {
-      //       _in: fileIds,
-      //     },
-      //   },
-      //   limit: -1,
-      // }))
+      const existingFiles = await api.client.request(readFiles({
+        fields: ['id', 'filename_disk'],
+        limit: -1,
+      }))
 
-      // const existingFileIds = new Set(existingFiles.map(file => file.id))
-      // const existingFileNames = new Set(existingFiles.map(file => file.filename_disk))
+      const existingFileIds = new Set(existingFiles.map(file => file.id))
+      const existingFileNames = new Set(existingFiles.map(file => file.filename_disk))
 
-      // const filesToUpload = files.filter(file => {
-      //   if (existingFileIds.has(file.id)) {
-      //     return false
-      //   }
+      const filesToUpload = files.filter(file => {
+        if (existingFileIds.has(file.id)) {
+          return false
+        }
 
-      //   if (existingFileNames.has(file.filename_disk)) {
-      //     return false
-      //   }
+        if (existingFileNames.has(file.filename_disk)) {
+          return false
+        }
 
-      //   return true
-      // })
+        return true
+      })
 
-      await Promise.all(files.map(async asset => {
+      await Promise.all(filesToUpload.map(async asset => {
         const fileName = asset.filename_disk
         const assetPath = path.resolve(dir, 'assets', fileName)
         const fileStream = new Blob([readFileSync(assetPath)], {type: asset.type})
