@@ -18,7 +18,6 @@
   ],
   "dependencies": {
     "@directus/sdk": "^17.0.1",
-    "@directus/types": "^12.0.1",
     "@oclif/core": "^3.18.1",
     "@oclif/plugin-help": "^6.0.12",
     "@oclif/plugin-plugins": "^4.1.22",
@@ -31,6 +30,7 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
+    "@directus/types": "^12.0.1",
     "@oclif/test": "^3.1.13",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",

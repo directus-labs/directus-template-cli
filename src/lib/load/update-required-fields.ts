@@ -9,13 +9,13 @@ import readFile from '../utils/read-file'
 
 export default async function updateRequiredFields(dir: string) {
   const fieldsToUpdate = readFile('fields', dir)
-  .filter(field => field.meta.required === true)
+  .filter(field => field.meta.required === true || field.schema?.is_nullable === false || field.schema?.is_unique === true)
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Updating ${fieldsToUpdate.length} fields to required`))
 
   for await (const field of fieldsToUpdate) {
     try {
-      await api.client.request(updateField(field.collection, field.field, {meta: {required: true}}))
+      await api.client.request(updateField(field.collection, field.field, {meta: {...field.neta}, schema: {...field.schema}}))
     } catch (error) {
       catchError(error)
     }

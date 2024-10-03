@@ -1,4 +1,7 @@
-import {createCollection, createField, readCollections, readFields, updateCollection} from '@directus/sdk'
+import {
+  createCollection, createField, readCollections, readFields, updateCollection,
+} from '@directus/sdk'
+import {Collection, CollectionMeta, Field} from '@directus/types'
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants'
@@ -38,15 +41,27 @@ async function processCollections(collectionsToAdd: any[], fieldsToAdd: any[]) {
   }
 }
 
-async function addNewCollectionWithFields(collection: any, allFields: any[]) {
-  const collectionFields = allFields.filter(field => field.collection === collection.collection)
-  .map(field => {
-    if (field.meta?.required) {
-      field.meta.reqiured = false
-    }
+const removeRequiredorIsNullable = (field:Field) => {
+  if (field.meta?.required === true) {
+    field.meta.required = false
+  }
 
-    return field
-  })
+  if (field.schema?.is_nullable === false) {
+    // eslint-disable-next-line camelcase
+    field.schema.is_nullable = true
+  }
+
+  if (field.schema?.is_unique === true) {
+    // eslint-disable-next-line camelcase
+    field.schema.is_unique = false
+  }
+
+  return field
+}
+
+async function addNewCollectionWithFields(collection: any, allFields: Field[]) {
+  const collectionFields = allFields.filter(field => field.collection === collection.collection)
+  .map(field => removeRequiredorIsNullable(field))
   const collectionWithoutGroup = {
     ...collection,
     fields: collectionFields,
@@ -56,8 +71,10 @@ async function addNewCollectionWithFields(collection: any, allFields: any[]) {
   await api.client.request(createCollection(collectionWithoutGroup))
 }
 
-async function addNewFieldsToExistingCollection(collectionName: string, fieldsToAdd: any[], existingFields: any[]) {
+async function addNewFieldsToExistingCollection(collectionName: string, fieldsToAdd: Field[], existingFields: any[]) {
   const collectionFieldsToAdd = fieldsToAdd.filter(field => field.collection === collectionName)
+  .map(field => removeRequiredorIsNullable(field))
+
   const existingCollectionFields = existingFields.filter((field: any) => field.collection === collectionName)
 
   for await (const field of collectionFieldsToAdd) {
