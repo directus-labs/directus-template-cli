@@ -15,7 +15,7 @@ export default async function updateRequiredFields(dir: string) {
 
   for await (const field of fieldsToUpdate) {
     try {
-      await api.client.request(updateField(field.collection, field.field, {meta: {...field.neta}, schema: {...field.schema}}))
+      await api.client.request(updateField(field.collection, field.field, {meta: {...field.meta}, schema: {...field.schema}}))
     } catch (error) {
       catchError(error)
     }
