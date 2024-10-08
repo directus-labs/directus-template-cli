@@ -3,6 +3,7 @@ import {ux} from '@oclif/core'
 import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
 import catchError from '../utils/catch-error'
+import getRoleIds from '../utils/get-role-ids'
 import readFile from '../utils/read-file'
 
 interface Access {
@@ -19,6 +20,7 @@ export default async function loadAccess(dir: string) {
 
   if (access && access.length > 0) {
     // Fetch existing accesses
+
     const existingAccesses = await api.client.request(() => ({
       method: 'GET',
       params: {
@@ -26,6 +28,8 @@ export default async function loadAccess(dir: string) {
       },
       path: '/access',
     })) as Access[]
+
+    const {legacyAdminRoleId, newAdminRoleId} = await getRoleIds(dir)
 
     const existingAccessById = new Map(existingAccesses.map(acc => [acc.id, acc]))
     const existingAccessByCompositeKey = new Map(existingAccesses.map(acc => [getCompositeKey(acc), acc]))
@@ -44,6 +48,11 @@ export default async function loadAccess(dir: string) {
         // If the role is null, delete the role key to avoid errors
         if (acc.role === null) {
           delete acc.role
+        }
+
+        // If the role is the legacy admin role, update it to the new admin role
+        if (acc.role === legacyAdminRoleId) {
+          acc.role = newAdminRoleId
         }
 
         await api.client.request(() => ({
