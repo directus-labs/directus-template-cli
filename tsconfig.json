@@ -9,8 +9,8 @@
     "target": "es2019",
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "vue"]
   },
   "include": [
     "src/**/*" ]
