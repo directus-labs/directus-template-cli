@@ -194,7 +194,7 @@ export default class ApplyCommand extends Command {
     } else {
       const userEmail = await ux.prompt('What is your email?')
       validatedFlags.userEmail = userEmail
-      const userPassword = await ux.prompt('What is your password?')
+      const userPassword = await ux.prompt('What is your password?', {type: 'hide'})
       validatedFlags.userPassword = userPassword
     }
 
