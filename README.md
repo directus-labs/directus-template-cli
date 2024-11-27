@@ -10,7 +10,7 @@ A streamlined CLI tool for managing Directus templates - making it easy to apply
 We strongly recommend against using this tool in existing production environments or as a critical part of your CI/CD pipeline without thorough testing. Always create backups before applying templates.
 
 **Important Notes:**
-- **Primary Purpose**: Built to deploy official Directus Core Team templates. While community templates are supported, the varied configurations make comprehensive support challenging.
+- **Primary Purpose**: Built to deploy templates created by the Directus Core Team. While community templates are supported, the unlimited possible configurations make comprehensive support challenging.
 - **Database Compatibility**: PostgreSQL and SQLite are recommended. MySQL users may encounter known issues.
 - **Performance**: Remote operations (extract/apply) are rate-limited to 10 requests/second using bottleneck. Processing time varies based on your instance size (collections, items, assets).
 - **Version Compatibility**:
