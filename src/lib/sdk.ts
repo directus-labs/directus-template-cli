@@ -84,7 +84,8 @@ class Api {
           return delay
         }
 
-        if (statusCode === 400) {
+        // If the status code is 400 or 401, we don't want to retry
+        if (statusCode === 400 || statusCode === 401) {
           return
         }
       }
