@@ -1,38 +1,36 @@
 import {readCollections, readItems} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
-export async function getCollections() {
+async function getCollections() {
   const response = await api.client.request(readCollections())
-
-  const collections = response
+  return response
   .filter(item => !item.collection.startsWith('directus_', 0))
   .filter(item => item.schema != null)
   .map(i => i.collection)
-  return collections
 }
 
-export async function getDataFromCollection(collection: string, dir: string) {
+async function getDataFromCollection(collection: string, dir: string) {
   try {
-    // @ts-ignore
-    const response = await api.client.request(readItems(collection,
-      {
-        limit: -1,
-      },
-    ),
-    )
-    writeToFile(`${collection}`, response, `${dir}/content/`)
-    ux.log('Extracted items from collection: ' + collection)
+    const response = await api.client.request(readItems(collection as never, {limit: -1}))
+    await writeToFile(`${collection}`, response, `${dir}/content/`)
   } catch (error) {
-    ux.warn(`Error extracting items from: ${collection}`)
-    ux.warn(error.message)
+    catchError(error)
   }
 }
 
 export async function extractContent(dir: string) {
-  const collections = await getCollections()
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting content'))
+  try {
+    const collections = await getCollections()
+    await Promise.all(collections.map(collection => getDataFromCollection(collection, dir)))
+  } catch (error) {
+    catchError(error)
+  }
 
-  await Promise.all(collections.map(collection => getDataFromCollection(collection, dir)))
+  ux.action.stop()
 }

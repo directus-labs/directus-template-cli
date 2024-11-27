@@ -23,10 +23,10 @@ export async function readTemplate(
     }
 
     return null
-  } catch (error) {
-    console.error(
-      `Failed to read package.json file in directory ${directoryPath}: ${error}`,
-    )
+  } catch {
+    // console.error(
+    //   `Failed to read package.json file in directory ${directoryPath}: ${error}`,
+    // )
     return null
   }
 }

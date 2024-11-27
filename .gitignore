@@ -8,6 +8,9 @@
 node_modules
 oclif.manifest.json
 .DS_Store
+templates
 
 /downloads
 /**/downloads
+.env
+.directus-template-cli/logs

@@ -1,46 +1,46 @@
-import {readAssetRaw,  readFiles} from '@directus/sdk'
+import {readFiles} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 import path from 'node:path'
-import {pipeline} from 'node:stream/promises'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 
-export async function getAssetList() {
-  const response = await api.client.request(readFiles({limit: -1}))
-  return response
+async function getAssetList() {
+  return api.client.request(readFiles({limit: -1}))
 }
 
-export async function downloadFile(file: any, dir: string) {
-  // Returned as ReadableStream<Uint8Array>
-  const response = await api.client.request(readAssetRaw(file.id))
-
-  // Write the file to disk
+async function downloadFile(file: any, dir: string) {
+  const response: Response | string = await api.client.request(() => ({
+    method: 'GET',
+    path: `/assets/${file.id}`,
+  }))
   const fullPath = path.join(dir, 'assets', file.filename_disk)
 
-  await pipeline(
-    // @ts-ignore
-    response,
-    fs.createWriteStream(fullPath),
-  )
+  if (typeof response === 'string') {
+    fs.writeFileSync(fullPath, response)
+  } else {
+    const data = await response.arrayBuffer()
+    fs.writeFileSync(fullPath, Buffer.from(data))
+  }
 }
 
 export async function downloadAllFiles(dir: string) {
-  // Create assets folder if it doesn't exist
-  const fullPath = path.join(dir, 'assets')
-  if (path && !fs.existsSync(fullPath)) {
-    fs.mkdirSync(fullPath, {recursive: true})
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Downloading assets'))
+  try {
+    const fullPath = path.join(dir, 'assets')
+    if (path && !fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, {recursive: true})
+    }
+
+    const fileList = await getAssetList()
+    await Promise.all(fileList.map(file => downloadFile(file, dir).catch(error => {
+      catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
+    })))
+  } catch (error) {
+    catchError(error)
   }
 
-  // Get the list of files
-  const fileList = await getAssetList()
-
-  // Download all files
-  await Promise.all(fileList.map(file => downloadFile(file, dir).catch(error => {
-    ux.warn(`Error downloading ${file.filename_disk}`)
-    ux.warn(error.message)
-  })))
-
-  // Log message after all files have been downloaded
-  ux.log('All files have been downloaded.')
+  ux.action.stop()
 }

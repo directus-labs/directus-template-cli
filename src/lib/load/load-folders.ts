@@ -1,29 +1,53 @@
-import {createFolders, updateFolder} from '@directus/sdk'
+import {createFolders, readFolders, updateFolder} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
-import logError from '../utils/log-error'
+import catchError from '../utils/catch-error'
 import readFile from '../utils/read-file'
 
 export default async function loadFolders(dir: string) {
   const folders = readFile('folders', dir)
-  ux.action.start(`Loading ${folders.length} folders`)
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${folders.length} folders`))
 
-  try {
-    const folderSkeleton = folders.map(folder => ({id: folder.id, name: folder.name}))
+  if (folders && folders.length > 0) {
+    try {
+      // Fetch existing folders
+      const existingFolders = await api.client.request(readFolders({
+        limit: -1,
+      }))
+      const existingFolderIds = new Set(existingFolders.map(folder => folder.id))
 
-    // Create the folders
-    await api.client.request(createFolders(folderSkeleton))
+      const foldersToAdd = folders.filter(folder => {
+        if (existingFolderIds.has(folder.id)) {
+          return false
+        }
 
-    // Update the folders with relationships concurrently
-    await Promise.all(folders.map(async folder => {
-      const {id, ...rest} = folder
-      await api.client.request(updateFolder(id, rest))
-    }))
-  } catch (error) {
-    logError(error)
+        return true
+      })
+
+      if (foldersToAdd.length > 0) {
+        const folderSkeleton = foldersToAdd.map(folder => ({id: folder.id, name: folder.name}))
+
+        // Create the folders
+        await api.client.request(createFolders(folderSkeleton))
+
+        // Update the folders with relationships concurrently
+        await Promise.all(foldersToAdd.map(async folder => {
+          const {id, ...rest} = folder
+          try {
+            await api.client.request(updateFolder(id, rest))
+          } catch (error) {
+            catchError(error)
+          }
+        }))
+      } else {
+        // ux.info('-- No new folders to create')
+      }
+    } catch (error) {
+      catchError(error)
+    }
   }
 
   ux.action.stop()
-  ux.log('Loaded folders')
 }

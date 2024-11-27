@@ -1,7 +1,9 @@
 import {readFields, readRelations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
+import {DIRECTUS_PINK} from '../constants'
 import {api} from '../sdk'
+import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
 /**
@@ -9,6 +11,7 @@ import writeToFile from '../utils/write-to-file'
  */
 
 export default async function extractRelations(dir: string) {
+  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting relations'))
   try {
     const response = await api.client.request(readRelations())
 
@@ -25,11 +28,10 @@ export default async function extractRelations(dir: string) {
     .filter(
       (i: any) =>
         !i.collection.startsWith('directus_', 0)
-            || customFields.some(
-              (f: { collection: string; field: string }) =>
-                f.collection === i.collection && f.field === i.field,
-            ),
-
+        || customFields.some(
+          (f: { collection: string; field: string }) =>
+            f.collection === i.collection && f.field === i.field,
+        ),
     )
     .map(i => {
       delete i.meta.id
@@ -37,9 +39,9 @@ export default async function extractRelations(dir: string) {
     })
 
     await writeToFile('relations', relations, dir)
-    ux.log('Extracted relations')
   } catch (error) {
-    ux.warn('Error extracting Relations:')
-    ux.warn(error.message)
+    catchError(error)
   }
+
+  ux.action.stop()
 }
