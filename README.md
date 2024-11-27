@@ -1,13 +1,21 @@
 # Directus Template CLI
 
-A CLI tool to make applying or extracting Directus "templates" a little easier...well a lot easier.
+A streamlined CLI tool for managing Directus templates - making it easy to apply and extract template configurations across instances.
 
-**Notes:**
+⚠️ **Beta Release Notice**: This tool is currently in beta and best suited for:
+- Proof of Concept (POC) projects
+- Demo environments
+- New project setups
 
-- This is a beta release. It is recommended for use on POC, demo, or greenfield projects only. When applying templates, you should always backup your project/database before applying a template.
-- ⚠️ Known issues with using MySQL currently. We highly recommend using PostgreSQL or SQLite for your database provider. If you're using PostgreSQL in production, we recommend using PostgreSQL in local development as well.
-- If you are extracting or applying from a remote source, the script can take quite a while depending on the "size" of your instance (how many collections, how many items in each collection, number and size of assets, etc). The script applies a strict rate limit of 10 requests per second using bottleneck.
-- As of v0.5.0, the CLI is compatible with Directus 11 and up. If you need to apply or extract to an instance of Directus 10, you can use v0.4.0 of the CLI. `npx directus-template-cli@0.4 extract` or `npx directus-template-cli@0.4 apply`.
+We strongly recommend against using this tool in existing production environments or as a critical part of your CI/CD pipeline without thorough testing. Always create backups before applying templates.
+
+**Important Notes:**
+- **Primary Purpose**: Built to deploy official Directus Core Team templates. While community templates are supported, the varied configurations make comprehensive support challenging.
+- **Database Compatibility**: PostgreSQL and SQLite are recommended. MySQL users may encounter known issues.
+- **Performance**: Remote operations (extract/apply) are rate-limited to 10 requests/second using bottleneck. Processing time varies based on your instance size (collections, items, assets).
+- **Version Compatibility**:
+  - v0.5.0+: Compatible with Directus 11 and up
+  - v0.4.0: Use for Directus 10 compatibility (`npx directus-template-cli@0.4 extract/apply`)
 
 Using the @latest tag ensures you're receiving the latest version of the packaged templates with the CLI. You can review [the specific versions on NPM](https://www.npmjs.com/package/directus-template-cli) and use @{version} syntax to apply the templates included with that version.
 
