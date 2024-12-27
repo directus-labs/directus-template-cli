@@ -22,7 +22,6 @@ export async function getCommunityTemplates(): Promise<Template[]> {
     const {dir} = await downloadTemplate('github:directus-labs/directus-templates', {
       dir: downloadDir,
       force: true,
-      preferOffline: true,
     })
 
     return await readAllTemplates(dir)
