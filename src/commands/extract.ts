@@ -18,6 +18,7 @@ interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
   excludeCollections?: string[];
+  skipFiles?: boolean;
   programmatic: boolean;
   templateLocation: string;
   templateName: string;
@@ -105,9 +106,9 @@ export default class ExtractCommand extends Command {
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)}${exclusionMessage} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
     await extract(directory, {
-      excludeCollections: flags.excludeCollections,
-      skipFiles: flags.skipFiles
-  })
+        excludeCollections: flags.excludeCollections,
+        skipFiles: flags.skipFiles
+    });
 
     ux.action.stop()
 
