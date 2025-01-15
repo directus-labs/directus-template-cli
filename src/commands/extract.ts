@@ -42,7 +42,13 @@ export default class ExtractCommand extends Command {
       description: 'Comma-separated list of collection names to exclude from extraction',
       multiple: true,
       required: false
-  }),
+    }),
+    skipFiles: Flags.boolean({
+      char: 'f',
+      description: 'Skip extracting files and assets',
+      required: false,
+      default: false
+    }),
     programmatic: customFlags.programmatic,
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
@@ -98,7 +104,10 @@ export default class ExtractCommand extends Command {
 
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)}${exclusionMessage} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
-    await extract(directory, flags.excludeCollections)
+    await extract(directory, {
+      excludeCollections: flags.excludeCollections,
+      skipFiles: flags.skipFiles
+  })
 
     ux.action.stop()
 
