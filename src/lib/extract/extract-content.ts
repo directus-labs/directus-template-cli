@@ -6,11 +6,12 @@ import {api} from '../sdk'
 import catchError from '../utils/catch-error'
 import writeToFile from '../utils/write-to-file'
 
-async function getCollections() {
+async function getCollections(excludeCollections?: string[]) {
   const response = await api.client.request(readCollections())
   return response
   .filter(item => !item.collection.startsWith('directus_', 0))
   .filter(item => item.schema != null)
+  .filter(item => !excludeCollections?.includes(item.collection))
   .map(i => i.collection)
 }
 
@@ -23,10 +24,15 @@ async function getDataFromCollection(collection: string, dir: string) {
   }
 }
 
-export async function extractContent(dir: string) {
-  ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting content'))
+export async function extractContent(dir: string, excludeCollections?: string[]) {
+  const exclusionMessage = excludeCollections?.length
+    ? ` (excluding ${excludeCollections.join(', ')})`
+    : ''
+
+  ux.action.start(ux.colorize(DIRECTUS_PINK, `Extracting content${exclusionMessage}`))
+
   try {
-    const collections = await getCollections()
+    const collections = await getCollections(excludeCollections)
     await Promise.all(collections.map(collection => getDataFromCollection(collection, dir)))
   } catch (error) {
     catchError(error)

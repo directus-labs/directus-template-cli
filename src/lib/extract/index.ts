@@ -21,7 +21,7 @@ import extractSettings from './extract-settings'
 import extractTranslations from './extract-translations'
 import extractUsers from './extract-users'
 
-export default async function extract(dir: string) {
+export default async function extract(dir: string, excludeCollections?: string[]) {
   // Get the destination directory for the actual files
   const destination = dir + '/src'
 
@@ -59,7 +59,7 @@ export default async function extract(dir: string) {
   await extractSettings(destination)
   await extractExtensions(destination)
 
-  await extractContent(destination)
+  await extractContent(destination, excludeCollections)
 
   await downloadAllFiles(destination)
 

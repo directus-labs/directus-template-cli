@@ -17,6 +17,7 @@ import {
 interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
+  excludeCollections?: string[];
   programmatic: boolean;
   templateLocation: string;
   templateName: string;
@@ -30,11 +31,19 @@ export default class ExtractCommand extends Command {
   static examples = [
     '$ directus-template-cli extract',
     '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
+    '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --excludeCollections=collection1,collection2',
   ]
 
   static flags = {
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
+    excludeCollections: {
+      char: 'e',
+      description: 'Comma-separated list of collection names to exclude from extraction',
+      multiple: true,
+      required: false,
+      type: 'string',
+    },
     programmatic: customFlags.programmatic,
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
@@ -84,9 +93,13 @@ export default class ExtractCommand extends Command {
 
     ux.log(SEPARATOR)
 
-    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    const exclusionMessage = flags.excludeCollections?.length
+      ? ` (excluding ${flags.excludeCollections.join(', ')})`
+      : ''
 
-    await extract(directory)
+    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)}${exclusionMessage} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
+
+    await extract(directory, flags.excludeCollections)
 
     ux.action.stop()
 
@@ -108,6 +121,15 @@ export default class ExtractCommand extends Command {
       "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
       {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
     )
+
+    const excludeCollectionsInput = await ux.prompt(
+      'Enter collection names to exclude (comma-separated) or press enter to skip:',
+      {required: false},
+    )
+
+    if (excludeCollectionsInput) {
+      flags.excludeCollections = excludeCollectionsInput.split(',').map(name => name.trim())
+    }
 
     ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
