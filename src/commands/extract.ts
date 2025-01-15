@@ -122,7 +122,7 @@ export default class ExtractCommand extends Command {
     )
 
     const excludeCollectionsInput = await ux.prompt(
-      'Enter collection names to exclude (comma-separated) or press enter to skip:',
+      'Enter collection names to exclude (comma-separated) or press enter to skip',
       {required: false},
     )
 
