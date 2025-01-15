@@ -1,4 +1,4 @@
-import {Command, ux} from '@oclif/core'
+import {Command, Flags, ux} from '@oclif/core'
 import inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -37,13 +37,12 @@ export default class ExtractCommand extends Command {
   static flags = {
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
-    excludeCollections: {
+    excludeCollections: Flags.string({
       char: 'e',
       description: 'Comma-separated list of collection names to exclude from extraction',
       multiple: true,
-      required: false,
-      type: 'string',
-    },
+      required: false
+  }),
     programmatic: customFlags.programmatic,
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
