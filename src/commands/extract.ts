@@ -131,6 +131,8 @@ export default class ExtractCommand extends Command {
       {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
     )
 
+    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
+
     const excludeCollectionsInput = await ux.prompt(
       'Enter collection names to exclude (comma-separated) or press enter to skip',
       {required: false},
@@ -140,7 +142,8 @@ export default class ExtractCommand extends Command {
       flags.excludeCollections = excludeCollectionsInput.split(',').map(name => name.trim())
     }
 
-    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    const skipFiles = await ux.confirm('Skip extracting files and assets? (y/N)');
+    flags.skipFiles = skipFiles
 
     ux.log(SEPARATOR)
 
