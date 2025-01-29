@@ -27,8 +27,8 @@ interface ExtractOptions {
 }
 
 export default async function extract(dir: string, options: ExtractOptions = {}) {
-  const { excludeCollections, skipFiles = false } = options;
-  
+  const {excludeCollections, skipFiles = false} = options
+
   // Get the destination directory for the actual files
   const destination = dir + '/src'
 
