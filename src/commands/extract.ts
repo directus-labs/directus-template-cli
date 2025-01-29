@@ -1,4 +1,4 @@
-import {Command, ux} from '@oclif/core'
+import {Command, Flags, ux} from '@oclif/core'
 import inquirer from 'inquirer'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -17,7 +17,9 @@ import {
 interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
+  excludeCollections?: string[];
   programmatic: boolean;
+  skipFiles?: boolean;
   templateLocation: string;
   templateName: string;
   userEmail: string;
@@ -30,12 +32,26 @@ export default class ExtractCommand extends Command {
   static examples = [
     '$ directus-template-cli extract',
     '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
+    '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --excludeCollections=collection1,collection2',
   ]
 
   static flags = {
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
+    excludeCollections: Flags.string({
+      char: 'e',
+      delimiter: ',', // Will split on commas and return an array
+      description: 'Comma-separated list of collection names to exclude from extraction',
+      multiple: true,
+      required: false,
+    }),
     programmatic: customFlags.programmatic,
+    skipFiles: Flags.boolean({
+      char: 'f',
+      default: false,
+      description: 'Skip extracting files and assets',
+      required: false,
+    }),
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
@@ -84,9 +100,16 @@ export default class ExtractCommand extends Command {
 
     ux.log(SEPARATOR)
 
-    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    const exclusionMessage = flags.excludeCollections?.length
+      ? ` (excluding ${flags.excludeCollections.join(', ')})`
+      : ''
 
-    await extract(directory)
+    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)}${exclusionMessage} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
+
+    await extract(directory, {
+      excludeCollections: flags.excludeCollections,
+      skipFiles: flags.skipFiles,
+    })
 
     ux.action.stop()
 
@@ -110,6 +133,18 @@ export default class ExtractCommand extends Command {
     )
 
     ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
+
+    const excludeCollectionsInput = await ux.prompt(
+      'Enter collection names to exclude (comma-separated) or press enter to skip',
+      {required: false},
+    )
+
+    if (excludeCollectionsInput) {
+      flags.excludeCollections = excludeCollectionsInput.split(',').map(name => name.trim())
+    }
+
+    const skipFiles = await ux.confirm('Skip extracting files and assets? (y/N)')
+    flags.skipFiles = skipFiles
 
     ux.log(SEPARATOR)
 

@@ -181,6 +181,18 @@ Using email/password:
 npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --userEmail="admin@example.com" --userPassword="admin" --directusUrl="http://localhost:8055"
 ```
 
+Skipping extracting content from sensitive or large collections:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --excludeCollections="posts,globals"
+```
+
+Skipping extracting files and assets:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --skipFiles
+```
+
 Available flags for programmatic mode:
 
 - `--directusUrl`: URL of the Directus instance to extract the template from (required)
@@ -189,6 +201,8 @@ Available flags for programmatic mode:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Directory to extract the template to (required)
 - `--templateName`: Name of the template (required)
+- `--excludeCollections`: Comma-separated list of collection names to exclude from extraction
+- `--skipFiles`: Skip extracting files and assets
 
 #### Using Environment Variables
 

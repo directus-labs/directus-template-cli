@@ -21,7 +21,14 @@ import extractSettings from './extract-settings'
 import extractTranslations from './extract-translations'
 import extractUsers from './extract-users'
 
-export default async function extract(dir: string) {
+interface ExtractOptions {
+  excludeCollections?: string[];
+  skipFiles?: boolean;
+}
+
+export default async function extract(dir: string, options: ExtractOptions = {}) {
+  const {excludeCollections, skipFiles = false} = options
+
   // Get the destination directory for the actual files
   const destination = dir + '/src'
 
@@ -37,8 +44,11 @@ export default async function extract(dir: string) {
   await extractFields(destination)
   await extractRelations(destination)
 
-  await extractFolders(destination)
-  await extractFiles(destination)
+  // Only extract files and folders if skipFiles is false
+  if (!skipFiles) {
+    await extractFolders(destination)
+    await extractFiles(destination)
+  }
 
   await extractUsers(destination)
   await extractRoles(destination)
@@ -59,9 +69,12 @@ export default async function extract(dir: string) {
   await extractSettings(destination)
   await extractExtensions(destination)
 
-  await extractContent(destination)
+  await extractContent(destination, excludeCollections)
 
-  await downloadAllFiles(destination)
+  // Only download files if skipFiles is false
+  if (!skipFiles) {
+    await downloadAllFiles(destination)
+  }
 
   return {}
 }
