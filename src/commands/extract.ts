@@ -18,8 +18,8 @@ interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
   excludeCollections?: string[];
-  skipFiles?: boolean;
   programmatic: boolean;
+  skipFiles?: boolean;
   templateLocation: string;
   templateName: string;
   userEmail: string;
@@ -40,17 +40,18 @@ export default class ExtractCommand extends Command {
     directusUrl: customFlags.directusUrl,
     excludeCollections: Flags.string({
       char: 'e',
+      delimiter: ',', // Will split on commas and return an array
       description: 'Comma-separated list of collection names to exclude from extraction',
       multiple: true,
-      required: false
-    }),
-    skipFiles: Flags.boolean({
-      char: 'f',
-      description: 'Skip extracting files and assets',
       required: false,
-      default: false
     }),
     programmatic: customFlags.programmatic,
+    skipFiles: Flags.boolean({
+      char: 'f',
+      default: false,
+      description: 'Skip extracting files and assets',
+      required: false,
+    }),
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
@@ -106,9 +107,9 @@ export default class ExtractCommand extends Command {
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)}${exclusionMessage} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
     await extract(directory, {
-        excludeCollections: flags.excludeCollections,
-        skipFiles: flags.skipFiles
-    });
+      excludeCollections: flags.excludeCollections,
+      skipFiles: flags.skipFiles,
+    })
 
     ux.action.stop()
 
@@ -142,7 +143,7 @@ export default class ExtractCommand extends Command {
       flags.excludeCollections = excludeCollectionsInput.split(',').map(name => name.trim())
     }
 
-    const skipFiles = await ux.confirm('Skip extracting files and assets? (y/N)');
+    const skipFiles = await ux.confirm('Skip extracting files and assets? (y/N)')
     flags.skipFiles = skipFiles
 
     ux.log(SEPARATOR)
