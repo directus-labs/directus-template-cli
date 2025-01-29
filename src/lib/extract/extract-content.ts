@@ -10,7 +10,7 @@ async function getCollections(excludeCollections?: string[]) {
   const response = await api.client.request(readCollections())
   return response
   .filter(item => !item.collection.startsWith('directus_', 0))
-  .filter(item => item.schema != null)
+  .filter(item => item.schema !== null)
   .filter(item => !excludeCollections?.includes(item.collection))
   .map(i => i.collection)
 }
