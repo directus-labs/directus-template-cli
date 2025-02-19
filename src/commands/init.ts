@@ -1,6 +1,5 @@
 import {Args, Command, Flags, ux} from '@oclif/core'
 import inquirer from 'inquirer'
-import fs from 'node:fs'
 import path from 'node:path'
 
 import {init} from '../lib/init'
@@ -337,22 +336,6 @@ Enjoy building your project!`
     }
 
     flags.frontend = chosenFrontend
-
-    // 5. Continue with the rest of the interactive flow:
-    // if (!this.checkDockerInstalled()) {
-    //   const {installDocker} = await inquirer.prompt<{ installDocker: boolean }>([
-    //     {
-    //       default: false,
-    //       message: 'Docker is not installed. Do you want to install Docker?',
-    //       name: 'installDocker',
-    //       type: 'confirm',
-    //     },
-    //   ])
-    //   if (installDocker) {
-    //     ux.log('Please follow Docker\'s official instructions to install Docker, then re-run the init command.')
-    //     this.exit(0)
-    //   }
-    // }
 
     const {installDeps} = await inquirer.prompt<{ installDeps: boolean }>([
       {

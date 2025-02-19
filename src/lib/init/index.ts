@@ -137,7 +137,7 @@ export async function init(dir: string, flags: InitFlags) {
     ux.log('• directus')
     ux.log(`• ${flags.frontend}`)
 
-    ux.exit(0)
+    return {}
   } catch (error) {
     catchError(error, {
       context: {dir, flags, function: 'init'},
