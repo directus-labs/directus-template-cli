@@ -1,4 +1,4 @@
-import {confirm, intro, isCancel, multiselect, note, outro, select, spinner, text} from '@clack/prompts'
+import {note, outro, spinner} from '@clack/prompts'
 import {ux} from '@oclif/core'
 import chalk from 'chalk'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
