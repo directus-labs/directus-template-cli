@@ -12,3 +12,11 @@ export const STARTERS_TEMPLATE_REPO = {
   string: 'github:directus-labs/starters',
   url: 'https://github.com/directus-labs/starters',
 }
+
+export const DEFAULT_REPO = {
+  owner: 'directus-labs',
+  path: '',
+  ref: 'cms-template',
+  repo: 'starters',
+  url: 'https://github.com/directus-labs/starters',
+}
