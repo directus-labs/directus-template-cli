@@ -1,8 +1,12 @@
+import {confirm, intro, isCancel, multiselect, outro, select, text} from '@clack/prompts'
 import {Args, Command, Flags, ux} from '@oclif/core'
+import chalk from 'chalk'
 import inquirer from 'inquirer'
 import path from 'node:path'
 
+import {DIRECTUS_PURPLE} from '../lib/constants'
 import {init} from '../lib/init'
+import {animatedBunny} from '../lib/utils/animated-bunny'
 import {createGitHub} from '../services/github'
 
 interface InitFlags {
@@ -13,6 +17,10 @@ interface InitFlags {
   programmatic: boolean
   template?: string
 
+}
+
+interface InitArgs {
+  directory: string
 }
 
 export default class InitCommand extends Command {
@@ -72,43 +80,52 @@ export default class InitCommand extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(InitCommand)
     const typedFlags = flags as InitFlags
-
+    const typedArgs = args as InitArgs
     // Set the target directory and create it if it doesn't exist
     this.targetDir = path.resolve(args.directory as string)
     // if (!fs.existsSync(this.targetDir)) {
     //   fs.mkdirSync(this.targetDir, {recursive: true})
     // }
 
-    await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags))
+    await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags, typedArgs))
   }
 
   /**
    * Interactive mode: prompts the user for each piece of info, with added template checks.
    * @param flags - The flags passed to the command.
+   * @param args - The arguments passed to the command.
    * @returns void
    */
-  private async runInteractive(flags: InitFlags): Promise<void> {
-    ux.styledHeader('Directus Template CLI - Init')
+  private async runInteractive(flags: InitFlags, args: InitArgs): Promise<void> {
+    await animatedBunny('Let\'s create a new Directus project!')
+
+    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI 🐰')} - Create Project`)
 
     // Create GitHub service
     const github = createGitHub()
+
+    // If no dir is provided, ask for it
+    if (!args.directory || args.directory === '.') {
+      this.targetDir = await text({
+        message: 'Enter the directory to create the project in:',
+        placeholder: './my-directus-project',
+      }).then(ans => ans as string)
+    }
 
     // 1. Fetch available templates
     const availableTemplates = await github.getTemplates()
 
     // 2. Prompt for template if not provided
     let {template} = flags
+
     if (!template) {
-      template = await inquirer
-      .prompt<{ template: string }>([
-        {
-          choices: availableTemplates,
-          message: 'Which Directus starters template would you like to use?',
-          name: 'template',
-          type: 'list',
-        },
-      ])
-      .then(ans => ans.template)
+      template = await select({
+        message: 'Which Directus backend template would you like to use?',
+        options: availableTemplates.map(template => ({
+          label: template,
+          value: template,
+        })),
+      }).then(ans => ans as string)
     }
 
     // 3. Validate that the template exists, fetch subdirectories
@@ -130,38 +147,28 @@ export default class InitCommand extends Command {
 
     // 4. If user hasn't specified a valid flags.frontend, ask from the list
     let chosenFrontend = flags.frontend
+
     if (!chosenFrontend || !potentialFrontends.includes(chosenFrontend)) {
-      chosenFrontend = await inquirer
-      .prompt<{ chosenFrontend: string }>([
-        {
-          choices: potentialFrontends,
-          message: 'Which frontend framework do you want to use?',
-          name: 'chosenFrontend',
-          type: 'list',
-        },
-      ])
-      .then(ans => ans.chosenFrontend)
+      chosenFrontend = await select({
+        message: 'Which frontend framework do you want to use?',
+        options: potentialFrontends.map(frontend => ({
+          label: frontend,
+          value: frontend,
+        })),
+      }).then(ans => ans as string)
     }
 
     flags.frontend = chosenFrontend
 
-    const {installDeps} = await inquirer.prompt<{ installDeps: boolean }>([
-      {
-        default: true,
-        message: 'Would you like to install project dependencies automatically?',
-        name: 'installDeps',
-        type: 'confirm',
-      },
-    ])
+    const installDeps = await confirm({
+      initialValue: true,
+      message: 'Would you like to install project dependencies automatically?',
+    }).then(ans => ans as boolean)
 
-    const {initGit} = await inquirer.prompt<{ initGit: boolean }>([
-      {
-        default: true,
-        message: 'Initialize a new Git repository?',
-        name: 'initGit',
-        type: 'confirm',
-      },
-    ])
+    const initGit = await confirm({
+      initialValue: true,
+      message: 'Initialize a new Git repository?',
+    }).then(ans => ans as boolean)
 
     await init(this.targetDir, {
       frontend: chosenFrontend,
@@ -169,6 +176,8 @@ export default class InitCommand extends Command {
       installDeps,
       template,
     })
+
+    ux.exit(0)
   }
 
   /**
@@ -204,5 +213,7 @@ export default class InitCommand extends Command {
       installDeps: true,
       template,
     })
+
+    ux.exit(0)
   }
 }
