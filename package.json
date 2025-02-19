@@ -24,7 +24,7 @@
     "@oclif/plugin-plugins": "^4.1.22",
     "@octokit/rest": "^21.1.1",
     "bottleneck": "^2.19.5",
-    "chalk": "^5.4.1",
+    "chalk": "4.1.2",
     "defu": "^6.1.4",
     "dotenv": "^16.4.1",
     "execa": "^9.5.2",
