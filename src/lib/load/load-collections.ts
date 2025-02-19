@@ -11,8 +11,9 @@ import readFile from '../utils/read-file'
 
 /**
  * Load collections into the Directus instance
+ * @param dir - The directory to read the collections and fields from
+ * @returns {Promise<void>} - Returns nothing
  */
-
 export default async function loadCollections(dir: string) {
   const collectionsToAdd = readFile('collections', dir)
   const fieldsToAdd = readFile('fields', dir)

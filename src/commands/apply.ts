@@ -257,7 +257,7 @@ export default class ApplyCommand extends Command {
     ux.action.stop()
     ux.log(SEPARATOR)
     ux.info('Template applied successfully.')
-    ux.exit(0)
+    // ux.exit(0)
   }
 
   /**
