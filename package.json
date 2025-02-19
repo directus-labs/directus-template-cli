@@ -24,6 +24,7 @@
     "bottleneck": "^2.19.5",
     "defu": "^6.1.4",
     "dotenv": "^16.4.1",
+    "execa": "^9.5.2",
     "formdata-node": "^6.0.3",
     "giget": "^1.2.1",
     "inquirer": "^8.2.5",
@@ -64,7 +65,8 @@
     "posttest": "npm run lint",
     "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md",
+    "run": "./bin/run"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -77,5 +79,6 @@
     "directus cms",
     "directus cli"
   ],
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

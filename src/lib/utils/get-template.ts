@@ -2,6 +2,7 @@ import {downloadTemplate} from 'giget'
 import fs from 'node:fs'
 import path from 'node:path'
 
+import {COMMUNITY_TEMPLATE_REPO} from '../constants'
 import resolvePathAndCheckExistence from './path'
 import {readAllTemplates, readTemplate} from './read-templates'
 import {transformGitHubUrl} from './transform-github-url'
@@ -19,7 +20,7 @@ export async function getCommunityTemplates(): Promise<Template[]> {
   }
 
   try {
-    const {dir} = await downloadTemplate('github:directus-labs/directus-templates', {
+    const {dir} = await downloadTemplate(COMMUNITY_TEMPLATE_REPO.string, {
       dir: downloadDir,
       force: true,
     })
