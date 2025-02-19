@@ -1,3 +1,4 @@
+import {spinner} from '@clack/prompts'
 import {ux} from '@oclif/core'
 import {execa} from 'execa'
 
@@ -64,13 +65,15 @@ async function checkDocker(): Promise<DockerCheckResult> {
  */
 function startContainers(cwd: string): Promise<void> {
   try {
-    ux.action.start('Starting Docker containers')
+    // ux.action.start('Starting Docker containers')
+    const s = spinner()
+    s.start('Starting Docker containers')
 
     return execa('docker-compose', ['up', '-d'], {
       cwd,
       // stdio: 'inherit',
     }).then(() => {
-      ux.action.stop()
+      s.stop('Docker containers running!')
     })
   } catch (error) {
     catchError(error, {
@@ -110,7 +113,8 @@ function stopContainers(cwd: string): Promise<void> {
  */
 function createWaitForHealthy(config: DockerConfig) {
   async function waitForHealthy(healthCheckUrl: string): Promise<boolean> {
-    ux.action.start('Waiting for service to be healthy')
+    const s = spinner()
+    s.start('Waiting for Directus to be ready.')
 
     try {
       await waitFor(
@@ -129,10 +133,10 @@ function createWaitForHealthy(config: DockerConfig) {
         },
       )
 
-      ux.action.stop()
+      s.stop('Directus is ready!')
       return true
     } catch (error) {
-      ux.action.stop('failed')
+      s.stop('')
       catchError(error, {
         context: {function: 'waitForHealthy', url: healthCheckUrl},
         fatal: true,

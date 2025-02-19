@@ -1,4 +1,6 @@
+import {confirm, intro, isCancel, multiselect, note, outro, select, spinner, text} from '@clack/prompts'
 import {ux} from '@oclif/core'
+import chalk from 'chalk'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
 import {glob} from 'glob'
 import fs from 'node:fs'
@@ -93,7 +95,9 @@ export async function init(dir: string, flags: InitFlags) {
         await dockerService.waitForHealthy(healthCheckUrl)
 
         const templatePath = path.join(directusDir, 'template')
-        ux.log(`Attempting to apply template from: ${templatePath}`)
+        // const s = spinner()
+        // s.start(`Attempting to apply template from: ${templatePath}`)
+        // ux.log(`Attempting to apply template from: ${templatePath}`)
         await ApplyCommand.run([
           '--directusUrl=http://localhost:8055',
           '-p',
@@ -101,6 +105,7 @@ export async function init(dir: string, flags: InitFlags) {
           '--userPassword=d1r3ctu5',
           '--templateLocation=' + templatePath,
         ])
+        // s.stop('Template applied!')
       } catch (error) {
         ux.error('Failed to start Directus containers or apply template')
         throw error
@@ -109,41 +114,55 @@ export async function init(dir: string, flags: InitFlags) {
 
     // Install dependencies for frontend if it exists
     if (flags.installDeps && fs.existsSync(frontendDir)) {
-      ux.action.start('Installing dependencies')
+      const s = spinner()
+      s.start('Installing dependencies')
+      // ux.action.start('Installing dependencies')
       try {
         const packageManager = await detectPackageManager(frontendDir)
         await installDependencies({
           cwd: frontendDir,
           packageManager,
+          silent: true,
         })
       } catch (error) {
         ux.warn('Failed to install dependencies')
         throw error
       }
 
-      ux.action.stop()
+      // ux.action.stop()
+      s.stop('Dependencies installed!')
     }
 
     // Initialize Git repo
     if (flags.gitInit) {
-      ux.action.start('Initializing git repository')
+      const s = spinner()
+      s.start('Initializing git repository')
+      // ux.action.start('Initializing git repository')
       await initGit(dir)
-      ux.action.stop()
+      // ux.action.stop()
+      s.stop('Git repository initialized!')
     }
 
     // Finishing up
-    ux.log(`🚀 Directus initialized with template – ${flags.template}`)
-    ux.log('You\'ll find the following directories in your project:')
-    ux.log('• directus')
-    ux.log(`• ${flags.frontend}`)
-
-    return {}
+    const relativeDir = path.relative(process.cwd(), dir)
+    const nextSteps = `- Directus is running on http://localhost:8055 \n- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)} and start developing! \n- Review the \`./README.md\` file for next steps.`
+    note(nextSteps, 'Next Steps')
+    // ux.log('You\'ll find the following directories in your project:')
+    // ux.log('• directus')
+    // ux.log(`• ${flags.frontend}`)
+    outro(`Problems? Join the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
   } catch (error) {
     catchError(error, {
       context: {dir, flags, function: 'init'},
       fatal: true,
       logToFile: true,
     })
+  }
+
+  return {
+    directusDir,
+    frontendDir,
+    template,
   }
 }
 
@@ -154,10 +173,10 @@ export async function init(dir: string, flags: InitFlags) {
  */
 async function initGit(targetDir: string): Promise<void> {
   try {
-    ux.action.start('Initializing git repository')
+    // ux.action.start('Initializing git repository')
     const {execa} = await import('execa')
     await execa('git', ['init'], {cwd: targetDir})
-    ux.action.stop()
+    // ux.action.stop()
   } catch (error) {
     catchError(error, {
       context: {function: 'initGit', targetDir},
