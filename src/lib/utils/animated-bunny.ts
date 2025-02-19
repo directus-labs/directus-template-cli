@@ -35,12 +35,8 @@ export async function animatedBunny(customMessage?: string) {
 
   const updateFrame = () => {
     if (isCleanedUp) return
-    const eyes = blinkState ? '• •' : '- -'
-    const frame = `
-(\\(\\
-( ${eyes}) ${chalk.dim('.')}${chalk.hex(DIRECTUS_PINK).visible(`"${typedSaying}"`)}
-o_(")(")
-`
+    const eyes = blinkState ? '- -' : 'Õ Õ'
+    const frame = `(\\   /)\n \\\\_//\n ( ${eyes}) ${chalk.dim('')}${chalk.hex(DIRECTUS_PINK).visible(`"${typedSaying}"`)}\nC(")(")`
     logUpdate(frame)
   }
 
@@ -57,11 +53,11 @@ o_(")(")
     } else {
       clearInterval(typing)
     }
-  }, 10)
+  }, 25)
 
   try {
     // Run the animation for the duration of typing plus 1 second
-    await new Promise(resolve => setTimeout(resolve, saying.length * 10 + 1000))
+    await new Promise(resolve => setTimeout(resolve, saying.length * 25 + 1000))
   } finally {
     cleanup()
     // Remove the event listeners
