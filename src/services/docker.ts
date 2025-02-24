@@ -1,6 +1,4 @@
 import {spinner} from '@clack/prompts'
-import {ux} from '@oclif/core'
-import {execa} from 'execa'
 
 import catchError from '../lib/utils/catch-error'
 import {waitFor} from '../lib/utils/wait'
@@ -32,6 +30,8 @@ export interface DockerCheckResult {
 async function checkDocker(): Promise<DockerCheckResult> {
   try {
     // Check if Docker is installed
+    const {execa} = await import('execa')
+
     const versionResult = await execa('docker', ['--version'])
     const isInstalled = versionResult.exitCode === 0
 
@@ -63,8 +63,9 @@ async function checkDocker(): Promise<DockerCheckResult> {
  * @param {string} cwd - The current working directory
  * @returns {Promise<void>} - Returns nothing
  */
-function startContainers(cwd: string): Promise<void> {
+async function startContainers(cwd: string): Promise<void> {
   try {
+    const {execa} = await import('execa')
     // ux.action.start('Starting Docker containers')
     const s = spinner()
     s.start('Starting Docker containers')
@@ -81,7 +82,7 @@ function startContainers(cwd: string): Promise<void> {
       fatal: true,
       logToFile: true,
     })
-    return Promise.reject(error)
+    throw error
   }
 }
 
@@ -90,8 +91,9 @@ function startContainers(cwd: string): Promise<void> {
  * @param {string} cwd - The current working directory
  * @returns {Promise<void>} - Returns nothing
  */
-function stopContainers(cwd: string): Promise<void> {
+async function stopContainers(cwd: string): Promise<void> {
   try {
+    const {execa} = await import('execa')
     return execa('docker-compose', ['down'], {
       cwd,
       // stdio: 'inherit',
@@ -102,7 +104,7 @@ function stopContainers(cwd: string): Promise<void> {
       fatal: false,
       logToFile: true,
     })
-    return Promise.reject(error)
+    throw error
   }
 }
 
