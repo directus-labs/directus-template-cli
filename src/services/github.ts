@@ -1,7 +1,7 @@
 import {Octokit} from '@octokit/rest'
 
-import {DEFAULT_REPO} from '../lib/constants'
-import {parseGitHubUrl} from '../lib/utils/parse-github-url'
+import {DEFAULT_REPO} from '../lib/constants.js'
+import {parseGitHubUrl} from '../lib/utils/parse-github-url.js'
 
 interface GitHubUrlParts {
   owner: string

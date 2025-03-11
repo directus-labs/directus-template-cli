@@ -1,12 +1,12 @@
 import {readUsers} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import filterFields from '../utils/filter-fields'
-import {directusUserFields} from '../utils/system-fields'
-import writeToFile from '../utils/write-to-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import filterFields from '../utils/filter-fields.js'
+import {directusUserFields} from '../utils/system-fields.js'
+import writeToFile from '../utils/write-to-file.js'
 
 /**
  * Extract users from the Directus instance

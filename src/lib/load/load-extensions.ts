@@ -1,11 +1,12 @@
 import {customEndpoint, readExtensions} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import {Extension} from '../types/extension'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import type {Extension} from '../types/extension.js'
+
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
 async function installExtension(extension: any): Promise<void> {
   await api.client.request(customEndpoint({
@@ -34,11 +35,11 @@ export default async function loadExtensions(dir: string): Promise<void> {
       const extensionsToInstall = extensions.filter(ext =>
         ext.meta?.source === 'registry'
         && !ext.bundle
-        // @ts-expect-error
+        // @ts-ignore - ignore
         && !installedExtensions.some(installed => installed.id === ext.id),
       )
 
-      ux.log(`Found ${extensions.length} extensions total: ${registryExtensions.length} registry extensions (including ${bundles.length} bundles), and ${localExtensions.length} local extensions`)
+      ux.stdout(`Found ${extensions.length} extensions total: ${registryExtensions.length} registry extensions (including ${bundles.length} bundles), and ${localExtensions.length} local extensions`)
 
       if (extensionsToInstall.length > 0) {
         ux.action.start(ux.colorize(DIRECTUS_PINK, `Installing ${extensionsToInstall.length} extensions`))
@@ -58,23 +59,23 @@ export default async function loadExtensions(dir: string): Promise<void> {
 
         for (const result of results) {
           if (result.status === 'fulfilled') {
-            ux.log(result.value)
+            ux.stdout(result.value)
           }
         }
 
         ux.action.stop()
-        ux.log('Finished installing extensions')
+        ux.stdout('Finished installing extensions')
       } else {
       // All extensions are already installed
-        ux.log('All extensions are already installed')
+        ux.stdout('All extensions are already installed')
       }
 
       if (localExtensions.length > 0) {
-        ux.log(`Note: ${localExtensions.length} local extensions need to be installed manually.`)
+        ux.stdout(`Note: ${localExtensions.length} local extensions need to be installed manually.`)
       }
     }
   } catch {
-    ux.log(`${ux.colorize('dim', '--')} No extensions found or extensions file is empty. Skipping extension installation.`)
+    ux.stdout(`${ux.colorize('dim', '--')} No extensions found or extensions file is empty. Skipping extension installation.`)
   }
 
   ux.action.stop()

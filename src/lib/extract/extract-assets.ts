@@ -1,11 +1,11 @@
 import {readFiles} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
 
 async function getAssetList() {
   return api.client.request(readFiles({limit: -1}))

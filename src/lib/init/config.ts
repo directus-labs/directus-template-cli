@@ -1,4 +1,4 @@
-import type {DirectusConfig, DockerConfig} from './types'
+import type {DirectusConfig, DockerConfig} from './types.js'
 
 export const DIRECTUS_CONFIG: DirectusConfig = {
   adminEmail: 'admin@example.com',

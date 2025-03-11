@@ -1,18 +1,20 @@
-import {Command, ux} from '@oclif/core'
-import inquirer from 'inquirer'
-import fs from 'node:fs'
-import path from 'node:path'
-import slugify from 'slugify'
 
-import * as customFlags from '../flags/common'
-import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
-import extract from '../lib/extract/'
-import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth'
-import catchError from '../lib/utils/catch-error'
+import {text, password, select} from '@clack/prompts'
+import {Command, ux} from '@oclif/core'
+import slugify from '@sindresorhus/slugify'
+import chalk from 'chalk'
+import fs from 'node:fs'
+import path from 'pathe'
+
+import * as customFlags from '../flags/common.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
+import extract from '../lib/extract/index.js'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
+import catchError from '../lib/utils/catch-error.js'
 import {
   generatePackageJsonContent,
   generateReadmeContent,
-} from '../lib/utils/template-defaults'
+} from '../lib/utils/template-defaults.js'
 
 interface ExtractFlags {
   directusToken: string;
@@ -82,7 +84,7 @@ export default class ExtractCommand extends Command {
       })
     }
 
-    ux.log(SEPARATOR)
+    ux.stdout(SEPARATOR)
 
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
@@ -90,8 +92,8 @@ export default class ExtractCommand extends Command {
 
     ux.action.stop()
 
-    ux.log(SEPARATOR)
-    ux.log('Template extracted successfully.')
+    ux.stdout(SEPARATOR)
+    ux.stdout('Template extracted successfully.')
     this.exit(0)
   }
 
@@ -101,49 +103,56 @@ export default class ExtractCommand extends Command {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
-    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Extract'))
+    this.styledHeader(chalk.hex(DIRECTUS_PURPLE)('Directus Template CLI - Extract'))
 
-    const templateName = await ux.prompt('What is the name of the template you would like to extract?')
-    const directory = await ux.prompt(
-      "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
-      {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
-    )
+    const templateName = await text({
+      message: 'What is the name of the template you would like to extract?',
+      placeholder: 'My Template',
+    })
 
-    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    const directory = await text({
+      placeholder: `templates/${slugify(templateName as string)}`,
+      defaultValue: `templates/${slugify(templateName as string)}`,
+      message: "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
+    })
 
-    ux.log(SEPARATOR)
+    ux.stdout(`You selected ${ux.colorize(DIRECTUS_PINK, directory as string)}`)
+
+    ux.stdout(SEPARATOR)
 
     // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    flags.directusUrl = directusUrl
+    flags.directusUrl = directusUrl as string
 
     // Prompt for login method
-    const loginMethod = await inquirer.prompt([
-      {
-        choices: [
-          {name: 'Directus Access Token', value: 'token'},
-          {name: 'Email and Password', value: 'email'},
-        ],
-        default: 'token',
-        message: 'How do you want to log in?',
-        name: 'loginMethod',
-        type: 'list',
-      },
-    ])
+    const loginMethod = await select({
+      options: [
+        {label: 'Directus Access Token', value: 'token'},
+        {label: 'Email and Password', value: 'email'},
+      ],
+      message: 'How do you want to log in?',
+    })
 
-    if (loginMethod.loginMethod === 'token') {
-      const directusToken = await getDirectusToken(directusUrl)
-      flags.directusToken = directusToken
+    if (loginMethod === 'token') {
+      const directusToken = await getDirectusToken(directusUrl as string)
+      flags.directusToken = directusToken as string
     } else {
-      flags.userEmail = await ux.prompt('What is your email?')
-      flags.userPassword = await ux.prompt('What is your password?', {type: 'hide'})
+      const email = await text({
+        message: 'What is your email?',
+      })
+      flags.userEmail = email as string
+
+      const userPassword = await password({
+        message: 'What is our password?',
+      })
+      flags.userPassword = userPassword as string
     }
 
-    ux.log(SEPARATOR)
+    ux.stdout(SEPARATOR)
 
     await initializeDirectusApi(flags)
 
-    await this.extractTemplate(templateName, directory, flags)
+    await this.extractTemplate(templateName as string, directory as string, flags)
   }
 
   /**
@@ -159,6 +168,18 @@ export default class ExtractCommand extends Command {
     await initializeDirectusApi(flags)
 
     await this.extractTemplate(templateName, templateLocation, flags)
+  }
+
+  /**
+   * Helper function to create styled headers since ux.styledHeader is removed in v4
+   * @param text - The text to style as a header
+   * @returns {void}
+   */
+  private styledHeader(text: string): void {
+    const padding = '═'.repeat(Math.max(0, text.length))
+    ux.stdout(`\n${padding}`)
+    ux.stdout(`${text}`)
+    ux.stdout(`${padding}\n`)
   }
 
   /**

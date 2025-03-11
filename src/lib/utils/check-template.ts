@@ -1,6 +1,6 @@
-import path from 'node:path'
+import path from 'pathe'
 
-import readFile from '../utils/read-file'
+import readFile from '../utils/read-file.js'
 
 export default async function checkTemplate(dir: string) {
   // Check for the collections,fields, and relations files

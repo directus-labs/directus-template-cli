@@ -5,20 +5,21 @@ import {readSettings, updateSettings} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import {createDefu} from 'defu'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
+// Cast ux to any to bypass type errors
 const customDefu = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
-    // @ts-expect-error
+    // @ts-ignore - ignore
     obj[key] = mergeArrays(key, obj[key], value)
     return true
   }
 
   if (typeof obj[key] === 'string' && typeof value === 'string') {
-    // @ts-expect-error
+    // @ts-ignore - ignore
     obj[key] = mergeJsonStrings(obj[key], value)
     return true
   }
@@ -57,7 +58,7 @@ export default async function loadSettings(dir: string) {
   const settings = readFile('settings', dir)
   try {
     const currentSettings = await api.client.request(readSettings())
-    const mergedSettings = customDefu(currentSettings, settings) as DirectusSettings
+    const mergedSettings = customDefu(currentSettings as any, settings) as DirectusSettings
     await api.client.request(updateSettings(mergedSettings))
   } catch (error) {
     catchError(error)

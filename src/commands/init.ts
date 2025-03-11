@@ -1,13 +1,12 @@
-import {confirm, intro, isCancel, multiselect, outro, select, text} from '@clack/prompts'
+import {confirm, intro, select, text} from '@clack/prompts'
 import {Args, Command, Flags, ux} from '@oclif/core'
 import chalk from 'chalk'
-import inquirer from 'inquirer'
-import path from 'node:path'
+import path from 'pathe'
 
-import {DIRECTUS_PURPLE} from '../lib/constants'
-import {init} from '../lib/init'
-import {animatedBunny} from '../lib/utils/animated-bunny'
-import {createGitHub} from '../services/github'
+import {DIRECTUS_PURPLE} from '../lib/constants.js'
+import {init} from '../lib/init.js'
+import {animatedBunny} from '../lib/utils/animated-bunny.js'
+import {createGitHub} from '../services/github.js'
 
 interface InitFlags {
   frontend?: string
@@ -71,7 +70,7 @@ export default class InitCommand extends Command {
     }),
   }
 
-  private targetDir: string = '.'
+  private targetDir = '.'
 
   /**
    * Entrypoint for the command.
@@ -99,7 +98,7 @@ export default class InitCommand extends Command {
   private async runInteractive(flags: InitFlags, args: InitArgs): Promise<void> {
     await animatedBunny('Let\'s create a new Directus project!')
 
-    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI 🐰')} - Create Project`)
+    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Create Project`)
 
     // Create GitHub service
     const github = createGitHub()
@@ -133,7 +132,12 @@ export default class InitCommand extends Command {
 
     while (directories.length === 0) {
       this.log(`Template "${template}" doesn't seem to exist in directus-labs/directus-starters.`)
-      template = await ux.prompt('Please enter a valid template name, or Ctrl+C to cancel:')
+      // ts-ignore no-await-in-loop
+      const templateName = await text({
+        message: 'Please enter a valid template name, or Ctrl+C to cancel:',
+      })
+      template = templateName as string
+      // ts-ignore no-await-in-loop
       directories = await github.getTemplateDirectories(template)
     }
 
@@ -146,7 +150,7 @@ export default class InitCommand extends Command {
     }
 
     // 4. If user hasn't specified a valid flags.frontend, ask from the list
-    let chosenFrontend = flags.frontend
+    let {frontend: chosenFrontend} = flags
 
     if (!chosenFrontend || !potentialFrontends.includes(chosenFrontend)) {
       chosenFrontend = await select({

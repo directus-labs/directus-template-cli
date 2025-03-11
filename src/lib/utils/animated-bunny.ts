@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import logUpdate from 'log-update'
 
-import {DIRECTUS_PINK} from '../constants'
+import {DIRECTUS_PINK} from '../constants.js'
 
 export const RANDOM_SAYINGS = [
   'One does not simply write backends...',

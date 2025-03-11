@@ -2,8 +2,8 @@ import type {Role} from '@directus/types'
 
 import {readMe} from '@directus/sdk'
 
-import {api} from '../sdk'
-import readFile from './read-file'
+import {api} from '../sdk.js'
+import readFile from './read-file.js'
 
 export default async function getRoleIds(dir: string) {
   const roles = readFile('roles', dir) as Role[]

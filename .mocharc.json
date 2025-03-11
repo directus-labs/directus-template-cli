@@ -1,12 +1,15 @@
 {
   "require": [
-    "test/helpers/init.js",
-    "ts-node/register"
+    "test/helpers/init.js"
   ],
   "watch-extensions": [
     "ts"
   ],
   "recursive": true,
   "reporter": "spec",
-  "timeout": 60000
+  "timeout": 60000,
+  "node-option": [
+    "experimental-specifier-resolution=node",
+    "loader=ts-node/esm"
+  ]
 }

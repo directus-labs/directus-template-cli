@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
 export default async (fileName: string, data: any, dir: string) => {
   const folders = fileName.split('/')

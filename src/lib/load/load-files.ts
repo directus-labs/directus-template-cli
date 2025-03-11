@@ -2,12 +2,12 @@ import {readFiles, uploadFiles} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import {FormData} from 'formdata-node'
 import {readFileSync} from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
 export default async function loadFiles(dir: string) {
   const files = readFile('files', dir)
@@ -51,7 +51,7 @@ export default async function loadFiles(dir: string) {
         form.append('file', fileStream, fileName)
 
         try {
-          await api.client.request(uploadFiles(form))
+          await api.client.request(uploadFiles(form as any))
         } catch (error) {
           catchError(error)
         }

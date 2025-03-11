@@ -1,7 +1,7 @@
 import fs from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
-import catchError from './catch-error'
+import catchError from './catch-error.js'
 
 export default function readFile(file: string, dir: string): any[] {
   const filePath = path.join(dir, `${file}.json`) // Use path.join for proper path resolution

@@ -1,33 +1,33 @@
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
-import extractAccess from './extract-access'
-import {downloadAllFiles} from './extract-assets'
-import extractCollections from './extract-collections'
-import {extractContent} from './extract-content'
-import {extractDashboards, extractPanels} from './extract-dashboards'
-import extractExtensions from './extract-extensions'
-import extractFields from './extract-fields'
-import extractFiles from './extract-files'
-import {extractFlows, extractOperations} from './extract-flows'
-import extractFolders from './extract-folders'
-import extractPermissions from './extract-permissions'
-import extractPolicies from './extract-policies'
-import extractPresets from './extract-presets'
-import extractRelations from './extract-relations'
-import extractRoles from './extract-roles'
-import extractSchema from './extract-schema'
-import extractSettings from './extract-settings'
-import extractTranslations from './extract-translations'
-import extractUsers from './extract-users'
+import extractAccess from './extract-access.js'
+import {downloadAllFiles} from './extract-assets.js'
+import extractCollections from './extract-collections.js'
+import {extractContent} from './extract-content.js'
+import {extractDashboards, extractPanels} from './extract-dashboards.js'
+import extractExtensions from './extract-extensions.js'
+import extractFields from './extract-fields.js'
+import extractFiles from './extract-files.js'
+import {extractFlows, extractOperations} from './extract-flows.js'
+import extractFolders from './extract-folders.js'
+import extractPermissions from './extract-permissions.js'
+import extractPolicies from './extract-policies.js'
+import extractPresets from './extract-presets.js'
+import extractRelations from './extract-relations.js'
+import extractRoles from './extract-roles.js'
+import extractSchema from './extract-schema.js'
+import extractSettings from './extract-settings.js'
+import extractTranslations from './extract-translations.js'
+import extractUsers from './extract-users.js'
 
 export default async function extract(dir: string) {
   // Get the destination directory for the actual files
-  const destination = dir + '/src'
+  const destination = `${dir}/src`
 
   // Check if directory exists, if not, then create it.
   if (!fs.existsSync(destination)) {
-    ux.log(`Attempting to create directory at: ${destination}`)
+    ux.stdout(`Attempting to create directory at: ${destination}`)
     fs.mkdirSync(destination, {recursive: true})
   }
 

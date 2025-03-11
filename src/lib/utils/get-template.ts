@@ -1,11 +1,16 @@
 import {downloadTemplate} from 'giget'
 import fs from 'node:fs'
-import path from 'node:path'
+import {fileURLToPath} from 'node:url'
+import path, {dirname} from 'pathe'
 
-import {COMMUNITY_TEMPLATE_REPO} from '../constants'
-import resolvePathAndCheckExistence from './path'
-import {readAllTemplates, readTemplate} from './read-templates'
-import {transformGitHubUrl} from './transform-github-url'
+import {COMMUNITY_TEMPLATE_REPO} from '../constants.js'
+import resolvePathAndCheckExistence from './path.js'
+import {readAllTemplates, readTemplate} from './read-templates.js'
+import {transformGitHubUrl} from './transform-github-url.js'
+
+// Create __dirname equivalent for ESM
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 interface Template {
   directoryPath: string;

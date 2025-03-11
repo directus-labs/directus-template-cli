@@ -1,7 +1,8 @@
 import {spinner} from '@clack/prompts'
+import {execa} from 'execa'
 
-import catchError from '../lib/utils/catch-error'
-import {waitFor} from '../lib/utils/wait'
+import catchError from '../lib/utils/catch-error.js'
+import {waitFor} from '../lib/utils/wait.js'
 
 export interface DockerConfig {
   composeFile: string
@@ -30,8 +31,6 @@ export interface DockerCheckResult {
 async function checkDocker(): Promise<DockerCheckResult> {
   try {
     // Check if Docker is installed
-    const {execa} = await import('execa')
-
     const versionResult = await execa('docker', ['--version'])
     const isInstalled = versionResult.exitCode === 0
 
@@ -65,7 +64,6 @@ async function checkDocker(): Promise<DockerCheckResult> {
  */
 async function startContainers(cwd: string): Promise<void> {
   try {
-    const {execa} = await import('execa')
     // ux.action.start('Starting Docker containers')
     const s = spinner()
     s.start('Starting Docker containers')
@@ -93,7 +91,6 @@ async function startContainers(cwd: string): Promise<void> {
  */
 async function stopContainers(cwd: string): Promise<void> {
   try {
-    const {execa} = await import('execa')
     return execa('docker-compose', ['down'], {
       cwd,
       // stdio: 'inherit',

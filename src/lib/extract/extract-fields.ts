@@ -1,10 +1,10 @@
 import {readFields} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import writeToFile from '../utils/write-to-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import writeToFile from '../utils/write-to-file.js'
 
 /**
  * Extract fields from the Directus instance
@@ -21,7 +21,7 @@ export default async function extractFields(dir: string) {
 
     const fields = response
     .filter(
-      // @ts-expect-error - This is a Directus issue
+      // @ts-ignore
       (i: { collection: string; meta?: { system?: boolean } }) => i.meta && !i.meta.system,
     )
     .map(i => {

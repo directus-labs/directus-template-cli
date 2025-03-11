@@ -4,9 +4,7 @@ import {authentication, createDirectus, rest} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import Bottleneck from 'bottleneck'
 
-export interface Schema {
-
-}
+type Schema = any
 
 export class DirectusError extends Error {
   errors: Array<{ extensions?: Record<string, unknown>; message: string }>
@@ -74,13 +72,13 @@ class Api {
 
         if (statusCode === 429) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 60_000
-          ux.log(`${ux.colorize('dim', '--')} Rate limited. Retrying after ${delay}ms`)
+          ux.stdout(`${ux.colorize('dim', '--')} Rate limited. Retrying after ${delay}ms`)
           return delay
         }
 
         if (statusCode === 503) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 5000
-          ux.log(`${ux.colorize('dim', '--')} Server under pressure. Retrying after ${delay}ms`)
+          ux.stdout(`${ux.colorize('dim', '--')} Server under pressure. Retrying after ${delay}ms`)
           return delay
         }
 
@@ -93,20 +91,20 @@ class Api {
       // For other errors, use exponential backoff, but only if we haven't exceeded retryCount
       if (jobInfo.retryCount < 3) {
         const delay = Math.min(1000 * 2 ** jobInfo.retryCount, 30_000)
-        ux.log(`${ux.colorize('dim', '--')} Request failed. Retrying after ${delay}ms`)
+        ux.stdout(`${ux.colorize('dim', '--')} Request failed. Retrying after ${delay}ms`)
         return delay
       }
 
-      ux.log(`${ux.colorize('dim', '--')} Max retries reached, not retrying further`)
+      ux.stdout(`${ux.colorize('dim', '--')} Max retries reached, not retrying further`)
     })
 
     this.limiter.on('retry', (error, jobInfo) => {
-      ux.log(`${ux.colorize('dim', '--')} Retrying job (attempt ${jobInfo.retryCount + 1})`)
+      ux.stdout(`${ux.colorize('dim', '--')} Retrying job (attempt ${jobInfo.retryCount + 1})`)
     })
 
     this.limiter.on('depleted', empty => {
       if (empty) {
-        ux.log(`${ux.colorize('dim', '--')} Rate limit quota depleted. Requests will be queued.`)
+        ux.stdout(`${ux.colorize('dim', '--')} Rate limit quota depleted. Requests will be queued.`)
       }
     })
   }

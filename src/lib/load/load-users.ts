@@ -1,11 +1,11 @@
 import {createUser, readUsers} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import getRoleIds from '../utils/get-role-ids'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import getRoleIds from '../utils/get-role-ids.js'
+import readFile from '../utils/read-file.js'
 
 export default async function loadUsers(
   dir: string,
@@ -25,11 +25,11 @@ export default async function loadUsers(
       user.role = isAdmin ? newAdminRoleId : user.role
 
       // Delete the unneeded fields
-      delete user.last_page
-      delete user.token
-      delete user.policies
+      user.last_page = undefined
+      user.token = undefined
+      user.policies = undefined
       // Delete passwords to prevent setting to *******
-      delete user.password
+      user.password = undefined
 
       return user
     })
@@ -50,12 +50,12 @@ export default async function loadUsers(
 
       if (existingUserWithSameEmail) {
         // Delete email if there's an existing user with the same email but different id
-        delete user.email
+        user.email = undefined
       }
 
       if (user.email === null) {
         // Delete email if it's null
-        delete user.email
+        user.email = undefined
       }
 
       try {

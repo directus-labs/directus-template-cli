@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
 class Logger {
   private static instance: Logger
@@ -26,7 +26,7 @@ class Logger {
   }
 
   private initializeLogFile(): void {
-    // @ts-ignore
+    // @ts-ignore - ignore
     const timestamp = new Date().toISOString().replaceAll(/[.:]/g, '-')
     const logDir = path.join(process.cwd(), '.directus-template-cli', 'logs')
     if (!fs.existsSync(logDir)) {

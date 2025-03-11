@@ -1,10 +1,10 @@
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import getRoleIds from '../utils/get-role-ids'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import getRoleIds from '../utils/get-role-ids.js'
+import readFile from '../utils/read-file.js'
 
 interface Access {
   id: string;
