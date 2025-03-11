@@ -1,4 +1,4 @@
-import {DEFAULT_REPO} from '../constants'
+import {DEFAULT_REPO} from '../constants.js'
 
 interface GitHubUrlParts {
   owner: string

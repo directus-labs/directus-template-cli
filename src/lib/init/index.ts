@@ -1,17 +1,18 @@
 import {note, outro, spinner} from '@clack/prompts'
 import {ux} from '@oclif/core'
 import chalk from 'chalk'
+import {execa} from 'execa'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
 import {glob} from 'glob'
 import fs from 'node:fs'
-import path from 'node:path'
 import {detectPackageManager, installDependencies} from 'nypm'
+import path from 'pathe'
 
-import ApplyCommand from '../../commands/apply'
-import {createDocker} from '../../services/docker'
-import catchError from '../utils/catch-error'
-import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url'
-import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config'
+import ApplyCommand from '../../commands/apply.js'
+import {createDocker} from '../../services/docker.js'
+import catchError from '../utils/catch-error.js'
+import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
+import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
 
 interface InitFlags {
   frontend?: string
@@ -97,13 +98,13 @@ export async function init(dir: string, flags: InitFlags) {
         const templatePath = path.join(directusDir, 'template')
         // const s = spinner()
         // s.start(`Attempting to apply template from: ${templatePath}`)
-        // ux.log(`Attempting to apply template from: ${templatePath}`)
+        // ux.stdout(`Attempting to apply template from: ${templatePath}`)
         await ApplyCommand.run([
           '--directusUrl=http://localhost:8055',
           '-p',
           '--userEmail=admin@example.com',
           '--userPassword=d1r3ctu5',
-          '--templateLocation=' + templatePath,
+          `--templateLocation=${templatePath}`,
         ])
         // s.stop('Template applied!')
       } catch (error) {
@@ -147,9 +148,9 @@ export async function init(dir: string, flags: InitFlags) {
     const relativeDir = path.relative(process.cwd(), dir)
     const nextSteps = `- Directus is running on http://localhost:8055 \n- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)} and start developing! \n- Review the \`./README.md\` file for next steps.`
     note(nextSteps, 'Next Steps')
-    // ux.log('You\'ll find the following directories in your project:')
-    // ux.log('• directus')
-    // ux.log(`• ${flags.frontend}`)
+    // ux.stdout('You\'ll find the following directories in your project:')
+    // ux.stdout('• directus')
+    // ux.stdout(`• ${flags.frontend}`)
     outro(`Problems? Join the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
   } catch (error) {
     catchError(error, {
@@ -174,7 +175,6 @@ export async function init(dir: string, flags: InitFlags) {
 async function initGit(targetDir: string): Promise<void> {
   try {
     // ux.action.start('Initializing git repository')
-    const {execa} = await import('execa')
     await execa('git', ['init'], {cwd: targetDir})
     // ux.action.stop()
   } catch (error) {

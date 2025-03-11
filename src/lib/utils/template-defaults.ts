@@ -1,10 +1,7 @@
-import slugify from 'slugify'
+import slugify from '@sindresorhus/slugify'
 
-export const generatePackageJsonContent = (templateName: string) => {
-  const slugifiedName = slugify(templateName, {
-    lower: true, // Convert to lowercase
-    strict: true, // Remove special characters
-  })
+export function generatePackageJsonContent(templateName: string): string {
+  const slugifiedName = slugify(templateName)
 
   const packageName = `directus-template-${slugifiedName}`
 

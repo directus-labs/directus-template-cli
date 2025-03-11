@@ -1,10 +1,10 @@
 import {createTranslations, readTranslations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
 export default async function loadTranslations(dir: string) {
   const translations = readFile('translations', dir)
@@ -33,7 +33,7 @@ export default async function loadTranslations(dir: string) {
         catchError(error)
       }
     } else {
-    // ux.info('-- No new translations to create')
+    // ux.stdout('-- No new translations to create')
     }
   }
 

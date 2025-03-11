@@ -1,4 +1,4 @@
-import {protectedDomains} from './protected-domains'
+import {protectedDomains} from './protected-domains.js'
 
 export default function validateUrl(url: string): boolean {
   try {

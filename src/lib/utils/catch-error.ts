@@ -1,7 +1,7 @@
 import {ux} from '@oclif/core'
 
-import {DirectusError} from '../sdk'
-import {logger} from '../utils/logger'
+import {DirectusError} from '../sdk.js'
+import {logger} from '../utils/logger.js'
 
 /**
  * Options for configuring the error handler behavior.

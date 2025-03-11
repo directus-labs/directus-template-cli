@@ -1,12 +1,12 @@
 import {createItems, readItems, updateItemsBatch, updateSingleton} from '@directus/sdk'
 import {ux} from '@oclif/core'
-import path from 'node:path'
+import path from 'pathe'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import {chunkArray} from '../utils/chunk-array'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import {chunkArray} from '../utils/chunk-array.js'
+import readFile from '../utils/read-file.js'
 
 const BATCH_SIZE = 50
 
@@ -43,7 +43,7 @@ async function loadSkeletonRecords(dir: string) {
     const newData = data.filter(entry => !existingPrimaryKeys.has(entry[primaryKeyField]))
 
     if (newData.length === 0) {
-      // ux.log(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
+      // ux.stdout(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
       return
     }
 
@@ -52,7 +52,7 @@ async function loadSkeletonRecords(dir: string) {
     )
 
     await Promise.all(batches.map(batch => uploadBatch(name, batch, createItems)))
-    // ux.log(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
+    // ux.stdout(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
   }))
 
   ux.action.status = 'Loaded skeleton records'
@@ -65,7 +65,7 @@ async function getExistingPrimaryKeys(collection: string, primaryKeyField: strin
 
   while (true) {
     try {
-      // @ts-expect-error string
+      // @ts-ignore
       const response = await api.client.request(readItems(collection, {
         fields: [primaryKeyField],
         limit,
@@ -131,7 +131,7 @@ async function loadSingletons(dir:string) {
     const data = readFile(name, sourceDir)
     try {
       const {user_created, user_updated, ...cleanedData} = data as any
-      // @ts-expect-error
+
       await api.client.request(updateSingleton(name, cleanedData))
     } catch (error) {
       catchError(error)

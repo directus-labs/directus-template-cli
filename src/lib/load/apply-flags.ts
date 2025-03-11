@@ -1,6 +1,6 @@
 import {ux} from '@oclif/core'
 
-import catchError from '../utils/catch-error'
+import catchError from '../utils/catch-error.js'
 
 export interface ApplyFlags {
   content: boolean;

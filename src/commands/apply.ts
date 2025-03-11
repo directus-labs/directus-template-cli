@@ -1,16 +1,16 @@
 import {Command, Flags, ux} from '@oclif/core'
-import * as inquirer from 'inquirer'
-import * as path from 'node:path'
+import {text, select, password} from '@clack/prompts'
+import * as path from 'pathe'
 
-import * as customFlags from '../flags/common'
-import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
-import {ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags'
+import * as customFlags from '../flags/common.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
+import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
 import apply from '../lib/load/index.js'
-import {getDirectusToken, getDirectusUrl, initializeDirectusApi} from '../lib/utils/auth'
-import catchError from '../lib/utils/catch-error'
-import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template'
-import {logger} from '../lib/utils/logger'
-import openUrl from '../lib/utils/open-url'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi} from '../lib/utils/auth.js'
+import catchError from '../lib/utils/catch-error.js'
+import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template.js'
+import {logger} from '../lib/utils/logger.js'
+import openUrl from '../lib/utils/open-url.js'
 
 interface Template {
   directoryPath: string
@@ -115,98 +115,93 @@ export default class ApplyCommand extends Command {
   private async runInteractive(flags: ApplyFlags): Promise<void> {
     const validatedFlags = validateInteractiveFlags(flags)
 
-    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Apply'))
+    // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Apply'))
 
-    const templateType = await inquirer.prompt([
-      {
-        choices: [
-          {name: 'Community templates', value: 'community'},
-          {name: 'From a local directory', value: 'local'},
-          {name: 'From a public GitHub repository', value: 'github'},
-          {name: 'Get premium templates', value: 'directus-plus'},
-        ],
-        message: 'What type of template would you like to apply?',
-        name: 'templateType',
-        type: 'list',
-      },
-    ])
+    const templateType = await select({
+        options: [
+        {label: 'Community templates', value: 'community'},
+        {label: 'From a local directory', value: 'local'},
+        {label: 'From a public GitHub repository', value: 'github'},
+        {label: 'Get premium templates', value: 'directus-plus'},
+      ],
+      message: 'What type of template would you like to apply?',
+    })
 
     let template: Template
 
-    switch (templateType.templateType) {
+    switch (templateType) {
     case 'community': {
       const templates = await getCommunityTemplates()
-      const {selectedTemplate} = await inquirer.prompt([
-        {
-          choices: templates.map(t => ({name: t.templateName, value: t})),
-          message: 'Select a template.',
-          name: 'selectedTemplate',
-          type: 'list',
-        },
-      ])
-      template = selectedTemplate
+      const selectedTemplate = await select({
+        options: templates.map(t => ({label: t.templateName, value: t})),
+        message: 'Select a template.',
+      })
+      template = selectedTemplate as Template
       break
     }
 
     case 'local': {
-      const localTemplateDir = await ux.prompt('What is the local template directory?')
-      template = await this.selectLocalTemplate(localTemplateDir)
+      const localTemplateDir = await text({
+        message: 'What is the local template directory?',
+      })
+      template = await this.selectLocalTemplate(localTemplateDir as string)
       break
     }
 
     case 'github': {
-      const ghTemplateUrl = await ux.prompt('What is the public GitHub repository URL?')
-      template = await getGithubTemplate(ghTemplateUrl)
+      const ghTemplateUrl = await text({
+        message: 'What is the public GitHub repository URL?',
+      })
+      template = await getGithubTemplate(ghTemplateUrl as string)
       break
     }
 
     case 'directus-plus': {
       openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
-      ux.log('Redirecting to Directus website.')
+      ux.stdout('Redirecting to Directus website.')
       ux.exit(0)
     }
     }
 
-    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
-    ux.log(SEPARATOR)
+    ux.stdout(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
+    ux.stdout(SEPARATOR)
 
     // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    validatedFlags.directusUrl = directusUrl
+    validatedFlags.directusUrl = directusUrl as string
 
     // Prompt for login method
-    const loginMethod = await inquirer.prompt([
-      {
-        choices: [
-          {name: 'Directus Access Token', value: 'token'},
-          {name: 'Email and Password', value: 'email'},
-        ],
-        default: 'token',
-        message: 'How do you want to log in?',
-        name: 'loginMethod',
-        type: 'list',
-      },
-    ])
+    const loginMethod = await select({
+      options: [
+        {label: 'Directus Access Token', value: 'token'},
+        {label: 'Email and Password', value: 'email'},
+      ],
+      message: 'How do you want to log in?',
+    })
 
-    if (loginMethod.loginMethod === 'token') {
-      const directusToken = await getDirectusToken(directusUrl)
-      validatedFlags.directusToken = directusToken
+    if (loginMethod === 'token') {
+      const directusToken = await getDirectusToken(directusUrl as string)
+      validatedFlags.directusToken = directusToken as string
     } else {
-      const userEmail = await ux.prompt('What is your email?')
-      validatedFlags.userEmail = userEmail
-      const userPassword = await ux.prompt('What is your password?', {type: 'hide'})
-      validatedFlags.userPassword = userPassword
+      const userEmail = await text({
+        message: 'What is your email?',
+      })
+      validatedFlags.userEmail = userEmail as string
+      const userPassword = await password({
+        message: 'What is your password?',
+      })
+      validatedFlags.userPassword = userPassword as string
     }
 
     await initializeDirectusApi(validatedFlags)
 
     if (template) {
-      ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, `Applying template - ${template.templateName} to ${directusUrl}`))
+      // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, `Applying template - ${template.templateName} to ${directusUrl}`))
       await apply(template.directoryPath, validatedFlags)
 
       ux.action.stop()
-      ux.log(SEPARATOR)
-      ux.info('Template applied successfully.')
+      ux.stdout(SEPARATOR)
+      ux.stdout('Template applied successfully.')
       ux.exit(0)
     }
   }
@@ -249,14 +244,14 @@ export default class ApplyCommand extends Command {
     await initializeDirectusApi(validatedFlags)
 
     const logMessage = `Applying template - ${template.templateName} to ${validatedFlags.directusUrl}`
-    ux.styledHeader(logMessage)
+    // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(logMessage)
     logger.log('info', logMessage)
 
     await apply(template.directoryPath, validatedFlags)
 
     ux.action.stop()
-    ux.log(SEPARATOR)
-    ux.info('Template applied successfully.')
+    ux.stdout(SEPARATOR)
+    ux.stdout('Template applied successfully.')
     // ux.exit(0)
   }
 
@@ -274,18 +269,14 @@ export default class ApplyCommand extends Command {
         return templates[0]
       }
 
-      const {selectedTemplate} = await inquirer.prompt([
-        {
-          choices: templates.map(t => ({
-            name: `${t.templateName} (${path.basename(t.directoryPath)})`,
-            value: t,
-          })),
-          message: 'Multiple templates found. Please select one:',
-          name: 'selectedTemplate',
-          type: 'list',
-        },
-      ])
-      return selectedTemplate
+      const selectedTemplate = await select({
+        options: templates.map(t => ({
+          label: `${t.templateName} (${path.basename(t.directoryPath)})`,
+          value: t,
+        })),
+        message: 'Multiple templates found. Please select one:',
+      })
+      return selectedTemplate as Template
     } catch (error) {
       if (error instanceof Error) {
         ux.error(error.message)

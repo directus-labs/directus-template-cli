@@ -1,9 +1,10 @@
 import {readMe} from '@directus/sdk'
+import {text} from '@clack/prompts'
 import {ux} from '@oclif/core'
 
-import {api} from '../sdk'
-import catchError from './catch-error'
-import validateUrl from './validate-url'
+import {api} from '../sdk.js'
+import catchError from './catch-error.js'
+import validateUrl from './validate-url.js'
 
 interface AuthFlags {
   directusToken?: string;
@@ -18,15 +19,18 @@ interface AuthFlags {
  */
 
 export async function getDirectusUrl() {
-  const directusUrl = await ux.prompt('What is your Directus URL?', {default: 'http://localhost:8055'})
+  const directusUrl = await text({
+    placeholder: 'http://localhost:8055',
+    message: 'What is your Directus URL?',
+  })
 
   // Validate URL
-  if (!validateUrl(directusUrl)) {
+  if (!validateUrl(directusUrl as string)) {
     ux.warn('Invalid URL')
     return getDirectusUrl()
   }
 
-  api.initialize(directusUrl)
+  api.initialize(directusUrl as string)
 
   return directusUrl
 }
@@ -38,11 +42,14 @@ export async function getDirectusUrl() {
  */
 
 export async function getDirectusToken(directusUrl: string) {
-  const directusToken = await ux.prompt('What is your Directus Admin Token?')
+  const directusToken = await text({
+    placeholder: 'admin-token-here',
+    message: 'What is your Directus Admin Token?',
+  })
 
   // Validate token by fetching the user
   try {
-    await api.loginWithToken(directusToken)
+    await api.loginWithToken(directusToken as string)
     const response = await api.client.request(readMe())
     return directusToken
   } catch (error) {
@@ -73,7 +80,7 @@ export async function initializeDirectusApi(flags: AuthFlags): Promise<void> {
     }
 
     const response = await api.client.request(readMe())
-    ux.log(`-- Logged in as ${response.first_name} ${response.last_name}`)
+    ux.stdout(`-- Logged in as ${response.first_name} ${response.last_name}`)
   } catch {
     catchError('-- Unable to authenticate with the provided credentials. Please check your credentials.', {
       fatal: true,

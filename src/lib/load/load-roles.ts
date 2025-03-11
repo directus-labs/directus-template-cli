@@ -1,11 +1,11 @@
 import {createRole, readRoles, updateRole} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import getRoleIds from '../utils/get-role-ids'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import getRoleIds from '../utils/get-role-ids.js'
+import readFile from '../utils/read-file.js'
 
 export default async function loadRoles(dir: string) {
   const roles = readFile('roles', dir)
@@ -26,8 +26,8 @@ export default async function loadRoles(dir: string) {
     .filter(role => !existingRoleNames.has(role.name.toLowerCase())) // Filter out roles with existing names
     .map(role => {
       const r = {...role}
-      delete r.users // Alias field. User roles will be applied when the users are loaded.
-      delete r.parent // We need to load all roles first
+      r.users = undefined // Alias field. User roles will be applied when the users are loaded.
+      r.parent = undefined // We need to load all roles first
       return r
     })
 
