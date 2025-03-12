@@ -41,8 +41,8 @@
     "posthog-node": "^4.10.1"
   },
   "devDependencies": {
-    "@oclif/prettier-config": "^0.2.1",
     "@directus/types": "^13.0.0",
+    "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4",
     "@types/chai": "^5.2.0",
     "@types/mocha": "^10",
@@ -68,7 +68,8 @@
       "@oclif/plugin-plugins"
     ],
     "topicSeparator": " ",
-    "topics": {}
+    "topics": {},
+    "hooks": {}
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
