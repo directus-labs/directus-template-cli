@@ -1,6 +1,7 @@
 import {Command, Flags, ux} from '@oclif/core'
-import {text, select, password} from '@clack/prompts'
+import {text, select, password, log, intro} from '@clack/prompts'
 import * as path from 'pathe'
+import {animatedBunny} from '../lib/utils/animated-bunny.js'
 
 import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
@@ -11,6 +12,7 @@ import catchError from '../lib/utils/catch-error.js'
 import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template.js'
 import {logger} from '../lib/utils/logger.js'
 import openUrl from '../lib/utils/open-url.js'
+import chalk from 'chalk'
 
 interface Template {
   directoryPath: string
@@ -115,7 +117,9 @@ export default class ApplyCommand extends Command {
   private async runInteractive(flags: ApplyFlags): Promise<void> {
     const validatedFlags = validateInteractiveFlags(flags)
 
-    // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Apply'))
+    // Show animated intro
+    await animatedBunny('Let\'s apply a template!')
+    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Apply Template`)
 
     const templateType = await select({
         options: [
@@ -158,13 +162,12 @@ export default class ApplyCommand extends Command {
 
     case 'directus-plus': {
       openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
-      ux.stdout('Redirecting to Directus website.')
+      log.info('Redirecting to Directus website.')
       ux.exit(0)
     }
     }
 
-    ux.stdout(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
-    ux.stdout(SEPARATOR)
+    log.info(`You selected ${ux.colorize(DIRECTUS_PINK, template.templateName)}`)
 
     // Get Directus URL
     const directusUrl = await getDirectusUrl()

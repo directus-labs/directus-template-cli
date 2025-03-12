@@ -17,17 +17,7 @@ import type { InitFlags } from '../../commands/init.js'
 import dotenv from 'dotenv'
 
 
-export async function init({dir, flags, config, runId}: {dir: string, flags: InitFlags, config: Config, runId: string}) {
-
-  // Call analytics unless telemetry is disabled
-  if (!flags.disableTelemetry) {
-    config.runHook('start', {
-      command: 'init',
-      flags,
-      config,
-      runId,
-    })
-  }
+export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
   // Check target directory
   const shouldForce: boolean = flags.overrideDir
@@ -79,8 +69,6 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
       }
     }
 
-    // Find and copy all .env.example files
-    const envFiles = glob.sync(path.join(dir, '**', '.env.example'))
 
     const directusInfo = {
       email: '',
@@ -88,9 +76,10 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
       url: '',
     }
 
-    const frontendInfo = {
-      url: '',
-    }
+
+
+    // Find and copy all .env.example files
+    const envFiles = glob.sync(path.join(dir, '**', '.env.example'))
 
     for (const file of envFiles) {
       const envFile = file.replace('.env.example', '.env')
@@ -100,20 +89,6 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
       directusInfo.email = parsedEnv.ADMIN_EMAIL
       directusInfo.password = parsedEnv.ADMIN_PASSWORD
       directusInfo.url = parsedEnv.PUBLIC_URL
-      // Read default frontend URL from .env
-      const urlPatterns = [
-        'NEXT_PUBLIC_SITE_URL',
-        'NUXT_PUBLIC_SITE_URL',
-        'SITE_URL',
-        'PUBLIC_SITE_URL',
-      ]
-      for (const pattern of urlPatterns) {
-        const urlMatch = parsedEnv[pattern]
-        if (urlMatch) {
-          frontendInfo.url = urlMatch
-          break
-        }
-      }
     }
 
     // Start Directus and apply template only if directus directory exists
@@ -129,7 +104,7 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
 
       try {
         await dockerService.startContainers(directusDir)
-        const healthCheckUrl = `${DIRECTUS_CONFIG.url}:${DIRECTUS_CONFIG.port}${DOCKER_CONFIG.healthCheckEndpoint}`
+        const healthCheckUrl = `${directusInfo.url}${DOCKER_CONFIG.healthCheckEndpoint}`
         await dockerService.waitForHealthy(healthCheckUrl)
 
         const templatePath = path.join(directusDir, 'template')
@@ -164,7 +139,7 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
         throw error
       }
 
-      // ux.action.stop()
+
       s.stop('Dependencies installed!')
     }
 
@@ -211,9 +186,7 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
  */
 async function initGit(targetDir: string): Promise<void> {
   try {
-    // ux.action.start('Initializing git repository')
     await execa('git', ['init'], {cwd: targetDir})
-    // ux.action.stop()
   } catch (error) {
     catchError(error, {
       context: {function: 'initGit', targetDir},

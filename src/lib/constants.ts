@@ -7,12 +7,6 @@ export const COMMUNITY_TEMPLATE_REPO = {
   url: 'https://github.com/directus-labs/directus-templates',
 }
 
-export const STARTERS_TEMPLATE_REPO = {
-  branch: 'cms-template',
-  string: 'github:directus-labs/starters',
-  url: 'https://github.com/directus-labs/starters',
-}
-
 export const DEFAULT_REPO = {
   owner: 'directus-labs',
   path: '',
@@ -22,3 +16,4 @@ export const DEFAULT_REPO = {
 }
 
 export const POSTHOG_PUBLIC_KEY = 'phc_STopE6gj6LDIjYonVF7493kQJK8S4v0Xrl6YPr2z9br'
+export const POSTHOG_HOST = 'https://us.i.posthog.com'
