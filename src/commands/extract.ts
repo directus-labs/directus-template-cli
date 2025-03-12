@@ -1,5 +1,5 @@
 
-import {text, password, select} from '@clack/prompts'
+import {text, password, select, intro, outro} from '@clack/prompts'
 import {Command, ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
 import chalk from 'chalk'
@@ -8,6 +8,8 @@ import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
+import {animatedBunny} from '../lib/utils/animated-bunny.js'
+
 import extract from '../lib/extract/index.js'
 import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
@@ -16,7 +18,7 @@ import {
   generateReadmeContent,
 } from '../lib/utils/template-defaults.js'
 
-interface ExtractFlags {
+export interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
   programmatic: boolean;
@@ -103,7 +105,9 @@ export default class ExtractCommand extends Command {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
-    this.styledHeader(chalk.hex(DIRECTUS_PURPLE)('Directus Template CLI - Extract'))
+    await animatedBunny('Let\'s extract a template!')
+
+    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Extract Template`)
 
     const templateName = await text({
       message: 'What is the name of the template you would like to extract?',
@@ -168,18 +172,6 @@ export default class ExtractCommand extends Command {
     await initializeDirectusApi(flags)
 
     await this.extractTemplate(templateName, templateLocation, flags)
-  }
-
-  /**
-   * Helper function to create styled headers since ux.styledHeader is removed in v4
-   * @param text - The text to style as a header
-   * @returns {void}
-   */
-  private styledHeader(text: string): void {
-    const padding = '═'.repeat(Math.max(0, text.length))
-    ux.stdout(`\n${padding}`)
-    ux.stdout(`${text}`)
-    ux.stdout(`${padding}\n`)
   }
 
   /**

@@ -20,3 +20,5 @@ export const DEFAULT_REPO = {
   repo: 'starters',
   url: 'https://github.com/directus-labs/starters',
 }
+
+export const POSTHOG_PUBLIC_KEY = 'phc_STopE6gj6LDIjYonVF7493kQJK8S4v0Xrl6YPr2z9br'

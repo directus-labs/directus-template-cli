@@ -17,7 +17,6 @@ interface AuthFlags {
  * Get the Directus URL from the user
  * @returns The Directus URL
  */
-
 export async function getDirectusUrl() {
   const directusUrl = await text({
     placeholder: 'http://localhost:8055',
@@ -40,7 +39,6 @@ export async function getDirectusUrl() {
  * @param directusUrl - The Directus URL
  * @returns The Directus token
  */
-
 export async function getDirectusToken(directusUrl: string) {
   const directusToken = await text({
     placeholder: 'admin-token-here',
@@ -65,10 +63,10 @@ export async function getDirectusToken(directusUrl: string) {
 }
 
 /**
-   * Initialize the Directus API with the provided flags
-   * @param flags - The validated ApplyFlags
-   */
-
+ * Initialize the Directus API with the provided flags and log in the user
+ * @param flags - The validated ApplyFlags
+ * @returns {Promise<void>} - Returns nothing
+*/
 export async function initializeDirectusApi(flags: AuthFlags): Promise<void> {
   api.initialize(flags.directusUrl)
 
@@ -89,10 +87,10 @@ export async function initializeDirectusApi(flags: AuthFlags): Promise<void> {
 }
 
 /**
- * Validate the authentication flags
- * @param flags - The AuthFlags
- */
-
+* Validate the authentication flags
+* @param flags - The AuthFlags
+* @returns {void} - Errors if the flags are invalid
+*/
 export function validateAuthFlags(flags: AuthFlags): void {
   if (!flags.directusUrl) {
     ux.error('Directus URL is required.')

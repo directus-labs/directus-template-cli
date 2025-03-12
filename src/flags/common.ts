@@ -43,3 +43,10 @@ export const templateName = Flags.string({
   description: 'Name of the template',
   env: 'TEMPLATE_NAME',
 })
+
+export const disableTelemetry = Flags.boolean({
+  char: 'd',
+  default: false,
+  description: 'Disable telemetry',
+  env: 'DISABLE_TELEMETRY',
+})

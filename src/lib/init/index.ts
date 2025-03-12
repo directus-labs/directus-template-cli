@@ -1,5 +1,5 @@
 import {note, outro, spinner} from '@clack/prompts'
-import {ux} from '@oclif/core'
+import {ux, type Config} from '@oclif/core'
 import chalk from 'chalk'
 import {execa} from 'execa'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
@@ -13,16 +13,21 @@ import {createDocker} from '../../services/docker.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
+import type { InitFlags } from '../../commands/init.js'
 
-interface InitFlags {
-  frontend?: string
-  gitInit?: boolean
-  installDeps?: boolean
-  overrideDir?: boolean
-  template?: string
-}
 
-export async function init(dir: string, flags: InitFlags) {
+export async function init({dir, flags, config, runId}: {dir: string, flags: InitFlags, config: Config, runId: string}) {
+
+  // Call analytics unless telemetry is disabled
+  if (!flags.disableTelemetry) {
+    config.runHook('start', {
+      command: 'init',
+      flags,
+      config,
+      runId,
+    })
+  }
+
   // Check target directory
   const shouldForce: boolean = flags.overrideDir
 
@@ -77,6 +82,11 @@ export async function init(dir: string, flags: InitFlags) {
     for (const file of envFiles) {
       const envFile = file.replace('.env.example', '.env')
       fs.copyFileSync(file, envFile)
+      // Read default login info from .env.example
+      const envExample = fs.readFileSync(file, 'utf8')
+      const emailMatch = envExample.match(/ADMIN_EMAIL=(.*)/)
+      const passwordMatch = envExample.match(/ADMIN_PASSWORD=(.*)/)
+
     }
 
     // Start Directus and apply template only if directus directory exists
@@ -96,9 +106,8 @@ export async function init(dir: string, flags: InitFlags) {
         await dockerService.waitForHealthy(healthCheckUrl)
 
         const templatePath = path.join(directusDir, 'template')
-        // const s = spinner()
-        // s.start(`Attempting to apply template from: ${templatePath}`)
-        // ux.stdout(`Attempting to apply template from: ${templatePath}`)
+        ux.stdout(`Attempting to apply template from: ${templatePath}`)
+
         await ApplyCommand.run([
           '--directusUrl=http://localhost:8055',
           '-p',
@@ -106,7 +115,6 @@ export async function init(dir: string, flags: InitFlags) {
           '--userPassword=d1r3ctu5',
           `--templateLocation=${templatePath}`,
         ])
-        // s.stop('Template applied!')
       } catch (error) {
         ux.error('Failed to start Directus containers or apply template')
         throw error
@@ -117,7 +125,6 @@ export async function init(dir: string, flags: InitFlags) {
     if (flags.installDeps && fs.existsSync(frontendDir)) {
       const s = spinner()
       s.start('Installing dependencies')
-      // ux.action.start('Installing dependencies')
       try {
         const packageManager = await detectPackageManager(frontendDir)
         await installDependencies({
@@ -138,9 +145,7 @@ export async function init(dir: string, flags: InitFlags) {
     if (flags.gitInit) {
       const s = spinner()
       s.start('Initializing git repository')
-      // ux.action.start('Initializing git repository')
       await initGit(dir)
-      // ux.action.stop()
       s.stop('Git repository initialized!')
     }
 
@@ -148,9 +153,7 @@ export async function init(dir: string, flags: InitFlags) {
     const relativeDir = path.relative(process.cwd(), dir)
     const nextSteps = `- Directus is running on http://localhost:8055 \n- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)} and start developing! \n- Review the \`./README.md\` file for next steps.`
     note(nextSteps, 'Next Steps')
-    // ux.stdout('You\'ll find the following directories in your project:')
-    // ux.stdout('• directus')
-    // ux.stdout(`• ${flags.frontend}`)
+
     outro(`Problems? Join the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
   } catch (error) {
     catchError(error, {

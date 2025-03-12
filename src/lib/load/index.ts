@@ -18,18 +18,8 @@ import loadSettings from './load-settings.js'
 import loadTranslations from './load-translations.js'
 import loadUsers from './load-users.js'
 import updateRequiredFields from './update-required-fields.js'
+import type { ApplyFlags } from './apply-flags.js'
 
-interface ApplyFlags {
-  content: boolean;
-  dashboards: boolean;
-  extensions: boolean;
-  files: boolean;
-  flows: boolean;
-  permissions: boolean;
-  schema: boolean;
-  settings: boolean;
-  users: boolean;
-}
 
 export default async function apply(dir: string, flags: ApplyFlags) {
   const source = `${dir}/src`

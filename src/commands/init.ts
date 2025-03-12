@@ -1,28 +1,31 @@
-import {confirm, intro, select, text} from '@clack/prompts'
-import {Args, Command, Flags, ux} from '@oclif/core'
+import {confirm, intro, select, text, isCancel, cancel, log as clackLog} from '@clack/prompts'
+import {Args, Flags, ux} from '@oclif/core'
 import chalk from 'chalk'
+import fs from 'node:fs'
 import path from 'pathe'
-
+import {disableTelemetry} from '../flags/common.js'
+import {randomUUID} from 'node:crypto'
 import {DIRECTUS_PURPLE} from '../lib/constants.js'
-import {init} from '../lib/init.js'
+import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {createGitHub} from '../services/github.js'
+import { BaseCommand } from './base.js'
+import { track, shutdown } from '../services/posthog.js'
 
-interface InitFlags {
+export interface InitFlags {
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
   overrideDir?: boolean
-  programmatic: boolean
   template?: string
-
+  disableTelemetry?: boolean
 }
 
-interface InitArgs {
+export interface InitArgs {
   directory: string
 }
 
-export default class InitCommand extends Command {
+export default class InitCommand extends BaseCommand {
   static args = {
     directory: Args.directory({
       default: '.',
@@ -36,8 +39,8 @@ export default class InitCommand extends Command {
   static examples = [
     '$ directus-template-cli init',
     '$ directus-template-cli init my-project',
-    '$ directus-template-cli init --frontend=nextjs --template=simple-cms --programmatic',
-    '$ directus-template-cli init my-project --frontend=nextjs --template=simple-cms --programmatic',
+    '$ directus-template-cli init --frontend=nextjs --template=simple-cms',
+    '$ directus-template-cli init my-project --frontend=nextjs --template=simple-cms',
   ]
 
   static flags = {
@@ -60,14 +63,10 @@ export default class InitCommand extends Command {
       default: false,
       description: 'Override the default directory',
     }),
-    programmatic: Flags.boolean({
-      char: 'p',
-      default: false,
-      description: 'Run in programmatic mode (non-interactive)',
-    }),
     template: Flags.string({
       description: 'Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/simple-cms)',
     }),
+    disableTelemetry: disableTelemetry,
   }
 
   private targetDir = '.'
@@ -80,13 +79,11 @@ export default class InitCommand extends Command {
     const {args, flags} = await this.parse(InitCommand)
     const typedFlags = flags as InitFlags
     const typedArgs = args as InitArgs
+
     // Set the target directory and create it if it doesn't exist
     this.targetDir = path.resolve(args.directory as string)
-    // if (!fs.existsSync(this.targetDir)) {
-    //   fs.mkdirSync(this.targetDir, {recursive: true})
-    // }
 
-    await (typedFlags.programmatic ? this.runProgrammatic(typedFlags) : this.runInteractive(typedFlags, typedArgs))
+    await this.runInteractive(typedFlags, typedArgs)
   }
 
   private async applyTemplate(template: string) {
@@ -288,8 +285,9 @@ Enjoy building your project!`
    * @returns void
    */
   private async runInteractive(flags: InitFlags, args: InitArgs): Promise<void> {
-    await animatedBunny('Let\'s create a new Directus project!')
 
+    // Show animated intro
+    await animatedBunny('Let\'s create a new Directus project!')
     intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Create Project`)
 
     // Create GitHub service
@@ -297,10 +295,32 @@ Enjoy building your project!`
 
     // If no dir is provided, ask for it
     if (!args.directory || args.directory === '.') {
-      this.targetDir = await text({
+      const dirResponse = await text({
         message: 'Enter the directory to create the project in:',
         placeholder: './my-directus-project',
-      }).then(ans => ans as string)
+      })
+
+      if (isCancel(dirResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      this.targetDir = dirResponse as string
+    }
+
+    if (fs.existsSync(this.targetDir) && !flags.overrideDir) {
+      const overrideDirResponse = await confirm({
+        message: 'Directory already exists. Would you like to overwrite it?',
+      })
+
+      if (isCancel(overrideDirResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      if (overrideDirResponse) {
+        flags.overrideDir = true
+      }
     }
 
     // 1. Fetch available templates
@@ -310,13 +330,20 @@ Enjoy building your project!`
     let {template} = flags
 
     if (!template) {
-      template = await select({
+      const templateResponse = await select({
         message: 'Which Directus backend template would you like to use?',
         options: availableTemplates.map(template => ({
           label: template,
           value: template,
         })),
-      }).then(ans => ans as string)
+      })
+
+      if (isCancel(templateResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      template = templateResponse as string
     }
 
     // 3. Validate that the template exists, fetch subdirectories
@@ -324,12 +351,16 @@ Enjoy building your project!`
 
     while (directories.length === 0) {
       this.log(`Template "${template}" doesn't seem to exist in directus-labs/directus-starters.`)
-      // ts-ignore no-await-in-loop
-      const templateName = await text({
+      const templateNameResponse = await text({
         message: 'Please enter a valid template name, or Ctrl+C to cancel:',
       })
-      template = templateName as string
-      // ts-ignore no-await-in-loop
+
+      if (isCancel(templateNameResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      template = templateNameResponse as string
       directories = await github.getTemplateDirectories(template)
     }
 
@@ -345,71 +376,102 @@ Enjoy building your project!`
     let {frontend: chosenFrontend} = flags
 
     if (!chosenFrontend || !potentialFrontends.includes(chosenFrontend)) {
-      chosenFrontend = await select({
+      const frontendResponse = await select({
         message: 'Which frontend framework do you want to use?',
         options: potentialFrontends.map(frontend => ({
           label: frontend,
           value: frontend,
         })),
-      }).then(ans => ans as string)
+      })
+
+      if (isCancel(frontendResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      chosenFrontend = frontendResponse as string
     }
 
     flags.frontend = chosenFrontend
 
-    const installDeps = await confirm({
+    const installDepsResponse = await confirm({
       initialValue: true,
       message: 'Would you like to install project dependencies automatically?',
-    }).then(ans => ans as boolean)
+    })
 
-    const initGit = await confirm({
+    if (isCancel(installDepsResponse)) {
+      cancel('Project creation cancelled.')
+      process.exit(0)
+    }
+
+    const installDeps = installDepsResponse as boolean
+
+    const initGitResponse = await confirm({
       initialValue: true,
       message: 'Initialize a new Git repository?',
-    }).then(ans => ans as boolean)
-
-    await init(this.targetDir, {
-      frontend: chosenFrontend,
-      gitInit: initGit,
-      installDeps,
-      template,
     })
+
+    if (isCancel(initGitResponse)) {
+      cancel('Project creation cancelled.')
+      process.exit(0)
+    }
+
+    const initGit = initGitResponse as boolean
+
+    // Track the command start unless telemetry is disabled
+    if (!flags.disableTelemetry && !this.userConfig.disableTelemetry) {
+      await track({
+        lifecycle: 'start',
+        distinctId: this.userConfig.distinctId,
+        command: 'init',
+        flags: {
+          frontend: chosenFrontend,
+          gitInit: initGit,
+          installDeps,
+          template,
+          disableTelemetry: flags.disableTelemetry,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+    }
+
+    // Initialize the project
+    await init({
+      dir: this.targetDir,
+      flags: {
+        frontend: chosenFrontend,
+        gitInit: initGit,
+        installDeps,
+        template,
+        overrideDir: flags.overrideDir,
+      },
+      config: this.config,
+      runId: this.runId,
+    })
+
+    // Track the command completion unless telemetry is disabled
+    if (!flags.disableTelemetry && !this.userConfig.disableTelemetry) {
+      await track({
+        distinctId: this.userConfig.distinctId,
+        lifecycle: 'complete',
+        command: 'init',
+        flags: {
+          frontend: chosenFrontend,
+          gitInit: initGit,
+          installDeps,
+          template,
+          overrideDir: flags.overrideDir,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+
+      await shutdown()
+    }
 
     ux.exit(0)
   }
 
-  /**
-   * Programmatic mode: relies on flags only, with checks for template existence and valid frontend.
-   * @param flags - The flags passed to the command.
-   * @returns void
-   */
-  private async runProgrammatic(flags: InitFlags): Promise<void> {
-    const github = createGitHub()
 
-    if (!flags.template) {
-      ux.error('Missing --template parameter for programmatic mode.')
-    }
-
-    if (!flags.frontend) {
-      ux.error('Missing --frontend parameter for programmatic mode.')
-    }
-
-    const template = flags.template as string
-    const directories = await github.getTemplateDirectories(template)
-    if (directories.length === 0) {
-      ux.error(`Template "${template}" doesn't seem to exist in directus-labs/directus-starters.`)
-    }
-
-    const potentialFrontends = directories.filter(dir => dir !== 'directus')
-    const frontend = flags.frontend as string
-    if (!potentialFrontends.includes(frontend)) {
-      ux.error(`Frontend "${frontend}" doesn't exist in template "${template}". Available frontends: ${potentialFrontends.join(', ')}`)
-    }
-
-    await init(this.targetDir, {
-      frontend,
-      installDeps: true,
-      template,
-    })
-
-    ux.exit(0)
-  }
 }
