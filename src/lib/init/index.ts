@@ -5,7 +5,7 @@ import {execa} from 'execa'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
 import {glob} from 'glob'
 import fs from 'node:fs'
-import {detectPackageManager, installDependencies} from 'nypm'
+import {detectPackageManager, installDependencies, type PackageManager} from 'nypm'
 import path from 'pathe'
 
 import ApplyCommand from '../../commands/apply.js'
@@ -14,6 +14,7 @@ import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
 import type { InitFlags } from '../../commands/init.js'
+import dotenv from 'dotenv'
 
 
 export async function init({dir, flags, config, runId}: {dir: string, flags: InitFlags, config: Config, runId: string}) {
@@ -38,6 +39,7 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
   const frontendDir = path.join(dir, flags.frontend)
   const directusDir = path.join(dir, 'directus')
   let template: DownloadTemplateResult
+  let packageManager: PackageManager | null = null
 
   try {
     // Download the template from GitHub
@@ -79,14 +81,39 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
 
     // Find and copy all .env.example files
     const envFiles = glob.sync(path.join(dir, '**', '.env.example'))
+
+    const directusInfo = {
+      email: '',
+      password: '',
+      url: '',
+    }
+
+    const frontendInfo = {
+      url: '',
+    }
+
     for (const file of envFiles) {
       const envFile = file.replace('.env.example', '.env')
       fs.copyFileSync(file, envFile)
-      // Read default login info from .env.example
-      const envExample = fs.readFileSync(file, 'utf8')
-      const emailMatch = envExample.match(/ADMIN_EMAIL=(.*)/)
-      const passwordMatch = envExample.match(/ADMIN_PASSWORD=(.*)/)
-
+      // Read default Directus login info from .env
+      const parsedEnv = dotenv.parse(fs.readFileSync(file, 'utf8'))
+      directusInfo.email = parsedEnv.ADMIN_EMAIL
+      directusInfo.password = parsedEnv.ADMIN_PASSWORD
+      directusInfo.url = parsedEnv.PUBLIC_URL
+      // Read default frontend URL from .env
+      const urlPatterns = [
+        'NEXT_PUBLIC_SITE_URL',
+        'NUXT_PUBLIC_SITE_URL',
+        'SITE_URL',
+        'PUBLIC_SITE_URL',
+      ]
+      for (const pattern of urlPatterns) {
+        const urlMatch = parsedEnv[pattern]
+        if (urlMatch) {
+          frontendInfo.url = urlMatch
+          break
+        }
+      }
     }
 
     // Start Directus and apply template only if directus directory exists
@@ -126,7 +153,7 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
       const s = spinner()
       s.start('Installing dependencies')
       try {
-        const packageManager = await detectPackageManager(frontendDir)
+        packageManager = await detectPackageManager(frontendDir)
         await installDependencies({
           cwd: frontendDir,
           packageManager,
@@ -151,10 +178,17 @@ export async function init({dir, flags, config, runId}: {dir: string, flags: Ini
 
     // Finishing up
     const relativeDir = path.relative(process.cwd(), dir)
-    const nextSteps = `- Directus is running on http://localhost:8055 \n- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)} and start developing! \n- Review the \`./README.md\` file for next steps.`
+
+    const directusText= `- Directus is running on ${directusInfo.url ?? 'http://localhost:8055'}. You can login with the email: ${chalk.cyan(directusInfo.email)} and password: ${chalk.cyan(directusInfo.password)}. \n`
+    const frontendText= frontendDir ? `- To start the frontend, run ${chalk.cyan(`cd ${frontendDir}`)} and then ${chalk.cyan(`${packageManager?.name} run dev`)}. \n` : ''
+    const projectText= `- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)}. \n`
+    const readmeText= '- Review the \`./README.md\` file for more information and next steps.'
+
+    const nextSteps = chalk.white(`${directusText}${projectText}${frontendText}`)
+
     note(nextSteps, 'Next Steps')
 
-    outro(`Problems? Join the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
+    outro(`Problems or questions? Hop into the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
   } catch (error) {
     catchError(error, {
       context: {dir, flags, function: 'init'},
