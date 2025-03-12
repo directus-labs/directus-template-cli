@@ -1,8 +1,7 @@
 import {ux} from '@oclif/core'
 import type {Config} from '@oclif/core'
-import {randomUUID} from 'node:crypto'
 import {PostHog} from 'posthog-node'
-import {POSTHOG_PUBLIC_KEY} from '../lib/constants.js'
+import {POSTHOG_PUBLIC_KEY, POSTHOG_HOST} from '../lib/constants.js'
 import {sanitizeFlags} from '../lib/utils/sanitize-flags.js'
 
 // Create a singleton client using module scope
@@ -20,7 +19,8 @@ export function getClient(debug = false): PostHog {
     client = new PostHog(
       POSTHOG_PUBLIC_KEY,
       {
-        host: 'https://us.i.posthog.com',
+        host: POSTHOG_HOST,
+        disableGeoip: false,
       },
     )
 
@@ -70,11 +70,13 @@ export function track({
   command,
   flags,
   runId,
+  message,
   config,
   properties = {},
   debug = false
 }: {
   lifecycle: 'start' | 'complete' | 'error',
+  message?: string,
   distinctId: string,
   command?: string,
   flags?: Record<string, unknown>,
@@ -89,13 +91,12 @@ export function track({
 
   const eventProperties = command
     ? {
-        command,
         runId,
-        distinctId,
+        message,
+        ...properties,
+        ...getEnvironmentInfo(config),
         // Always sanitize sensitive flags
-        flags: flags ? sanitizeFlags(flags) : undefined,
-        environment: getEnvironmentInfo(config),
-        ...properties
+        ...sanitizeFlags(flags),
       }
     : properties;
 
@@ -106,7 +107,7 @@ export function track({
 
   phClient.capture({
     distinctId,
-    event: `directus_template_cli.${lifecycle}`,
+    event: `directus_template_cli.${command}.${lifecycle}`,
     properties: eventProperties
   })
 
@@ -120,12 +121,14 @@ export function track({
  */
 function getEnvironmentInfo(config?: Config): Record<string, unknown> {
   return {
-    node_version: process.version,
-    os: process.platform,
+    // PostHog properties
+    $os: process.platform,
+    $raw_user_agent: config?.userAgent || 'unknown',
+    // Custom properties
     arch: process.arch || 'unknown',
+    nodeVersion: process.version,
     platform: config?.platform || 'unknown',
     shell: config?.shell || 'unknown',
-    user_agent: config?.userAgent || 'unknown',
     version: config?.version || 'unknown',
   };
 }

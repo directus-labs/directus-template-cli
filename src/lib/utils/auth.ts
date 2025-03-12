@@ -1,5 +1,5 @@
 import {readMe} from '@directus/sdk'
-import {text} from '@clack/prompts'
+import {text, log, isCancel} from '@clack/prompts'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk.js'
@@ -23,6 +23,11 @@ export async function getDirectusUrl() {
     message: 'What is your Directus URL?',
   })
 
+  if (isCancel(directusUrl)) {
+    log.info('Exiting...')
+    ux.exit(0)
+  }
+
   // Validate URL
   if (!validateUrl(directusUrl as string)) {
     ux.warn('Invalid URL')
@@ -44,6 +49,11 @@ export async function getDirectusToken(directusUrl: string) {
     placeholder: 'admin-token-here',
     message: 'What is your Directus Admin Token?',
   })
+
+  if (isCancel(directusToken)) {
+    log.info('Exiting...')
+    ux.exit(0)
+  }
 
   // Validate token by fetching the user
   try {

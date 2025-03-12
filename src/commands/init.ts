@@ -4,7 +4,6 @@ import chalk from 'chalk'
 import fs from 'node:fs'
 import path from 'pathe'
 import {disableTelemetry} from '../flags/common.js'
-import {randomUUID} from 'node:crypto'
 import {DIRECTUS_PURPLE} from '../lib/constants.js'
 import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
@@ -429,10 +428,10 @@ Enjoy building your project!`
           gitInit: initGit,
           installDeps,
           template,
-          disableTelemetry: flags.disableTelemetry,
         },
         runId: this.runId,
         config: this.config,
+        debug: true,
       });
     }
 
@@ -446,16 +445,15 @@ Enjoy building your project!`
         template,
         overrideDir: flags.overrideDir,
       },
-      config: this.config,
-      runId: this.runId,
+
     })
 
     // Track the command completion unless telemetry is disabled
     if (!flags.disableTelemetry && !this.userConfig.disableTelemetry) {
       await track({
-        distinctId: this.userConfig.distinctId,
-        lifecycle: 'complete',
         command: 'init',
+        lifecycle: 'complete',
+        distinctId: this.userConfig.distinctId,
         flags: {
           frontend: chosenFrontend,
           gitInit: initGit,
@@ -465,6 +463,7 @@ Enjoy building your project!`
         },
         runId: this.runId,
         config: this.config,
+        debug: true,
       });
 
       await shutdown()
