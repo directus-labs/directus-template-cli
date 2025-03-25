@@ -46,7 +46,7 @@ function mergeArrays(key: string, current: any[], incoming: any[]): any[] {
 
 function mergeJsonStrings(current: string, incoming: string): string {
   try {
-    return JSON.stringify(customDefu(JSON.parse(current), JSON.parse(incoming)))
+    return JSON.stringify(customDefu(JSON.parse(incoming), JSON.parse(current)))
   } catch {
     return incoming // If not valid JSON, return the incoming value
   }
@@ -57,7 +57,7 @@ export default async function loadSettings(dir: string) {
   const settings = readFile('settings', dir)
   try {
     const currentSettings = await api.client.request(readSettings())
-    const mergedSettings = customDefu(currentSettings, settings) as DirectusSettings
+    const mergedSettings = customDefu(settings, currentSettings) as DirectusSettings
     await api.client.request(updateSettings(mergedSettings))
   } catch (error) {
     catchError(error)
