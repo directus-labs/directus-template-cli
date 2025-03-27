@@ -87,6 +87,7 @@ async function checkRequiredPorts(): Promise<void> {
 
   if (hasConflicts) {
     ux.warn('Please stop any conflicting services before continuing.')
+    process.exit(1)
   }
 }
 
