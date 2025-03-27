@@ -4,7 +4,6 @@ import fs from 'node:fs';
 import path from 'pathe';
 
 interface UserConfig {
-  disableTelemetry?: boolean;
   distinctId?: string | null;
 }
 
@@ -26,7 +25,6 @@ export abstract class BaseCommand extends Command {
       } else {
         // Create default config if it doesn't exist
         const defaultConfig: UserConfig = {
-          disableTelemetry: true,
           distinctId: randomUUID(),
         };
         fs.mkdirSync(this.config.configDir, { recursive: true });

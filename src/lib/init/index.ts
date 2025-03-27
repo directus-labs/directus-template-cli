@@ -1,5 +1,5 @@
 import {note, outro, spinner} from '@clack/prompts'
-import {ux, type Config} from '@oclif/core'
+import {ux} from '@oclif/core'
 import chalk from 'chalk'
 import {execa} from 'execa'
 import {type DownloadTemplateResult, downloadTemplate} from 'giget'
@@ -7,18 +7,17 @@ import {glob} from 'glob'
 import fs from 'node:fs'
 import {detectPackageManager, installDependencies, type PackageManager} from 'nypm'
 import path from 'pathe'
+import dotenv from 'dotenv'
 
 import ApplyCommand from '../../commands/apply.js'
 import {createDocker} from '../../services/docker.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
+import {readTemplateConfig} from '../utils/template-config.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
-import type { InitFlags } from '../../commands/init.js'
-import dotenv from 'dotenv'
-
+import type {InitFlags} from '../../commands/init.js'
 
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
-
   // Check target directory
   const shouldForce: boolean = flags.overrideDir
 
@@ -26,7 +25,8 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     throw new Error('Directory already exists. Use --override-dir to override.')
   }
 
-  const frontendDir = path.join(dir, flags.frontend)
+  // If template is a URL, we need to handle it differently
+  const isDirectUrl = flags.template?.startsWith('http')
   const directusDir = path.join(dir, 'directus')
   let template: DownloadTemplateResult
   let packageManager: PackageManager | null = null
@@ -34,49 +34,65 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
   try {
     // Download the template from GitHub
     const parsedUrl = parseGitHubUrl(flags.template)
+
+    // If it's a direct URL, we download the entire repository
+    // Otherwise, we use the template from the starters repo
     template = await downloadTemplate(createGigetString(parsedUrl), {
       dir,
       force: shouldForce,
     })
 
-    // Cleanup the template
-    if (flags.frontend) {
-      // Ensure directus directory exists before cleaning up
+    // For direct URLs, we need to check if there's a directus directory
+    // If not, assume the entire repo is a directus template
+    if (isDirectUrl) {
       if (!fs.existsSync(directusDir)) {
+        // Move all files to directus directory
         fs.mkdirSync(directusDir, {recursive: true})
-      }
-
-      // Read and parse package.json
-      const packageJsonPath = path.join(dir, 'package.json')
-      if (!fs.existsSync(packageJsonPath)) {
-        throw new Error('package.json not found in template')
-      }
-
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-      const templateConfig = packageJson['directus:template']
-
-      // Get all frontend paths from the configuration
-      const frontendPaths = Object.values(templateConfig?.frontends || {})
-      .map(frontend => (frontend as { path: string }).path.replace(/^\.\//, ''))
-      .filter(path => path !== flags.frontend) // Exclude the selected frontend
-
-      // Remove unused frontend directories
-      for (const frontendPath of frontendPaths) {
-        const pathToRemove = path.join(dir, frontendPath)
-        if (fs.existsSync(pathToRemove)) {
-          fs.rmSync(pathToRemove, {recursive: true})
+        const files = fs.readdirSync(dir)
+        for (const file of files) {
+          if (file !== 'directus') {
+            fs.renameSync(path.join(dir, file), path.join(directusDir, file))
+          }
         }
       }
     }
 
+    // Read template configuration
+    const templateInfo = readTemplateConfig(dir)
+    let frontendDir: string | undefined
+
+    // Handle frontends based on template configuration
+    if (flags.frontend && templateInfo) {
+      // Find the selected frontend in the configuration
+      const selectedFrontend = templateInfo.frontendOptions.find(f => f.id === flags.frontend)
+
+      if (!selectedFrontend) {
+        throw new Error(`Frontend "${flags.frontend}" not found in template configuration`)
+      }
+
+      // Remove all frontend directories except the selected one
+      for (const frontend of templateInfo.frontendOptions) {
+        if (frontend.id !== flags.frontend) {
+          const pathToRemove = path.join(dir, frontend.path)
+          if (fs.existsSync(pathToRemove)) {
+            fs.rmSync(pathToRemove, {recursive: true})
+          }
+        }
+      }
+
+      // Move the selected frontend to the correct location if needed
+      frontendDir = path.join(dir, selectedFrontend.path)
+      if (frontendDir !== path.join(dir, flags.frontend)) {
+        fs.renameSync(frontendDir, path.join(dir, flags.frontend))
+        frontendDir = path.join(dir, flags.frontend)
+      }
+    }
 
     const directusInfo = {
       email: '',
       password: '',
       url: '',
     }
-
-
 
     // Find and copy all .env.example files
     const envFiles = glob.sync(path.join(dir, '**', '.env.example'))
@@ -123,22 +139,23 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
       }
     }
 
-    // Install dependencies for frontend if it exists
-    if (flags.installDeps && fs.existsSync(frontendDir)) {
+    // Install dependencies if requested
+    if (flags.installDeps) {
       const s = spinner()
       s.start('Installing dependencies')
       try {
-        packageManager = await detectPackageManager(frontendDir)
-        await installDependencies({
-          cwd: frontendDir,
-          packageManager,
-          silent: true,
-        })
+        if (fs.existsSync(frontendDir)) {
+          packageManager = await detectPackageManager(frontendDir)
+          await installDependencies({
+            cwd: frontendDir,
+            packageManager,
+            silent: true,
+          })
+        }
       } catch (error) {
         ux.warn('Failed to install dependencies')
         throw error
       }
-
 
       s.stop('Dependencies installed!')
     }
@@ -154,12 +171,12 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     // Finishing up
     const relativeDir = path.relative(process.cwd(), dir)
 
-    const directusText= `- Directus is running on ${directusInfo.url ?? 'http://localhost:8055'}. You can login with the email: ${chalk.cyan(directusInfo.email)} and password: ${chalk.cyan(directusInfo.password)}. \n`
-    const frontendText= frontendDir ? `- To start the frontend, run ${chalk.cyan(`cd ${frontendDir}`)} and then ${chalk.cyan(`${packageManager?.name} run dev`)}. \n` : ''
-    const projectText= `- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)}. \n`
-    const readmeText= '- Review the \`./README.md\` file for more information and next steps.'
+    const directusText = `- Directus is running on ${directusInfo.url ?? 'http://localhost:8055'}. You can login with the email: ${chalk.cyan(directusInfo.email)} and password: ${chalk.cyan(directusInfo.password)}. \n`
+    const frontendText = flags.frontend ? `- To start the frontend, run ${chalk.cyan(`cd ${flags.frontend}`)} and then ${chalk.cyan(`${packageManager?.name} run dev`)}. \n` : ''
+    const projectText = `- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)}. \n`
+    const readmeText = '- Review the \`./README.md\` file for more information and next steps.'
 
-    const nextSteps = chalk.white(`${directusText}${projectText}${frontendText}`)
+    const nextSteps = chalk.white(`${directusText}${projectText}${frontendText}${readmeText}`)
 
     note(nextSteps, 'Next Steps')
 
@@ -174,7 +191,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
   return {
     directusDir,
-    frontendDir,
+    frontendDir: flags.frontend ? path.join(dir, flags.frontend) : undefined,
     template,
   }
 }

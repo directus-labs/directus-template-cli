@@ -1,6 +1,8 @@
-import {spinner} from '@clack/prompts'
+import {spinner, log} from '@clack/prompts'
 import {execa} from 'execa'
-
+import net from 'node:net'
+import {ux} from '@oclif/core'
+import path from 'pathe'
 import catchError from '../lib/utils/catch-error.js'
 import {waitFor} from '../lib/utils/wait.js'
 
@@ -22,6 +24,70 @@ export interface DockerCheckResult {
   installed: boolean
   message?: string
   running: boolean
+}
+
+interface PortCheck {
+  inUse: boolean
+  process?: string
+}
+
+/**
+ * Check if a port is in use and what's using it
+ * @param port The port to check
+ * @returns Object indicating if port is in use and what's using it
+ */
+async function checkPort(port: number): Promise<PortCheck> {
+  return new Promise((resolve) => {
+    const server = net.createServer()
+
+    server.once('error', async (err: NodeJS.ErrnoException) => {
+      if (err.code === 'EADDRINUSE') {
+        // Try to get information about what's using the port
+        try {
+          const {stdout} = await execa('lsof', ['-i', `:${port}`])
+          const process = stdout.split('\n')[1]?.split(/\s+/)[0] // Get process name
+          resolve({ inUse: true, process })
+        } catch {
+          resolve({ inUse: true })
+        }
+      } else {
+        resolve({ inUse: false })
+      }
+    })
+
+    server.once('listening', () => {
+      server.close()
+      resolve({ inUse: false })
+    })
+
+    server.listen(port)
+  })
+}
+
+/**
+ * Check if required ports are available and warn if they're in use
+ * @returns Promise<void>
+ */
+async function checkRequiredPorts(): Promise<void> {
+  const portsToCheck = [
+    { port: 8055, name: 'Directus API' },
+    { port: 5432, name: 'PostgreSQL' },
+  ]
+
+  let hasConflicts = false
+
+  for (const {port, name} of portsToCheck) {
+    const status = await checkPort(port)
+    if (status.inUse) {
+      hasConflicts = true
+      const process = status.process ? ` by ${status.process}` : ''
+      ux.warn(`Port ${port} (${name}) is already in use${process}`)
+    }
+  }
+
+  if (hasConflicts) {
+    ux.warn('Please stop any conflicting services before continuing.')
+  }
 }
 
 /**
@@ -64,13 +130,14 @@ async function checkDocker(): Promise<DockerCheckResult> {
  */
 async function startContainers(cwd: string): Promise<void> {
   try {
-    // ux.action.start('Starting Docker containers')
+    // Check if required ports are available
+    await checkRequiredPorts()
+
     const s = spinner()
     s.start('Starting Docker containers')
 
     return execa('docker-compose', ['up', '-d'], {
       cwd,
-      // stdio: 'inherit',
     }).then(() => {
       s.stop('Docker containers running!')
     })
@@ -93,7 +160,6 @@ async function stopContainers(cwd: string): Promise<void> {
   try {
     return execa('docker-compose', ['down'], {
       cwd,
-      // stdio: 'inherit',
     }).then(() => {})
   } catch (error) {
     catchError(error, {
