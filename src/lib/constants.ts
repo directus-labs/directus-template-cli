@@ -17,3 +17,5 @@ export const DEFAULT_REPO = {
 
 export const POSTHOG_PUBLIC_KEY = 'phc_STopE6gj6LDIjYonVF7493kQJK8S4v0Xrl6YPr2z9br'
 export const POSTHOG_HOST = 'https://us.i.posthog.com'
+
+export const DEFAULT_BRANCH = 'main'

@@ -2,12 +2,16 @@ import {confirm, intro, select, text, isCancel, cancel, log as clackLog} from '@
 import {Args, Flags, ux} from '@oclif/core'
 import chalk from 'chalk'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'pathe'
 import {disableTelemetry} from '../flags/common.js'
 import {DIRECTUS_PURPLE} from '../lib/constants.js'
 import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {createGitHub} from '../services/github.js'
+import {readTemplateConfig} from '../lib/utils/template-config.js'
+import {createGigetString, parseGitHubUrl} from '../lib/utils/parse-github-url.js'
+import {downloadTemplate} from 'giget'
 import { BaseCommand } from './base.js'
 import { track, shutdown } from '../services/posthog.js'
 
@@ -155,8 +159,9 @@ export default class InitCommand extends BaseCommand {
 
     // 3. Validate that the template exists, fetch subdirectories
     let directories = await github.getTemplateDirectories(template)
+    const isDirectUrl = template?.startsWith('http')
 
-    while (directories.length === 0) {
+    while (!isDirectUrl && directories.length === 0) {
       this.log(`Template "${template}" doesn't seem to exist in directus-labs/directus-starters.`)
       const templateNameResponse = await text({
         message: 'Please enter a valid template name, or Ctrl+C to cancel:',
@@ -173,33 +178,47 @@ export default class InitCommand extends BaseCommand {
 
     flags.template = template
 
-    // Filter out the 'directus' folder; the rest are potential frontends
-    const potentialFrontends = directories.filter(dir => dir !== 'directus')
-    if (potentialFrontends.length === 0) {
-      this.error(`No frontends found for template "${template}". Exiting.`)
-    }
+    // Download the template to a temporary directory to read its configuration
+    const tempDir = path.join(os.tmpdir(), `directus-template-${Date.now()}`)
+    let chosenFrontend = flags.frontend
 
-    // 4. If user hasn't specified a valid flags.frontend, ask from the list
-    let {frontend: chosenFrontend} = flags
-
-    if (!chosenFrontend || !potentialFrontends.includes(chosenFrontend)) {
-      const frontendResponse = await select({
-        message: 'Which frontend framework do you want to use?',
-        options: potentialFrontends.map(frontend => ({
-          label: frontend,
-          value: frontend,
-        })),
+    try {
+      await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
+        dir: tempDir,
+        force: true,
       })
 
-      if (isCancel(frontendResponse)) {
-        cancel('Project creation cancelled.')
-        process.exit(0)
+      // Read template configuration
+      const templateInfo = readTemplateConfig(tempDir)
+
+      // 4. If template has frontends and user hasn't specified a valid one, ask from the list
+      if (templateInfo?.frontendOptions.length > 0 && (!chosenFrontend || !templateInfo.frontendOptions.find(f => f.id === chosenFrontend))) {
+        const frontendResponse = await select({
+          message: 'Which frontend framework do you want to use?',
+          options: [
+            ...templateInfo.frontendOptions.map(frontend => ({
+              label: frontend.name,
+              value: frontend.id,
+            })),
+            // { label: 'No frontend', value: '' },
+          ],
+        })
+
+        if (isCancel(frontendResponse)) {
+          cancel('Project creation cancelled.')
+          process.exit(0)
+        }
+
+        chosenFrontend = frontendResponse as string
       }
 
-      chosenFrontend = frontendResponse as string
+      flags.frontend = chosenFrontend
+    } finally {
+      // Clean up temporary directory
+      if (fs.existsSync(tempDir)) {
+        fs.rmSync(tempDir, { recursive: true, force: true })
+      }
     }
-
-    flags.frontend = chosenFrontend
 
     const installDepsResponse = await confirm({
       initialValue: true,
@@ -226,7 +245,7 @@ export default class InitCommand extends BaseCommand {
     const initGit = initGitResponse as boolean
 
     // Track the command start unless telemetry is disabled
-    if (!flags.disableTelemetry && !this.userConfig.disableTelemetry) {
+    if (!flags.disableTelemetry) {
       await track({
         lifecycle: 'start',
         distinctId: this.userConfig.distinctId,
@@ -239,7 +258,6 @@ export default class InitCommand extends BaseCommand {
         },
         runId: this.runId,
         config: this.config,
-        debug: true,
       });
     }
 
@@ -257,7 +275,7 @@ export default class InitCommand extends BaseCommand {
     })
 
     // Track the command completion unless telemetry is disabled
-    if (!flags.disableTelemetry && !this.userConfig.disableTelemetry) {
+    if (!flags.disableTelemetry) {
       await track({
         command: 'init',
         lifecycle: 'complete',
@@ -271,7 +289,6 @@ export default class InitCommand extends BaseCommand {
         },
         runId: this.runId,
         config: this.config,
-        debug: true,
       });
 
       await shutdown()
@@ -279,6 +296,5 @@ export default class InitCommand extends BaseCommand {
 
     ux.exit(0)
   }
-
 
 }
