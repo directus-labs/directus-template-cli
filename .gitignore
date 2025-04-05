@@ -9,6 +9,8 @@ node_modules
 oclif.manifest.json
 .DS_Store
 templates
+tsconfig.tsbuildinfo
+/build
 
 /downloads
 /**/downloads
