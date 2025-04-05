@@ -9,7 +9,7 @@ export const DIRECTUS_CONFIG: DirectusConfig = {
 
 export const DOCKER_CONFIG: DockerConfig = {
   composeFile: 'docker-compose.yml',
-  healthCheckEndpoint: '/server/ping',
+  healthCheckEndpoint: '/server/info',
   interval: 3000,
   maxAttempts: 30,
 }

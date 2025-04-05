@@ -97,11 +97,16 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     // Find and copy all .env.example files
     const envFiles = glob.sync(path.join(dir, '**', '.env.example'))
 
+    // Process all env files first
     for (const file of envFiles) {
       const envFile = file.replace('.env.example', '.env')
       fs.copyFileSync(file, envFile)
-      // Read default Directus login info from .env
-      const parsedEnv = dotenv.parse(fs.readFileSync(file, 'utf8'))
+    }
+
+    // Then read Directus-specific info only from the Directus env file
+    const directusEnvFile = path.join(directusDir, '.env')
+    if (fs.existsSync(directusEnvFile)) {
+      const parsedEnv = dotenv.parse(fs.readFileSync(directusEnvFile, 'utf8'))
       directusInfo.email = parsedEnv.ADMIN_EMAIL
       directusInfo.password = parsedEnv.ADMIN_PASSWORD
       directusInfo.url = parsedEnv.PUBLIC_URL
@@ -120,8 +125,14 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
       try {
         await dockerService.startContainers(directusDir)
-        const healthCheckUrl = `${directusInfo.url}${DOCKER_CONFIG.healthCheckEndpoint}`
-        await dockerService.waitForHealthy(healthCheckUrl)
+        const healthCheckUrl = `${directusInfo.url || 'http://localhost:8055'}${DOCKER_CONFIG.healthCheckEndpoint}`
+
+        // Wait for healthy before proceeding
+        const isHealthy = await dockerService.waitForHealthy(healthCheckUrl)
+
+        if (!isHealthy) {
+          throw new Error('Directus failed to become healthy')
+        }
 
         const templatePath = path.join(directusDir, 'template')
         ux.stdout(`Attempting to apply template from: ${templatePath}`)
