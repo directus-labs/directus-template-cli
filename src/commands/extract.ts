@@ -1,5 +1,5 @@
 
-import {text, password, select, intro, outro} from '@clack/prompts'
+import {text, password, select, intro, outro, log} from '@clack/prompts'
 import {Command, ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
 import chalk from 'chalk'
@@ -7,7 +7,7 @@ import fs from 'node:fs'
 import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
-import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR, BSL_LICENSE_TEXT} from '../lib/constants.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 
 import extract from '../lib/extract/index.js'
@@ -94,6 +94,7 @@ export default class ExtractCommand extends Command {
 
     ux.action.stop()
 
+    log.warn(BSL_LICENSE_TEXT)
     ux.stdout(SEPARATOR)
     ux.stdout('Template extracted successfully.')
     this.exit(0)

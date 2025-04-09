@@ -1,4 +1,4 @@
-import {note, outro, spinner} from '@clack/prompts'
+import {note, outro, spinner, log as clackLog} from '@clack/prompts'
 import {ux} from '@oclif/core'
 import chalk from 'chalk'
 import {execa} from 'execa'
@@ -16,7 +16,7 @@ import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
 import type {InitFlags} from '../../commands/init.js'
-
+import {BSL_LICENSE_TEXT} from '../constants.js'
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
   // Check target directory
   const shouldForce: boolean = flags.overrideDir
@@ -190,6 +190,8 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     const nextSteps = chalk.white(`${directusText}${projectText}${frontendText}${readmeText}`)
 
     note(nextSteps, 'Next Steps')
+
+    clackLog.warn(BSL_LICENSE_TEXT)
 
     outro(`Problems or questions? Hop into the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
   } catch (error) {
