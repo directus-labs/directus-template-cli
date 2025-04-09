@@ -38,7 +38,8 @@
     "log-update": "^6.1.0",
     "nypm": "^0.6.0",
     "pathe": "^2.0.3",
-    "posthog-node": "^4.10.1"
+    "posthog-node": "^4.10.1",
+    "terminal-link": "^4.0.0"
   },
   "devDependencies": {
     "@directus/types": "^13.0.0",

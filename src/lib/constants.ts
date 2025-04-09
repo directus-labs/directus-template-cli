@@ -1,8 +1,11 @@
 import chalk from 'chalk'
-
+import terminalLink from 'terminal-link'
 export const DIRECTUS_PURPLE = '#6644ff'
 export const DIRECTUS_PINK = '#FF99DD'
 export const SEPARATOR = '------------------'
+
+export const pinkText = chalk.hex(DIRECTUS_PINK)
+export const purpleText = chalk.hex(DIRECTUS_PURPLE)
 
 export const COMMUNITY_TEMPLATE_REPO = {
   string: 'github:directus-labs/directus-templates',
@@ -24,4 +27,7 @@ export const DEFAULT_BRANCH = 'main'
 
 
 export const BSL_LICENSE_URL = 'https://directus.io/bsl'
-export const BSL_LICENSE_TEXT = `You REQUIRE a license to use Directus if your organisation has more than $5MM USD a year in revenue and/or funding. For all organizations and people with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. \nDirectus is licensed under BSL1.1. Visit ${chalk.underline(chalk.cyan(BSL_LICENSE_URL))} for more information or reach out to us at ${chalk.underline(chalk.cyan('sales-demo-with-evil-sales@directus.io'))}.`
+const BSL_LINK = terminalLink(BSL_LICENSE_URL, BSL_LICENSE_URL)
+const BSL_MAILTO = terminalLink('sales-demo-with-evil-sales@directus.io', 'mailto:sales-demo-with-evil-sales@directus.io')
+
+export const BSL_LICENSE_TEXT = `You REQUIRE a license to use Directus if your organisation has more than $5MM USD a year in revenue and/or funding.\nFor all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. \nDirectus is licensed under BSL1.1. Visit ${pinkText(BSL_LINK)} for more information or reach out to us at ${pinkText(BSL_MAILTO)}.`

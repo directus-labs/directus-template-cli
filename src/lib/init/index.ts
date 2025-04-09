@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import {detectPackageManager, installDependencies, type PackageManager} from 'nypm'
 import path from 'pathe'
 import dotenv from 'dotenv'
+import terminalLink from 'terminal-link'
 
 import ApplyCommand from '../../commands/apply.js'
 import {createDocker} from '../../services/docker.js'
@@ -16,7 +17,9 @@ import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
 import type {InitFlags} from '../../commands/init.js'
-import {BSL_LICENSE_TEXT} from '../constants.js'
+import {BSL_LICENSE_TEXT, pinkText} from '../constants.js'
+
+
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
   // Check target directory
   const shouldForce: boolean = flags.overrideDir
@@ -123,7 +126,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
         throw new Error(dockerStatus.message)
       }
 
-      try {
+
         await dockerService.startContainers(directusDir)
         const healthCheckUrl = `${directusInfo.url || 'http://localhost:8055'}${DOCKER_CONFIG.healthCheckEndpoint}`
 
@@ -144,10 +147,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
           '--userPassword=d1r3ctu5',
           `--templateLocation=${templatePath}`,
         ])
-      } catch (error) {
-        ux.error('Failed to start Directus containers or apply template')
-        throw error
-      }
+
     }
 
     // Install dependencies if requested
@@ -182,18 +182,20 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     // Finishing up
     const relativeDir = path.relative(process.cwd(), dir)
 
-    const directusText = `- Directus is running on ${directusInfo.url ?? 'http://localhost:8055'}. You can login with the email: ${chalk.cyan(directusInfo.email)} and password: ${chalk.cyan(directusInfo.password)}. \n`
-    const frontendText = flags.frontend ? `- To start the frontend, run ${chalk.cyan(`cd ${flags.frontend}`)} and then ${chalk.cyan(`${packageManager?.name} run dev`)}. \n` : ''
-    const projectText = `- Navigate to your project directory using ${chalk.cyan(`cd ${relativeDir}`)}. \n`
+    const directusUrl = directusInfo.url ?? 'http://localhost:8055'
+
+    const directusText = `- Directus is running on ${terminalLink(directusUrl, directusUrl)}. You can login with the email: ${pinkText(directusInfo.email)} and password: ${pinkText(directusInfo.password)}. \n`
+    const frontendText = flags.frontend ? `- To start the frontend, run ${pinkText(`cd ${flags.frontend}`)} and then ${pinkText(`${packageManager?.name} run dev`)}. \n` : ''
+    const projectText = `- Navigate to your project directory using ${pinkText(`cd ${relativeDir}`)}. \n`
     const readmeText = '- Review the \`./README.md\` file for more information and next steps.'
 
-    const nextSteps = chalk.white(`${directusText}${projectText}${frontendText}${readmeText}`)
+    const nextSteps = `${directusText}${projectText}${frontendText}${readmeText}`
 
     note(nextSteps, 'Next Steps')
 
     clackLog.warn(BSL_LICENSE_TEXT)
 
-    outro(`Problems or questions? Hop into the community on Discord at ${chalk.underline(chalk.cyan('https://directus.chat'))}`)
+    outro(`Problems or questions? Hop into the community on Discord at ${pinkText(terminalLink('https://directus.chat', 'https://directus.chat'))}`)
   } catch (error) {
     catchError(error, {
       context: {dir, flags, function: 'init'},
