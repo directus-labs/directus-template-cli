@@ -2,7 +2,7 @@ import {Command, Flags, ux} from '@oclif/core'
 import {text, select, password, log, intro} from '@clack/prompts'
 import * as path from 'pathe'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
-
+import {BSL_LICENSE_TEXT} from '../lib/constants.js'
 import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
 import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
@@ -204,6 +204,9 @@ export default class ApplyCommand extends Command {
 
       ux.action.stop()
       ux.stdout(SEPARATOR)
+
+      log.warn(BSL_LICENSE_TEXT)
+
       ux.stdout('Template applied successfully.')
       ux.exit(0)
     }
