@@ -298,14 +298,21 @@ Enjoy building your project!`
 
     // If no dir is provided, ask for it
     if (!args.directory || args.directory === '.') {
-      const dirResponse = await text({
+      let dirResponse = await text({
         message: 'Enter the directory to create the project in:',
         placeholder: './my-directus-project',
       })
 
+
       if (isCancel(dirResponse)) {
         cancel('Project creation cancelled.')
         process.exit(0)
+      }
+
+       // If there's no response, set a default
+       if (!dirResponse) {
+        clackLog.warn('No directory provided, using default: ./my-directus-project')
+        dirResponse = './my-directus-project'
       }
 
       this.targetDir = dirResponse as string
