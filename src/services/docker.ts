@@ -137,7 +137,7 @@ async function startContainers(cwd: string): Promise<void> {
     const s = spinner()
     s.start('Starting Docker containers')
 
-    return execa('docker-compose', ['up', '-d'], {
+    return execa('docker compose', ['up', '-d'], {
       cwd,
     }).then(() => {
       s.stop('Docker containers running!')
@@ -159,7 +159,7 @@ async function startContainers(cwd: string): Promise<void> {
  */
 async function stopContainers(cwd: string): Promise<void> {
   try {
-    return execa('docker-compose', ['down'], {
+    return execa('docker compose', ['down'], {
       cwd,
     }).then(() => {})
   } catch (error) {
