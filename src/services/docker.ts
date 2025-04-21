@@ -125,24 +125,89 @@ async function checkDocker(): Promise<DockerCheckResult> {
 }
 
 /**
+ * Get the list of image names defined in the docker-compose file
+ * @param {string} cwd - The current working directory
+ * @returns {Promise<string[]>} - A list of image names
+ */
+async function getRequiredImagesFromCompose(cwd: string): Promise<string[]> {
+  try {
+    const { stdout } = await execa('docker', ['compose', 'config', '--images'], { cwd });
+    // stdout contains a list of image names, one per line
+    return stdout.split('\n').filter(img => img.trim() !== ''); // Filter out empty lines
+  } catch (error) {
+    // Handle potential errors, e.g., compose file not found or invalid
+    log.error('Failed to get images from docker-compose file.');
+    catchError(error, {
+      context: { cwd, function: 'getRequiredImagesFromCompose' },
+      fatal: false, // Don't necessarily exit, maybe let startContainers handle it
+      logToFile: true,
+    });
+    return []; // Return empty list on error
+  }
+}
+
+/**
+ * Check if a list of Docker images exist locally
+ * @param {string[]} imageNames - An array of Docker image names (e.g., "postgres:16")
+ * @returns {Promise<boolean>} - True if all images exist locally, false otherwise
+ */
+async function checkImagesExist(imageNames: string[]): Promise<boolean> {
+  if (imageNames.length === 0) {
+    return true; // No images to check, technically they all "exist"
+  }
+  try {
+    // Use Promise.allSettled to check all images even if some commands fail
+    const results = await Promise.allSettled(
+      imageNames.map(imageName => execa('docker', ['inspect', '--type=image', imageName]))
+    );
+
+    // Check if all inspect commands succeeded (exit code 0)
+    return results.every(result => result.status === 'fulfilled' && result.value.exitCode === 0);
+  } catch (error) {
+    // This catch block might be redundant due to allSettled, but good for safety
+    log.error('Error checking for Docker images.');
+    catchError(error, {
+      context: { imageNames, function: 'checkImagesExist' },
+      fatal: false,
+      logToFile: true,
+    });
+    return false; // Assume images don't exist if there's an error checking
+  }
+}
+
+/**
  * Start Docker containers using docker compose
  * @param {string} cwd - The current working directory
  * @returns {Promise<void>} - Returns nothing
  */
 async function startContainers(cwd: string): Promise<void> {
+  const s = spinner()
   try {
     // Check if required ports are available
     await checkRequiredPorts()
 
-    const s = spinner()
-    s.start('Starting Docker containers')
+    // Get required images from compose file
+    const requiredImages = await getRequiredImagesFromCompose(cwd);
+    const imagesExist = await checkImagesExist(requiredImages);
 
-    return execa('docker', ['compose', 'up', '-d'], {
+    // Log a message if images need downloading
+    if (!imagesExist && requiredImages.length > 0) {
+      log.info('Required Docker image(s) are missing and will be downloaded.');
+    }
+
+    const startMessage = imagesExist || requiredImages.length === 0 ? 'Starting Docker containers...' : 'Downloading required Docker images...';
+    const endMessage = imagesExist || requiredImages.length === 0 ? 'Docker containers running!' : 'Docker images downloaded and containers started!';
+
+    s.start(startMessage); // Start spinner with the appropriate message
+
+    await execa('docker', ['compose', 'up', '-d'], {
       cwd,
-    }).then(() => {
-      s.stop('Docker containers running!')
     })
+
+    s.stop(endMessage); // Update spinner message on success
+
   } catch (error) {
+    s.stop('Error starting Docker containers.') // Stop spinner on error
     catchError(error, {
       context: {cwd, function: 'startContainers'},
       fatal: true,
