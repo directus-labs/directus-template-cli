@@ -1,5 +1,4 @@
 import chalk from 'chalk'
-import terminalLink from 'terminal-link'
 export const DIRECTUS_PURPLE = '#6644ff'
 export const DIRECTUS_PINK = '#FF99DD'
 export const SEPARATOR = '------------------'
@@ -27,7 +26,9 @@ export const DEFAULT_BRANCH = 'main'
 
 
 export const BSL_LICENSE_URL = 'https://directus.io/bsl'
-const BSL_LINK = terminalLink(BSL_LICENSE_URL, BSL_LICENSE_URL)
-const BSL_MAILTO = terminalLink('sales-demo-with-evil-sales@directus.io', 'mailto:sales-demo-with-evil-sales@directus.io')
+export const BSL_EMAIL = 'licensing@directus.io'
 
-export const BSL_LICENSE_TEXT = `You REQUIRE a license to use Directus if your organisation has more than $5MM USD a year in revenue and/or funding.\nFor all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. \nDirectus is licensed under BSL1.1. Visit ${pinkText(BSL_LINK)} for more information or reach out to us at ${pinkText(BSL_MAILTO)}.`
+export const BSL_LICENSE_HEADLINE = 'You REQUIRE a license to use Directus if your organization has more than $5MM USD a year in revenue and/or funding.'
+export const BSL_LICENSE_TEXT = 'For all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. Directus is licensed under BSL 1.1.'
+
+export const BSL_LICENSE_CTA = `Visit ${pinkText(BSL_LICENSE_URL)} for more information or reach out to us at ${pinkText(BSL_EMAIL)}.`
