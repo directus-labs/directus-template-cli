@@ -64,6 +64,7 @@ export default class InitCommand extends BaseCommand {
     }),
     overwriteDir: Flags.boolean({
       aliases: ['overwrite-dir'],
+      allowNo: true,
       default: false,
       description: 'Override the default directory',
     }),
@@ -130,9 +131,10 @@ export default class InitCommand extends BaseCommand {
     if (fs.existsSync(this.targetDir) && !flags.overwriteDir) {
       const overwriteDirResponse = await confirm({
         message: 'Directory already exists. Would you like to overwrite it?',
+        initialValue: false,
       })
 
-      if (isCancel(overwriteDirResponse)) {
+      if (isCancel(overwriteDirResponse) || overwriteDirResponse === false) {
         cancel('Project creation cancelled.')
         process.exit(0)
       }
