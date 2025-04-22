@@ -19,7 +19,7 @@ export interface InitFlags {
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
-  overrideDir?: boolean
+  overwriteDir?: boolean
   template?: string
   disableTelemetry?: boolean
 }
@@ -62,7 +62,8 @@ export default class InitCommand extends BaseCommand {
       default: true,
       description: 'Install dependencies automatically',
     }),
-    overrideDir: Flags.boolean({
+    overwriteDir: Flags.boolean({
+      aliases: ['overwrite-dir'],
       default: false,
       description: 'Override the default directory',
     }),
@@ -318,33 +319,36 @@ Enjoy building your project!`
       this.targetDir = dirResponse as string
     }
 
-    if (fs.existsSync(this.targetDir) && !flags.overrideDir) {
-      const overrideDirResponse = await confirm({
+    if (fs.existsSync(this.targetDir) && !flags.overwriteDir) {
+      const overwriteDirResponse = await confirm({
         message: 'Directory already exists. Would you like to overwrite it?',
       })
 
-      if (isCancel(overrideDirResponse)) {
+      if (isCancel(overwriteDirResponse)) {
         cancel('Project creation cancelled.')
         process.exit(0)
       }
 
-      if (overrideDirResponse) {
-        flags.overrideDir = true
+      if (overwriteDirResponse) {
+        flags.overwriteDir = true
       }
     }
 
-    // 1. Fetch available templates
+    // 1. Fetch available templates (now returns Array<{id: string, name: string, description?: string}>)
     const availableTemplates = await github.getTemplates()
 
     // 2. Prompt for template if not provided
-    let {template} = flags
+    let {template} = flags // This will store the chosen template ID
+    let chosenTemplateObject: { id: string; name: string; description?: string } | undefined;
+
 
     if (!template) {
-      const templateResponse = await select({
+      const templateResponse = await select<any>({ // Explicit types for clarity
         message: 'Which Directus backend template would you like to use?',
-        options: availableTemplates.map(template => ({
-          label: template,
-          value: template,
+        options: availableTemplates.map(tmpl => ({
+          value: tmpl.id, // The value submitted will be the ID (directory name)
+          label: tmpl.name, // Display the friendly name
+          hint: tmpl.description, // Show the description as a hint
         })),
       })
 
@@ -353,17 +357,21 @@ Enjoy building your project!`
         process.exit(0)
       }
 
-      template = templateResponse as string
+      template = templateResponse
     }
 
-    // 3. Validate that the template exists, fetch subdirectories
-    let directories = await github.getTemplateDirectories(template)
+    // Find the chosen template object for potential future use (e.g., display name later)
+    chosenTemplateObject = availableTemplates.find(t => t.id === template);
+
+    // 3. Validate that the template exists in the available list
     const isDirectUrl = template?.startsWith('http')
 
-    while (!isDirectUrl && directories.length === 0) {
-      this.log(`Template "${template}" doesn't seem to exist in directus-labs/directus-starters.`)
+    // Validate against the 'id' property of the template objects
+    while (!isDirectUrl && !availableTemplates.some(t => t.id === template)) {
+      // Keep the warning message simple or refer back to the list shown in the prompt
+      clackLog.warn(`Template ID "${template}" is not valid. Please choose from the list provided or enter a direct GitHub URL.`)
       const templateNameResponse = await text({
-        message: 'Please enter a valid template name, or Ctrl+C to cancel:',
+        message: 'Please enter a valid template ID, a direct GitHub URL, or Ctrl+C to cancel:',
       })
 
       if (isCancel(templateNameResponse)) {
@@ -372,10 +380,10 @@ Enjoy building your project!`
       }
 
       template = templateNameResponse as string
-      directories = await github.getTemplateDirectories(template)
+      chosenTemplateObject = availableTemplates.find(t => t.id === template); // Update chosen object after re-entry
     }
 
-    flags.template = template
+    flags.template = template // Ensure the flag stores the ID
 
     // Download the template to a temporary directory to read its configuration
     const tempDir = path.join(os.tmpdir(), `directus-template-${Date.now()}`)
@@ -468,7 +476,7 @@ Enjoy building your project!`
         gitInit: initGit,
         installDeps,
         template,
-        overrideDir: flags.overrideDir,
+        overwriteDir: flags.overwriteDir,
       },
 
     })
@@ -484,7 +492,7 @@ Enjoy building your project!`
           gitInit: initGit,
           installDeps,
           template,
-          overrideDir: flags.overrideDir,
+          overwriteDir: flags.overwriteDir,
         },
         runId: this.runId,
         config: this.config,
