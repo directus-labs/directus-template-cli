@@ -52,34 +52,64 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
     throw new Error('URL is required')
   }
 
-  // Clean the URL first
   const cleanedUrl = cleanGitHubUrl(url)
 
-  // Handle full GitHub URLs
   if (cleanedUrl.includes('github.com')) {
     try {
       const parsed = new URL(cleanedUrl)
-      const parts = parsed.pathname.split('/').filter(Boolean)
+      const pathParts = parsed.pathname.split('/').filter(Boolean)
 
-      if (parts.length < 2) {
-        throw new Error('Invalid GitHub URL format')
+      if (pathParts.length < 2) {
+        throw new Error('Invalid GitHub URL format: Needs owner and repo.')
       }
 
-      const [owner, repo, ...rest] = parts
-      const path = rest.length > 0 ? rest.join('/') : undefined
-      const ref = parsed.searchParams.get('ref') || DEFAULT_BRANCH
+      const owner = pathParts[0]
+      const repo = pathParts[1]
+      let ref = DEFAULT_BRANCH // Default ref
+      let path: string | undefined
+
+      // Check for /tree/ref/ or /blob/ref/ patterns
+      const treeIndex = pathParts.indexOf('tree')
+      const blobIndex = pathParts.indexOf('blob')
+      let refIndex = -1
+
+      if (treeIndex > 1 && treeIndex + 1 < pathParts.length) {
+        refIndex = treeIndex + 1
+      } else if (blobIndex > 1 && blobIndex + 1 < pathParts.length) {
+        refIndex = blobIndex + 1
+      }
+
+      if (refIndex !== -1) {
+        ref = pathParts[refIndex]
+        // Path is everything after the ref
+        path = pathParts.slice(refIndex + 1).join('/') || undefined
+      } else if (pathParts.length > 2) {
+        // If no tree/blob, but more parts exist, assume it's part of the path
+        // This handles cases like github.com/owner/repo/some/path without a specific ref marker
+        path = pathParts.slice(2).join('/') || undefined
+        // If URL has an explicit ?ref= param, use that, otherwise keep default
+        ref = parsed.searchParams.get('ref') || ref
+      } else {
+        // No path, just owner/repo
+        ref = parsed.searchParams.get('ref') || ref
+      }
+
+
+      // Ensure path is undefined if empty string
+      if (path === '') path = undefined;
 
       return {owner, repo, path, ref}
-    } catch (error) {
-      throw new Error(`Invalid GitHub URL: ${url}`)
+    } catch (error: any) {
+      throw new Error(`Invalid GitHub URL: ${url}. Error: ${error.message}`)
     }
   }
 
-  // Handle repository paths (owner/repo format)
+  // Handle repository paths (owner/repo/path format) without github.com
   const parts = cleanedUrl.split('/').filter(Boolean)
   if (parts.length >= 2) {
     const [owner, repo, ...rest] = parts
     const path = rest.length > 0 ? rest.join('/') : undefined
+    // Assume default branch for simple paths unless we add ref detection here too
     return {owner, repo, path, ref: DEFAULT_BRANCH}
   }
 
