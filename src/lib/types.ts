@@ -6,7 +6,7 @@ export interface DirectusTemplateFrontend {
 export interface DirectusTemplateConfig {
   name: string
   description: string
-  template: string
+  template: string | null
   frontends: {
     [key: string]: DirectusTemplateFrontend
   }
