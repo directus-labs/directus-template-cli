@@ -8,7 +8,6 @@ import fs from 'node:fs'
 import {detectPackageManager, installDependencies, type PackageManager} from 'nypm'
 import path from 'pathe'
 import dotenv from 'dotenv'
-import terminalLink from 'terminal-link'
 
 import ApplyCommand from '../../commands/apply.js'
 import {createDocker} from '../../services/docker.js'
@@ -17,15 +16,15 @@ import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
 import type {InitFlags} from '../../commands/init.js'
-import {BSL_LICENSE_TEXT, pinkText} from '../constants.js'
+import {BSL_LICENSE_TEXT, BSL_LICENSE_HEADLINE, BSL_LICENSE_CTA, pinkText} from '../constants.js'
 
 
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
   // Check target directory
-  const shouldForce: boolean = flags.overrideDir
+  const shouldForce: boolean = flags.overwriteDir
 
   if (fs.existsSync(dir) && !shouldForce) {
-    throw new Error('Directory already exists. Use --override-dir to override.')
+    throw new Error('Directory already exists. Use --overwrite-dir to override.')
   }
 
   // If template is a URL, we need to handle it differently
@@ -137,18 +136,28 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
           throw new Error('Directus failed to become healthy')
         }
 
-        const templatePath = path.join(directusDir, 'template')
-        ux.stdout(`Attempting to apply template from: ${templatePath}`)
+        // Check if a template path is specified in the config and exists
+        let templatePath: string | undefined;
+        if (templateInfo?.config?.template && typeof templateInfo.config.template === 'string') {
+          templatePath = path.join(dir, templateInfo.config.template); // Path relative to root dir
+        }
 
-        await ApplyCommand.run([
-          '--directusUrl=http://localhost:8055',
-          '-p',
-          '--userEmail=admin@example.com',
-          '--userPassword=d1r3ctu5',
-          `--templateLocation=${templatePath}`,
-        ])
-
+        if (templatePath && fs.existsSync(templatePath)) {
+          ux.stdout(`Applying template from: ${templatePath}`)
+          await ApplyCommand.run([
+            `--directusUrl=${directusInfo.url || 'http://localhost:8055'}`,
+            '-p',
+            `--userEmail=${directusInfo.email}`,
+            `--userPassword=${directusInfo.password}`,
+            `--templateLocation=${templatePath}`,
+          ])
+        } else {
+           ux.stdout('Skipping backend template application.')
+        }
     }
+
+    // Detect package manager even if not installing dependencies
+    packageManager = await detectPackageManager(frontendDir)
 
     // Install dependencies if requested
     if (flags.installDeps) {
@@ -156,7 +165,6 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
       s.start('Installing dependencies')
       try {
         if (fs.existsSync(frontendDir)) {
-          packageManager = await detectPackageManager(frontendDir)
           await installDependencies({
             cwd: frontendDir,
             packageManager,
@@ -184,18 +192,21 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     const directusUrl = directusInfo.url ?? 'http://localhost:8055'
 
-    const directusText = `- Directus is running on ${terminalLink(directusUrl, directusUrl)}. You can login with the email: ${pinkText(directusInfo.email)} and password: ${pinkText(directusInfo.password)}. \n`
+    const directusText = `- Directus is running on ${directusUrl}. \n`
+    const directusLoginText = `- You can login with the email: ${pinkText(directusInfo.email)} and password: ${pinkText(directusInfo.password)}. \n`
     const frontendText = flags.frontend ? `- To start the frontend, run ${pinkText(`cd ${flags.frontend}`)} and then ${pinkText(`${packageManager?.name} run dev`)}. \n` : ''
     const projectText = `- Navigate to your project directory using ${pinkText(`cd ${relativeDir}`)}. \n`
     const readmeText = '- Review the \`./README.md\` file for more information and next steps.'
 
-    const nextSteps = `${directusText}${projectText}${frontendText}${readmeText}`
+    const nextSteps = `${directusText}${directusLoginText}${projectText}${frontendText}${readmeText}`
 
     note(nextSteps, 'Next Steps')
 
-    clackLog.warn(BSL_LICENSE_TEXT)
+    clackLog.warn(BSL_LICENSE_HEADLINE)
+    clackLog.info(BSL_LICENSE_TEXT)
+    clackLog.info(BSL_LICENSE_CTA)
 
-    outro(`Problems or questions? Hop into the community on Discord at ${pinkText(terminalLink('https://directus.chat', 'https://directus.chat'))}`)
+    outro(`Problems or questions? Hop into the community at ${pinkText('https://directus.chat')}`)
   } catch (error) {
     catchError(error, {
       context: {dir, flags, function: 'init'},
