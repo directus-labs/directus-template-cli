@@ -32,3 +32,5 @@ export const BSL_LICENSE_HEADLINE = 'You REQUIRE a license to use Directus if yo
 export const BSL_LICENSE_TEXT = 'For all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. Directus is licensed under BSL 1.1.'
 
 export const BSL_LICENSE_CTA = `Visit ${pinkText(BSL_LICENSE_URL)} for more information or reach out to us at ${pinkText(BSL_EMAIL)}.`
+
+export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055'
