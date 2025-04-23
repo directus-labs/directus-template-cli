@@ -108,10 +108,48 @@ export function track({
   phClient.capture({
     distinctId,
     event: `directus_template_cli.${command}.${lifecycle}`,
-    properties: eventProperties
+    properties: {eventProperties}
   })
 
   if (debug) ux.stdout('Event tracked successfully')
+}
+
+/**
+ * Manually capture an exception in PostHog
+ * @param error The error object to capture
+ * @param distinctId The distinct ID for the user
+ * @param properties Optional additional properties to track
+ * @param debug Whether to log debug information
+ */
+export function captureException({
+  error,
+  distinctId,
+  properties = {},
+  debug = false
+}: {
+  error: unknown,
+  distinctId: string,
+  properties?: Record<string, unknown>,
+  debug?: boolean
+}): void {
+  if (debug) ux.stdout('Capturing exception...')
+
+  const phClient = getClient(debug)
+
+  const exceptionProperties = properties
+
+  if (debug) {
+    ux.stdout('Sending exception data:')
+    ux.stdout(`Error: ${error}`)
+    ux.stdout(`Properties: ${JSON.stringify(exceptionProperties)}`)
+  }
+
+  try {
+    phClient.captureException(error, distinctId, properties)
+    if (debug) ux.stdout('Exception captured successfully')
+  } catch (captureError) {
+    ux.warn(`Failed to capture PostHog exception: ${captureError}`)
+  }
 }
 
 /**

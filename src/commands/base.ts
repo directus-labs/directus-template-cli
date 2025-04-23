@@ -2,9 +2,14 @@ import { Command, type Config } from '@oclif/core';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'pathe';
+import { setExecutionContext } from '../services/execution-context.js';
 
 interface UserConfig {
   distinctId?: string | null;
+}
+
+interface BaseFlags {
+  disableTelemetry?: boolean;
 }
 
 export abstract class BaseCommand extends Command {
@@ -15,6 +20,21 @@ export abstract class BaseCommand extends Command {
     super(argv, config);
     this.runId = randomUUID();
     this.loadUserConfig();
+  }
+
+  override async init(): Promise<void> {
+    await super.init();
+
+    const { flags } = await this.parse({
+      flags: this.ctor.flags,
+      args: this.ctor.args,
+      strict: false,
+    });
+
+    setExecutionContext({
+      distinctId: this.userConfig.distinctId ?? undefined,
+      disableTelemetry: (flags as BaseFlags)?.disableTelemetry ?? false,
+    });
   }
 
   private loadUserConfig(): void {
