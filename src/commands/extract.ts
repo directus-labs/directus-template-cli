@@ -1,5 +1,5 @@
-import {text, password, select, intro, outro, log} from '@clack/prompts'
-import {Command, ux} from '@oclif/core'
+import {text, select, intro, log} from '@clack/prompts'
+import {ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
 import chalk from 'chalk'
 import fs from 'node:fs'
@@ -12,7 +12,7 @@ import { BaseCommand } from './base.js'
 import { track, shutdown } from '../services/posthog.js'
 
 import extract from '../lib/extract/index.js'
-import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags, getDirectusEmailAndPassword} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
 import {
   generatePackageJsonContent,
@@ -180,14 +180,8 @@ export default class ExtractCommand extends BaseCommand {
       const directusToken = await getDirectusToken(directusUrl as string)
       flags.directusToken = directusToken as string
     } else {
-      const email = await text({
-        message: 'What is your email?',
-      })
-      flags.userEmail = email as string
-
-      const userPassword = await password({
-        message: 'What is our password?',
-      })
+      const {userEmail, userPassword} = await getDirectusEmailAndPassword()
+      flags.userEmail = userEmail as string
       flags.userPassword = userPassword as string
     }
 

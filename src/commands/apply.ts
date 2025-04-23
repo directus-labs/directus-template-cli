@@ -1,5 +1,5 @@
-import {Command, Flags, ux} from '@oclif/core'
-import {text, select, password, log, intro} from '@clack/prompts'
+import { Flags, ux} from '@oclif/core'
+import {text, select, log, intro} from '@clack/prompts'
 import * as path from 'pathe'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {BSL_LICENSE_TEXT} from '../lib/constants.js'
@@ -7,7 +7,7 @@ import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
 import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
 import apply from '../lib/load/index.js'
-import {getDirectusToken, getDirectusUrl, initializeDirectusApi} from '../lib/utils/auth.js'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi, getDirectusEmailAndPassword} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
 import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template.js'
 import {logger} from '../lib/utils/logger.js'
@@ -189,13 +189,9 @@ export default class ApplyCommand extends BaseCommand {
       const directusToken = await getDirectusToken(directusUrl as string)
       validatedFlags.directusToken = directusToken as string
     } else {
-      const userEmail = await text({
-        message: 'What is your email?',
-      })
+      const {userEmail, userPassword} = await getDirectusEmailAndPassword()
+
       validatedFlags.userEmail = userEmail as string
-      const userPassword = await password({
-        message: 'What is your password?',
-      })
       validatedFlags.userPassword = userPassword as string
     }
 

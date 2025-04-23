@@ -1,11 +1,11 @@
 import {readMe} from '@directus/sdk'
-import {text, log, isCancel} from '@clack/prompts'
+import {text, log, isCancel, password} from '@clack/prompts'
 import {ux} from '@oclif/core'
 
 import {api} from '../sdk.js'
 import catchError from './catch-error.js'
 import validateUrl from './validate-url.js'
-
+import { DEFAULT_DIRECTUS_URL } from '../../lib/constants.js'
 interface AuthFlags {
   directusToken?: string;
   directusUrl: string;
@@ -19,13 +19,19 @@ interface AuthFlags {
  */
 export async function getDirectusUrl() {
   const directusUrl = await text({
-    placeholder: 'http://localhost:8055',
+    placeholder: DEFAULT_DIRECTUS_URL,
     message: 'What is your Directus URL?',
   })
+
 
   if (isCancel(directusUrl)) {
     log.info('Exiting...')
     ux.exit(0)
+  }
+
+  if (!directusUrl) {
+    ux.warn(`No URL provided, using default: ${DEFAULT_DIRECTUS_URL}`)
+    return DEFAULT_DIRECTUS_URL
   }
 
   // Validate URL
@@ -70,6 +76,38 @@ export async function getDirectusToken(directusUrl: string) {
     })
     return getDirectusToken(directusUrl)
   }
+}
+
+export async function getDirectusEmailAndPassword() {
+  const userEmail = await text({
+    message: 'What is your email?',
+    validate(value) {
+      if (!value) {
+        return 'Email is required'
+      }
+    },
+  })
+
+  if (isCancel(userEmail)) {
+    log.info('Exiting...')
+    ux.exit(0)
+  }
+
+  const userPassword = await password({
+    message: 'What is your password?',
+    validate(value) {
+      if (!value) {
+        return 'Password is required'
+      }
+    },
+  })
+
+  if (isCancel(userPassword)) {
+    log.info('Exiting...')
+    ux.exit(0)
+  }
+
+  return {userEmail, userPassword}
 }
 
 /**
