@@ -13,13 +13,15 @@ import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, g
 import {logger} from '../lib/utils/logger.js'
 import openUrl from '../lib/utils/open-url.js'
 import chalk from 'chalk'
+import { BaseCommand } from './base.js'
+import { track, shutdown } from '../services/posthog.js'
 
 interface Template {
   directoryPath: string
   templateName: string
 }
 
-export default class ApplyCommand extends Command {
+export default class ApplyCommand extends BaseCommand {
   static description = 'Apply a template to a blank Directus instance.'
 
   static examples = [
@@ -94,6 +96,7 @@ export default class ApplyCommand extends Command {
       default: undefined,
       description: 'Load users',
     }),
+    disableTelemetry: customFlags.disableTelemetry,
   }
 
   /**
@@ -200,9 +203,46 @@ export default class ApplyCommand extends Command {
 
     if (template) {
       // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, `Applying template - ${template.templateName} to ${directusUrl}`))
+
+      // Track start just before applying
+      if (!validatedFlags.disableTelemetry) {
+        await track({
+          command: 'apply',
+          lifecycle: 'start',
+          distinctId: this.userConfig.distinctId,
+          flags: {
+            programmatic: false,
+            templateName: template.templateName,
+            templateType,
+            // Include other relevant flags from validatedFlags if needed
+            ...validatedFlags,
+          },
+          runId: this.runId,
+          config: this.config,
+        });
+      }
+
       await apply(template.directoryPath, validatedFlags)
 
       ux.action.stop()
+
+      // Track completion before final messages/exit
+      if (!validatedFlags.disableTelemetry) {
+        await track({
+          command: 'apply',
+          lifecycle: 'complete',
+          distinctId: this.userConfig.distinctId,
+          flags: {
+            templateName: template.templateName,
+            templateType,
+            ...validatedFlags,
+          },
+          runId: this.runId,
+          config: this.config,
+        });
+        await shutdown();
+      }
+
       ux.stdout(SEPARATOR)
 
       log.warn(BSL_LICENSE_TEXT)
@@ -253,9 +293,44 @@ export default class ApplyCommand extends Command {
     // /* TODO: Replace with custom styledHeader function */ ux.styledHeader(logMessage)
     logger.log('info', logMessage)
 
+    // Track start just before applying
+    if (!validatedFlags.disableTelemetry) {
+      await track({
+        command: 'apply',
+        lifecycle: 'start',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          programmatic: true,
+          templateName: template.templateName,
+          // Include other relevant flags from validatedFlags
+          ...validatedFlags,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+    }
+
     await apply(template.directoryPath, validatedFlags)
 
     ux.action.stop()
+
+    // Track completion before final messages/exit
+    if (!validatedFlags.disableTelemetry) {
+      await track({
+        command: 'apply',
+        lifecycle: 'complete',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          templateName: template.templateName,
+          // Include other relevant flags from validatedFlags
+          ...validatedFlags,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+      await shutdown();
+    }
+
     ux.stdout(SEPARATOR)
     ux.stdout('Template applied successfully.')
     // ux.exit(0)

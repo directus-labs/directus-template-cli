@@ -1,4 +1,3 @@
-
 import {text, password, select, intro, outro, log} from '@clack/prompts'
 import {Command, ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
@@ -9,6 +8,8 @@ import path from 'pathe'
 import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR, BSL_LICENSE_TEXT} from '../lib/constants.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
+import { BaseCommand } from './base.js'
+import { track, shutdown } from '../services/posthog.js'
 
 import extract from '../lib/extract/index.js'
 import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
@@ -26,9 +27,10 @@ export interface ExtractFlags {
   templateName: string;
   userEmail: string;
   userPassword: string;
+  disableTelemetry?: boolean;
 }
 
-export default class ExtractCommand extends Command {
+export default class ExtractCommand extends BaseCommand {
   static description = 'Extract a template from a Directus instance.'
 
   static examples = [
@@ -44,6 +46,7 @@ export default class ExtractCommand extends Command {
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
     userPassword: customFlags.userPassword,
+    disableTelemetry: customFlags.disableTelemetry,
   }
 
   /**
@@ -65,6 +68,23 @@ export default class ExtractCommand extends Command {
    * @returns {Promise<void>} - Returns nothing
    */
   private async extractTemplate(templateName: string, directory: string, flags: ExtractFlags): Promise<void> {
+    // Track start of extraction attempt
+    if (!flags.disableTelemetry) {
+      await track({
+        command: 'extract',
+        lifecycle: 'start',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          templateName,
+          templateLocation: directory,
+          directusUrl: flags.directusUrl,
+          programmatic: flags.programmatic,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+    }
+
     try {
       if (!fs.existsSync(directory)) {
         fs.mkdirSync(directory, {recursive: true})
@@ -93,6 +113,24 @@ export default class ExtractCommand extends Command {
     await extract(directory)
 
     ux.action.stop()
+
+    // Track completion before final messages/exit
+    if (!flags.disableTelemetry) {
+      await track({
+        command: 'extract',
+        lifecycle: 'complete',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          templateName,
+          templateLocation: directory,
+          directusUrl: flags.directusUrl,
+          programmatic: flags.programmatic,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+      await shutdown();
+    }
 
     log.warn(BSL_LICENSE_TEXT)
     ux.stdout(SEPARATOR)
