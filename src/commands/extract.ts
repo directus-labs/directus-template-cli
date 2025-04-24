@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
-import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR, BSL_LICENSE_TEXT} from '../lib/constants.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR, BSL_LICENSE_TEXT, BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE} from '../lib/constants.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import { BaseCommand } from './base.js'
 import { track, shutdown } from '../services/posthog.js'
@@ -132,7 +132,10 @@ export default class ExtractCommand extends BaseCommand {
       await shutdown();
     }
 
-    log.warn(BSL_LICENSE_TEXT)
+    log.warn(BSL_LICENSE_HEADLINE)
+    log.info(BSL_LICENSE_TEXT)
+    log.info(BSL_LICENSE_CTA)
+
     ux.stdout(SEPARATOR)
     ux.stdout('Template extracted successfully.')
     this.exit(0)

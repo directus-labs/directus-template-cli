@@ -2,7 +2,6 @@ import { Flags, ux} from '@oclif/core'
 import {text, select, log, intro} from '@clack/prompts'
 import * as path from 'pathe'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
-import {BSL_LICENSE_TEXT} from '../lib/constants.js'
 import * as customFlags from '../flags/common.js'
 import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
 import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
@@ -15,7 +14,7 @@ import openUrl from '../lib/utils/open-url.js'
 import chalk from 'chalk'
 import { BaseCommand } from './base.js'
 import { track, shutdown } from '../services/posthog.js'
-
+import { BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, BSL_LICENSE_CTA } from '../lib/constants.js'
 interface Template {
   directoryPath: string
   templateName: string
@@ -241,7 +240,9 @@ export default class ApplyCommand extends BaseCommand {
 
       ux.stdout(SEPARATOR)
 
-      log.warn(BSL_LICENSE_TEXT)
+      log.warn(BSL_LICENSE_HEADLINE)
+      log.info(BSL_LICENSE_TEXT)
+      log.info(BSL_LICENSE_CTA)
 
       ux.stdout('Template applied successfully.')
       ux.exit(0)
@@ -329,6 +330,11 @@ export default class ApplyCommand extends BaseCommand {
 
     ux.stdout(SEPARATOR)
     ux.stdout('Template applied successfully.')
+
+
+    log.warn(BSL_LICENSE_HEADLINE)
+    log.info(BSL_LICENSE_TEXT)
+    log.info(BSL_LICENSE_CTA)
     // ux.exit(0)
   }
 
