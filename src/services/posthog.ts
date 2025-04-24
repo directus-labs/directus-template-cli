@@ -108,7 +108,7 @@ export function track({
   phClient.capture({
     distinctId,
     event: `directus_template_cli.${command}.${lifecycle}`,
-    properties: {eventProperties}
+    properties: eventProperties
   })
 
   if (debug) ux.stdout('Event tracked successfully')
@@ -145,6 +145,7 @@ export function captureException({
   }
 
   try {
+
     phClient.captureException(error, distinctId, properties)
     if (debug) ux.stdout('Exception captured successfully')
   } catch (captureError) {
