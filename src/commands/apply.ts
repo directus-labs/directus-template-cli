@@ -96,6 +96,7 @@ export default class ApplyCommand extends BaseCommand {
       description: 'Load users',
     }),
     disableTelemetry: customFlags.disableTelemetry,
+
   }
 
   /**
@@ -331,10 +332,10 @@ export default class ApplyCommand extends BaseCommand {
     ux.stdout(SEPARATOR)
     ux.stdout('Template applied successfully.')
 
-
-    log.warn(BSL_LICENSE_HEADLINE)
-    log.info(BSL_LICENSE_TEXT)
-    log.info(BSL_LICENSE_CTA)
+    // Hide BSL license info if running programatically for now
+    // log.warn(BSL_LICENSE_HEADLINE)
+    // log.info(BSL_LICENSE_TEXT)
+    // log.info(BSL_LICENSE_CTA)
     // ux.exit(0)
   }
 
