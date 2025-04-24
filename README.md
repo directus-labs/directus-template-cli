@@ -230,7 +230,7 @@ You can also pass flags as environment variables. This can be useful for CI/CD p
 - `TARGET_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 - `TEMPLATE_TYPE`: Equivalent to `--templateType`
--
+
 
 ### Existing Data
 
@@ -242,7 +242,7 @@ In most of the system collections (collections,roles, permissions, etc.), if an 
 
 Exceptions:
 
-- directus_settings: The CLI attempts to merge the template's project settings with the existing settings in the target instance. Using the existing settings as a base and updating them with the values from the template. This should prevent overwriting branding, themes, and other customizations.
+- `directus_settings`: The CLI attempts to merge the template's project settings with the existing settings in the target instance. Using the existing settings as a base and updating them with the values from the template. This should prevent overwriting branding, themes, and other customizations.
 
 **Your Collections:**
 
