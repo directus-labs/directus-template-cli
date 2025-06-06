@@ -6,10 +6,10 @@
   "bin": {
     "directus-template-cli": "./bin/run"
   },
-  "homepage": "https://github.com/directus-community/directus-template-cli",
+  "homepage": "https://github.com/directus-labs/directus-template-cli",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "directus-community/directus-template-cli",
+  "repository": "directus-labs/directus-template-cli",
   "files": [
     "/bin",
     "/dist",
@@ -69,7 +69,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "bugs": "https://github.com/directus-community/directus-template-cli/issues",
+  "bugs": "https://github.com/directus-labs/directus-template-cli/issues",
   "keywords": [
     "directus",
     "templates",
