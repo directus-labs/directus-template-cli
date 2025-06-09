@@ -4,8 +4,10 @@ import {authentication, createDirectus, rest} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import Bottleneck from 'bottleneck'
 
-export interface Schema {
+type Schema = any
 
+function log(message: string) {
+  ux.stdout(`${ux.colorize('dim', '--')} ${message}`)
 }
 
 export class DirectusError extends Error {
@@ -39,6 +41,8 @@ export class DirectusError extends Error {
     return formattedError
   }
 
+
+
   async parseErrors(): Promise<void> {
     try {
       const data = await this.response.json()
@@ -68,45 +72,55 @@ class Api {
     })
 
     this.limiter.on('failed', async (error, jobInfo) => {
+
+      // @ts-ignore
+      if (error instanceof TypeError && error.message === 'fetch failed' && error.cause?.code === 'ECONNREFUSED') {
+        log(`Connection refused. Please check the Directus URL and ensure the server is running. Not retrying. ${error.message}`)
+        return
+      }
+
       if (error instanceof DirectusError) {
         const retryAfter = error.headers?.get('Retry-After')
         const statusCode = error.status
 
+
+        // If the status code is 400 or 401, we don't want to retry
+        if (statusCode === 400 || statusCode === 401) {
+          log(`Request failed with status ${statusCode}. Not retrying. ${error.message}`)
+          return
+        }
+
         if (statusCode === 429) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 60_000
-          ux.log(`${ux.colorize('dim', '--')} Rate limited. Retrying after ${delay}ms`)
+          log(`Rate limited. Retrying after ${delay}ms`)
           return delay
         }
 
         if (statusCode === 503) {
           const delay = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : 5000
-          ux.log(`${ux.colorize('dim', '--')} Server under pressure. Retrying after ${delay}ms`)
+          log(`Server under pressure. Retrying after ${delay}ms`)
           return delay
         }
 
-        // If the status code is 400 or 401, we don't want to retry
-        if (statusCode === 400 || statusCode === 401) {
-          return
-        }
       }
 
       // For other errors, use exponential backoff, but only if we haven't exceeded retryCount
       if (jobInfo.retryCount < 3) {
         const delay = Math.min(1000 * 2 ** jobInfo.retryCount, 30_000)
-        ux.log(`${ux.colorize('dim', '--')} Request failed. Retrying after ${delay}ms`)
+        log(`Request failed. Retrying after ${delay}ms`)
         return delay
       }
 
-      ux.log(`${ux.colorize('dim', '--')} Max retries reached, not retrying further`)
+      log('Max retries reached, not retrying further')
     })
 
     this.limiter.on('retry', (error, jobInfo) => {
-      ux.log(`${ux.colorize('dim', '--')} Retrying job (attempt ${jobInfo.retryCount + 1})`)
+      log(`Retrying job (attempt ${jobInfo.retryCount + 1})`)
     })
 
     this.limiter.on('depleted', empty => {
       if (empty) {
-        ux.log(`${ux.colorize('dim', '--')} Rate limit quota depleted. Requests will be queued.`)
+        log('Rate limit quota depleted. Requests will be queued.')
       }
     })
   }

@@ -1,18 +1,20 @@
+import type {Collection, CollectionMeta, Field} from '@directus/types'
+
 import {
   createCollection, createField, readCollections, readFields, updateCollection,
 } from '@directus/sdk'
-import {Collection, CollectionMeta, Field} from '@directus/types'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
 /**
  * Load collections into the Directus instance
+ * @param dir - The directory to read the collections and fields from
+ * @returns {Promise<void>} - Returns nothing
  */
-
 export default async function loadCollections(dir: string) {
   const collectionsToAdd = readFile('collections', dir)
   const fieldsToAdd = readFile('fields', dir)
@@ -80,7 +82,7 @@ async function addNewFieldsToExistingCollection(collectionName: string, fieldsTo
   for await (const field of collectionFieldsToAdd) {
     if (!existingCollectionFields.some((existingField: any) => existingField.field === field.field)) {
       try {
-        // @ts-ignore
+        // @ts-ignore - ignore
         await api.client.request(createField(collectionName, field))
       } catch (error) {
         catchError(error)
@@ -120,7 +122,7 @@ async function addCustomFieldsOnSystemCollections(fields: any[]) {
       )
 
       if (!fieldExists) {
-        // @ts-expect-error string
+        // @ts-ignore
         await api.client.request(createField(field.collection, field))
       }
     } catch (error) {

@@ -9,8 +9,11 @@ node_modules
 oclif.manifest.json
 .DS_Store
 templates
+/build
 
 /downloads
 /**/downloads
 .env
 .directus-template-cli/logs
+
+tsconfig.tsbuildinfo

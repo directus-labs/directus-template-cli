@@ -1,6 +1,6 @@
 import {ux} from '@oclif/core'
 
-import catchError from '../utils/catch-error'
+import catchError from '../utils/catch-error.js'
 
 export interface ApplyFlags {
   content: boolean;
@@ -19,7 +19,8 @@ export interface ApplyFlags {
   templateType: 'community' | 'github' | 'local';
   userEmail: string;
   userPassword: string;
-  users: boolean;
+  users?: boolean;
+  disableTelemetry?: boolean;
 }
 
 export const loadFlags = [

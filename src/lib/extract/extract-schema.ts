@@ -1,12 +1,12 @@
 import {schemaSnapshot} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
-import path from 'node:path'
+import path from 'pathe'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import writeToFile from '../utils/write-to-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import writeToFile from '../utils/write-to-file.js'
 
 export default async function extractSchema(dir: string) {
   ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting schema snapshot'))

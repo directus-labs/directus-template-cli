@@ -1,10 +1,10 @@
 import {createFlow, createOperations, readFlows, updateOperation} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import {DIRECTUS_PINK} from '../constants'
-import {api} from '../sdk'
-import catchError from '../utils/catch-error'
-import readFile from '../utils/read-file'
+import {DIRECTUS_PINK} from '../constants.js'
+import {api} from '../sdk.js'
+import catchError from '../utils/catch-error.js'
+import readFile from '../utils/read-file.js'
 
 export default async function loadFlows(dir: string) {
   const flows = readFile('flows', dir)
@@ -52,8 +52,8 @@ export async function loadOperations(operations: any[]) {
   try {
     const opsIds = operations.map(operation => {
       const opCopy = {...operation}
-      delete opCopy.reject
-      delete opCopy.resolve
+      opCopy.reject = undefined
+      opCopy.resolve = undefined
       return opCopy
     })
 

@@ -1,20 +1,25 @@
-import {Command, ux} from '@oclif/core'
-import inquirer from 'inquirer'
+import {text, select, intro, log} from '@clack/prompts'
+import {ux} from '@oclif/core'
+import slugify from '@sindresorhus/slugify'
+import chalk from 'chalk'
 import fs from 'node:fs'
-import path from 'node:path'
-import slugify from 'slugify'
+import path from 'pathe'
 
-import * as customFlags from '../flags/common'
-import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants'
-import extract from '../lib/extract/'
-import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth'
-import catchError from '../lib/utils/catch-error'
+import * as customFlags from '../flags/common.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR, BSL_LICENSE_TEXT, BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE} from '../lib/constants.js'
+import {animatedBunny} from '../lib/utils/animated-bunny.js'
+import { BaseCommand } from './base.js'
+import { track, shutdown } from '../services/posthog.js'
+
+import extract from '../lib/extract/index.js'
+import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags, getDirectusEmailAndPassword} from '../lib/utils/auth.js'
+import catchError from '../lib/utils/catch-error.js'
 import {
   generatePackageJsonContent,
   generateReadmeContent,
-} from '../lib/utils/template-defaults'
+} from '../lib/utils/template-defaults.js'
 
-interface ExtractFlags {
+export interface ExtractFlags {
   directusToken: string;
   directusUrl: string;
   programmatic: boolean;
@@ -22,9 +27,10 @@ interface ExtractFlags {
   templateName: string;
   userEmail: string;
   userPassword: string;
+  disableTelemetry?: boolean;
 }
 
-export default class ExtractCommand extends Command {
+export default class ExtractCommand extends BaseCommand {
   static description = 'Extract a template from a Directus instance.'
 
   static examples = [
@@ -40,6 +46,7 @@ export default class ExtractCommand extends Command {
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
     userPassword: customFlags.userPassword,
+    disableTelemetry: customFlags.disableTelemetry,
   }
 
   /**
@@ -61,6 +68,23 @@ export default class ExtractCommand extends Command {
    * @returns {Promise<void>} - Returns nothing
    */
   private async extractTemplate(templateName: string, directory: string, flags: ExtractFlags): Promise<void> {
+    // Track start of extraction attempt
+    if (!flags.disableTelemetry) {
+      await track({
+        command: 'extract',
+        lifecycle: 'start',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          templateName,
+          templateLocation: directory,
+          directusUrl: flags.directusUrl,
+          programmatic: flags.programmatic,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+    }
+
     try {
       if (!fs.existsSync(directory)) {
         fs.mkdirSync(directory, {recursive: true})
@@ -82,7 +106,7 @@ export default class ExtractCommand extends Command {
       })
     }
 
-    ux.log(SEPARATOR)
+    ux.stdout(SEPARATOR)
 
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
@@ -90,8 +114,30 @@ export default class ExtractCommand extends Command {
 
     ux.action.stop()
 
-    ux.log(SEPARATOR)
-    ux.log('Template extracted successfully.')
+    // Track completion before final messages/exit
+    if (!flags.disableTelemetry) {
+      await track({
+        command: 'extract',
+        lifecycle: 'complete',
+        distinctId: this.userConfig.distinctId,
+        flags: {
+          templateName,
+          templateLocation: directory,
+          directusUrl: flags.directusUrl,
+          programmatic: flags.programmatic,
+        },
+        runId: this.runId,
+        config: this.config,
+      });
+      await shutdown();
+    }
+
+    log.warn(BSL_LICENSE_HEADLINE)
+    log.info(BSL_LICENSE_TEXT)
+    log.info(BSL_LICENSE_CTA)
+
+    ux.stdout(SEPARATOR)
+    ux.stdout('Template extracted successfully.')
     this.exit(0)
   }
 
@@ -101,49 +147,52 @@ export default class ExtractCommand extends Command {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
-    ux.styledHeader(ux.colorize(DIRECTUS_PURPLE, 'Directus Template CLI - Extract'))
+    await animatedBunny('Let\'s extract a template!')
 
-    const templateName = await ux.prompt('What is the name of the template you would like to extract?')
-    const directory = await ux.prompt(
-      "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
-      {default: `templates/${slugify(templateName, {lower: true, strict: true})}`},
-    )
+    intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Extract Template`)
 
-    ux.log(`You selected ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    const templateName = await text({
+      message: 'What is the name of the template you would like to extract?',
+      placeholder: 'My Template',
+    })
 
-    ux.log(SEPARATOR)
+    const directory = await text({
+      placeholder: `templates/${slugify(templateName as string)}`,
+      defaultValue: `templates/${slugify(templateName as string)}`,
+      message: "What directory would you like to extract the template to? If it doesn't exist, it will be created.",
+    })
+
+    ux.stdout(`You selected ${ux.colorize(DIRECTUS_PINK, directory as string)}`)
+
+    ux.stdout(SEPARATOR)
 
     // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    flags.directusUrl = directusUrl
+    flags.directusUrl = directusUrl as string
 
     // Prompt for login method
-    const loginMethod = await inquirer.prompt([
-      {
-        choices: [
-          {name: 'Directus Access Token', value: 'token'},
-          {name: 'Email and Password', value: 'email'},
-        ],
-        default: 'token',
-        message: 'How do you want to log in?',
-        name: 'loginMethod',
-        type: 'list',
-      },
-    ])
+    const loginMethod = await select({
+      options: [
+        {label: 'Directus Access Token', value: 'token'},
+        {label: 'Email and Password', value: 'email'},
+      ],
+      message: 'How do you want to log in?',
+    })
 
-    if (loginMethod.loginMethod === 'token') {
-      const directusToken = await getDirectusToken(directusUrl)
-      flags.directusToken = directusToken
+    if (loginMethod === 'token') {
+      const directusToken = await getDirectusToken(directusUrl as string)
+      flags.directusToken = directusToken as string
     } else {
-      flags.userEmail = await ux.prompt('What is your email?')
-      flags.userPassword = await ux.prompt('What is your password?', {type: 'hide'})
+      const {userEmail, userPassword} = await getDirectusEmailAndPassword()
+      flags.userEmail = userEmail as string
+      flags.userPassword = userPassword as string
     }
 
-    ux.log(SEPARATOR)
+    ux.stdout(SEPARATOR)
 
     await initializeDirectusApi(flags)
 
-    await this.extractTemplate(templateName, directory, flags)
+    await this.extractTemplate(templateName as string, directory as string, flags)
   }
 
   /**

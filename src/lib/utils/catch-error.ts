@@ -1,14 +1,16 @@
 import {ux} from '@oclif/core'
 
-import {DirectusError} from '../sdk'
-import {logger} from '../utils/logger'
+import {DirectusError} from '../sdk.js'
+import {logger} from '../utils/logger.js'
+import { captureException } from '../../services/posthog.js'
+import { getExecutionContext } from '../../services/execution-context.js'
 
 /**
  * Options for configuring the error handler behavior.
  */
 interface ErrorHandlerOptions {
   /** Additional context to be included in the error log. */
-  context?: Record<string, any>
+  context?: Record<string, unknown>
   /** If true, the error will be treated as fatal and the process will exit. */
   fatal?: boolean
   /** If true, the error will be logged to a file. */
@@ -22,7 +24,9 @@ interface ErrorHandlerOptions {
  * @returns void
  */
 export default function catchError(error: unknown, options: ErrorHandlerOptions = {}): void {
-  const {context = {}, fatal = false, logToFile = true} = options
+  const { context = {}, fatal = false, logToFile = true } = options
+
+  const { distinctId, disableTelemetry } = getExecutionContext()
 
   let errorMessage: string
 
@@ -32,6 +36,11 @@ export default function catchError(error: unknown, options: ErrorHandlerOptions 
     errorMessage = `Error: ${error.message}`
   } else {
     errorMessage = `Unknown error: ${JSON.stringify(error)}`
+  }
+
+  // Capture exception before logging/exiting
+  if (!disableTelemetry && distinctId) {
+    captureException({error, distinctId, properties: {context}})
   }
 
   // Format the error message with context if provided
