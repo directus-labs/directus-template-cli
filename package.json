@@ -23,7 +23,7 @@
     "@inquirer/prompts": "^7.3.3",
     "@oclif/core": "^4.2.9",
     "@oclif/plugin-help": "^6.2.26",
-    "@oclif/plugin-plugins": "^5.4.34",
+    "@oclif/plugin-plugins": "^5.4.44",
     "@octokit/rest": "^21.1.1",
     "@sindresorhus/slugify": "^2.2.1",
     "bottleneck": "^2.19.5",
