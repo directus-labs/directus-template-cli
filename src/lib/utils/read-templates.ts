@@ -2,13 +2,11 @@ import fs from 'node:fs'
 import path from 'pathe'
 
 interface Template {
-  directoryPath: string;
-  templateName: string;
+  directoryPath: string
+  templateName: string
 }
 
-export async function readTemplate(
-  directoryPath: string,
-): Promise<Template | null> {
+export async function readTemplate(directoryPath: string): Promise<Template | null> {
   const packageFilePath = path.join(directoryPath, 'package.json')
 
   try {
@@ -31,9 +29,7 @@ export async function readTemplate(
   }
 }
 
-export async function readAllTemplates(
-  directoryPath: string,
-): Promise<Template[]> {
+export async function readAllTemplates(directoryPath: string): Promise<Template[]> {
   const templates: Template[] = []
 
   const files = await fs.promises.readdir(directoryPath)
