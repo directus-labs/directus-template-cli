@@ -3,6 +3,7 @@
 A streamlined CLI tool for creating new Directus projects and managing Directus templates - making it easy to apply and extract template configurations across instances.
 
 This tool is best suited for:
+
 - Proof of Concept (POC) projects
 - Demo environments
 - New project setups
@@ -10,8 +11,9 @@ This tool is best suited for:
 ⚠️ We strongly recommend against using this tool in existing production environments or as a critical part of your CI/CD pipeline without thorough testing. Always create backups before applying templates.
 
 **Important Notes:**
+
 - **Primary Purpose**: Built to deploy templates created by the Directus Core Team. While community templates are supported, the unlimited possible configurations make comprehensive support challenging.
-- **Database Compatibility**: PostgreSQL is recommended. Applying templates that are extracted and applied between different databases (Extract from SQLite ->  Apply to Postgres) can caused issues and is not recommended. MySQL users may encounter known issues.
+- **Database Compatibility**: PostgreSQL is recommended. Applying templates that are extracted and applied between different databases (Extract from SQLite -> Apply to Postgres) can caused issues and is not recommended. MySQL users may encounter known issues.
 - **Performance**: Remote operations (extract/apply) are rate-limited to 10 requests/second using bottleneck. Processing time varies based on your instance size (collections, items, assets).
 - **Version Compatibility**:
   - v0.5.0+: Compatible with Directus 11 and up
@@ -30,6 +32,7 @@ npx directus-template-cli@latest init
 ```
 
 You'll be guided through:
+
 - Selecting a directory for your new project
 - Choosing a Directus backend template
 - Selecting a frontend framework (if available for the template)
@@ -50,7 +53,6 @@ npx directus-template-cli@latest init --frontend=nextjs --template=cms
 npx directus-template-cli@latest init my-project --frontend=nextjs --template=cms
 npx directus-template-cli@latest init --template=https://github.com/directus-labs/starters/tree/main/cms
 ```
-
 
 Available flags:
 
@@ -112,6 +114,7 @@ The `directus:template` property contains:
   - Each frontend has a `name` (display name) and `path` (directory containing the frontend code)
 
 When you use this template with the `init` command, it will:
+
 1. Copy the Directus template files from the specified template directory
 2. Copy the selected frontend code based on your choice or the `--frontend` flag
 3. Set up the project structure with both backend and frontend integrated
@@ -133,11 +136,9 @@ npx directus-template-cli@latest apply
 
 You can choose from our community maintained templates or you can also choose a template from a local directory or a public GitHub repository.
 
-
 ### Programmatic Mode
 
 By default, the CLI will run in interactive mode. For CI/CD pipelines or automated scripts, you can use the programmatic mode:
-
 
 Using a token:
 
@@ -196,7 +197,6 @@ This command will apply the template but exclude content and users. Available `-
 - `--no-settings`: Skip loading Settings
 - `--no-users`: Skip loading Users
 
-
 #### Template Component Dependencies
 
 When applying templates, certain components have dependencies on others. Here are the key relationships to be aware of:
@@ -230,7 +230,6 @@ You can also pass flags as environment variables. This can be useful for CI/CD p
 - `TARGET_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 - `TEMPLATE_TYPE`: Equivalent to `--templateType`
-
 
 ### Existing Data
 
@@ -290,6 +289,10 @@ Available flags:
 - `--templateLocation`: Directory to extract the template to (required)
 - `--templateName`: Name of the template (required)
 - `--disableTelemetry`: Disable telemetry collection
+- `--skipCollectionFiles`: Do not extract the directus_files collection
+- `--skipDownloadFiles`: Do not download the actual file attachments
+- `--syncExtractContent`: Extract content collections in a serial manner to limit load on instance
+- `--limitContentCollections "collectionA,collectionB"`: Only extract named content collections from comma-separated list
 
 #### Using Environment Variables
 
@@ -306,9 +309,10 @@ Similar to the Apply command, you can use environment variables for the Extract 
 The Directus Template CLI logs information to a file in the `.directus-template-cli/logs` directory.
 
 Logs are automatically generated for each run of the CLI. Here's how the logging system works:
-   - A new log file is created for each CLI run.
-   - Log files are stored in the `.directus-template-cli/logs` directory within your current working directory.
-   - Each log file is named `run-[timestamp].log`, where `[timestamp]` is the ISO timestamp of when the CLI was initiated.
+
+- A new log file is created for each CLI run.
+- Log files are stored in the `.directus-template-cli/logs` directory within your current working directory.
+- Each log file is named `run-[timestamp].log`, where `[timestamp]` is the ISO timestamp of when the CLI was initiated.
 
 The logger automatically sanitizes sensitive information such as passwords, tokens, and keys before writing to the log file. But it may not catch everything. Just be aware of this and make sure to remove the log files when they are no longer needed.
 
