@@ -47,6 +47,8 @@ export default async function loadFiles(dir: string) {
         if (asset.title) form.append('title', asset.title)
         if (asset.description) form.append('description', asset.description)
         if (asset.folder) form.append('folder', asset.folder)
+        if (asset.tags) form.append('tags', asset.tags)
+        if(asset.type) form.append('type', asset.type)
 
         form.append('file', fileStream, fileName)
 
