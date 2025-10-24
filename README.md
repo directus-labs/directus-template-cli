@@ -224,10 +224,10 @@ If you use `--no-` flags, be cautious about excluding dependencies. For instance
 
 You can also pass flags as environment variables. This can be useful for CI/CD pipelines or when you want to avoid exposing sensitive information in command-line arguments. Here are the available environment variables:
 
-- `TARGET_DIRECTUS_URL`: Equivalent to `--directusUrl`
-- `TARGET_DIRECTUS_TOKEN`: Equivalent to `--directusToken`
-- `TARGET_DIRECTUS_EMAIL`: Equivalent to `--userEmail`
-- `TARGET_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
+- `DIRECTUS_URL`: Equivalent to `--directusUrl`
+- `DIRECTUS_TOKEN`: Equivalent to `--directusToken`
+- `DIRECTUS_EMAIL`: Equivalent to `--userEmail`
+- `DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 - `TEMPLATE_TYPE`: Equivalent to `--templateType`
 
@@ -295,10 +295,10 @@ Available flags:
 
 Similar to the Apply command, you can use environment variables for the Extract command as well:
 
-- `SOURCE_DIRECTUS_URL`: Equivalent to `--directusUrl`
-- `SOURCE_DIRECTUS_TOKEN`: Equivalent to `--directusToken`
-- `SOURCE_DIRECTUS_EMAIL`: Equivalent to `--userEmail`
-- `SOURCE_DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
+- `DIRECTUS_URL`: Equivalent to `--directusUrl`
+- `DIRECTUS_TOKEN`: Equivalent to `--directusToken`
+- `DIRECTUS_EMAIL`: Equivalent to `--userEmail`
+- `DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 
 ## Logs
