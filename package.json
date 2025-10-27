@@ -32,7 +32,6 @@
     "defu": "^6.1.4",
     "dotenv": "^16.4.7",
     "execa": "9.5.2",
-    "formdata-node": "^6.0.3",
     "giget": "^2.0.0",
     "glob": "^11.0.1",
     "log-update": "^6.1.0",
