@@ -1,6 +1,6 @@
 {
   "name": "directus-template-cli",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "type": "module",
@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@directus/sdk": "^19.0.1",
+    "@directus/sdk": "20.1.0",
     "@inquirer/prompts": "^7.3.3",
     "@oclif/core": "^4.2.9",
     "@oclif/plugin-help": "^6.2.26",
