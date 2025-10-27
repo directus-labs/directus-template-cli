@@ -152,7 +152,7 @@ class Api {
       throw new Error('API client is not initialized. Call initialize() first.')
     }
 
-    await this.client.login(email, password)
+    await this.client.login({email, password})
   }
 
   public async loginWithToken(token: string): Promise<void> {
