@@ -1,6 +1,6 @@
+
 import { readFiles, uploadFiles } from '@directus/sdk'
 import { ux } from '@oclif/core'
-import { FormData } from 'formdata-node'
 import { readFileSync } from 'node:fs'
 import path from 'pathe'
 
@@ -39,23 +39,26 @@ export default async function loadFiles(dir: string) {
       await Promise.all(filesToUpload.map(async asset => {
         const fileName = asset.filename_disk
         const assetPath = path.resolve(dir, 'assets', fileName)
-        const fileStream = new Blob([readFileSync(assetPath)], { type: asset.type })
+
+        const fileType = asset.type || 'application/octet-stream'
+
+        const fileBuffer = readFileSync(assetPath)
+        const file = new File([new Uint8Array(fileBuffer)], fileName, { type: fileType })
 
         const form = new FormData()
+
+        form.append('type', fileType)
         form.append('id', asset.id)
 
         if (asset.title) form.append('title', asset.title)
         if (asset.description) form.append('description', asset.description)
         if (asset.folder) form.append('folder', asset.folder)
-        if (asset.type) form.append('type', asset.type)
+        if (asset.tags) form.append('tags', asset.tags)
 
-        form.append('file', fileStream, fileName)
+        form.append('file', file)
 
-        try {
-          await api.client.request(uploadFiles(form as any))
-        } catch (error) {
-          catchError(error)
-        }
+
+        await api.client.request(uploadFiles(form as any))
       }))
     } catch (error) {
       catchError(error)
