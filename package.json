@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@directus/sdk": "^19.0.1",
+    "@directus/sdk": "^19.1.0",
     "@inquirer/prompts": "^7.3.3",
     "@oclif/core": "^4.2.9",
     "@oclif/plugin-help": "^6.2.26",
