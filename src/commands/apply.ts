@@ -336,7 +336,8 @@ export default class ApplyCommand extends BaseCommand {
     // log.warn(BSL_LICENSE_HEADLINE)
     // log.info(BSL_LICENSE_TEXT)
     // log.info(BSL_LICENSE_CTA)
-    // ux.exit(0)
+
+    ux.exit(0)
   }
 
   /**
