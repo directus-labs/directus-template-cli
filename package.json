@@ -79,7 +79,8 @@
     "prepack": "pnpm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md",
-    "run": "./bin/run.js"
+    "run": "./bin/run.js",
+    "run:dev": "./bin/dev.js"
   },
   "engines": {
     "node": ">=18.0.0"

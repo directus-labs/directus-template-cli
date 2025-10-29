@@ -1,4 +1,4 @@
-import {Flags} from '@oclif/core'
+import { Flags } from '@oclif/core'
 
 export const directusToken = Flags.string({
   description: 'Token to use for the Directus instance',
@@ -48,4 +48,27 @@ export const disableTelemetry = Flags.boolean({
   default: false,
   description: 'Disable telemetry',
   env: 'DISABLE_TELEMETRY',
+})
+
+export const skipCollectionFiles = Flags.boolean({
+  default: false,
+  description: 'Skip extracting collection "directus_files"',
+  env: 'SKIP_COLLECTION_FILES',
+})
+
+export const skipDownloadFiles = Flags.boolean({
+  default: false,
+  description: 'Skip downloading asset files',
+  env: 'SKIP_DOWNLOAD_FILES',
+})
+
+export const syncExtractContent = Flags.boolean({
+  default: false,
+  description: 'Fetch content collections synchronously to reduce load on the Directus instance',
+  env: 'SYNC_EXTRACT_CONTENT',
+})
+
+export const limitContentCollections = Flags.string({
+  description: 'Limit content extraction to specific collections (comma-separated)',
+  env: 'LIMIT_CONTENT_COLLECTIONS',
 })
