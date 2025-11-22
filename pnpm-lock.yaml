@@ -12,8 +12,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0
       '@directus/sdk':
-        specifier: ^19.0.1
-        version: 19.0.1
+        specifier: 20.1.0
+        version: 20.1.0
       '@inquirer/prompts':
         specifier: ^7.3.3
         version: 7.3.3(@types/node@18.19.80)
@@ -318,8 +318,8 @@ packages:
   '@directus/schema@13.0.0':
     resolution: {integrity: sha512-QrL+HQ6BWyoyQSXNoPNhaFE7OrK/9jcT10TP86qKxWwLt1BQ+yxgWqar53Hh3i4r/dA25qCIXhm9I/SLWqe9SA==}
 
-  '@directus/sdk@19.0.1':
-    resolution: {integrity: sha512-6KwWedA/vxrMN2aRm5L52TEgB+42vkz0Ae8kwOitHuBPT4VWtUNOXenzaHnZyXyNrEgh/VBLJ36f3UEe3b/Wfw==}
+  '@directus/sdk@20.1.0':
+    resolution: {integrity: sha512-EV2bwfiOXc1QFYAIqfGgyZ7JcKgHF43UVEYivUpMjOLiihI9tpmNfcz/qmOXju7LCZrBmSwTOHMRtOXPdZWiLQ==}
     engines: {node: '>=22'}
 
   '@directus/types@13.0.0':
@@ -3871,7 +3871,7 @@ snapshots:
       - supports-color
       - tedious
 
-  '@directus/sdk@19.0.1': {}
+  '@directus/sdk@20.1.0': {}
 
   '@directus/types@13.0.0(knex@3.1.0)(vue@3.5.3(typescript@5.8.2))':
     dependencies:

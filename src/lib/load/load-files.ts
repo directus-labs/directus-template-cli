@@ -1,11 +1,11 @@
-import {readFiles, uploadFiles} from '@directus/sdk'
-import {ux} from '@oclif/core'
-import {FormData} from 'formdata-node'
-import {readFileSync} from 'node:fs'
+import { readFiles, uploadFiles } from '@directus/sdk'
+import { ux } from '@oclif/core'
+import { FormData } from 'formdata-node'
+import { readFileSync } from 'node:fs'
 import path from 'pathe'
 
-import {DIRECTUS_PINK} from '../constants.js'
-import {api} from '../sdk.js'
+import { DIRECTUS_PINK } from '../constants.js'
+import { api } from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
 
@@ -39,7 +39,7 @@ export default async function loadFiles(dir: string) {
       await Promise.all(filesToUpload.map(async asset => {
         const fileName = asset.filename_disk
         const assetPath = path.resolve(dir, 'assets', fileName)
-        const fileStream = new Blob([readFileSync(assetPath)], {type: asset.type})
+        const fileStream = new Blob([readFileSync(assetPath)], { type: asset.type })
 
         const form = new FormData()
         form.append('id', asset.id)
@@ -47,6 +47,7 @@ export default async function loadFiles(dir: string) {
         if (asset.title) form.append('title', asset.title)
         if (asset.description) form.append('description', asset.description)
         if (asset.folder) form.append('folder', asset.folder)
+        if (asset.type) form.append('type', asset.type)
 
         form.append('file', fileStream, fileName)
 
