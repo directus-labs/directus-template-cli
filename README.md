@@ -1,11 +1,29 @@
 # Directus Template CLI
 
-A streamlined CLI tool for creating new Directus projects and managing Directus templates - making it easy to apply and extract template configurations across instances.
+A streamlined tool for creating new Directus projects and managing Directus templates - making it easy to apply and extract template configurations across instances. Now available as both a **CLI** and **REST API**.
 
 This tool is best suited for:
 - Proof of Concept (POC) projects
 - Demo environments
 - New project setups
+
+## 🆕 API Mode
+
+In addition to the traditional CLI, you can now run this tool as an API server:
+
+```bash
+npm start
+# or
+npm run api
+```
+
+This starts an Express server on port 3000 (configurable via `PORT` environment variable) with REST endpoints for applying and extracting templates. Perfect for:
+- CI/CD pipelines
+- Automated workflows
+- Integration with other services
+- Custom web applications
+
+📖 **[Full API Documentation →](./API_README.md)**
 
 ⚠️ We strongly recommend against using this tool in existing production environments or as a critical part of your CI/CD pipeline without thorough testing. Always create backups before applying templates.
 
