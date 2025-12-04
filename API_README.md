@@ -34,6 +34,26 @@ PORT=8080 npm start
 
 The server will start on port 3000 by default (or the port specified by the `PORT` environment variable).
 
+## Rate Limiting
+
+The API implements rate limiting to protect against abuse:
+- **Limit**: 10 requests per minute per IP address
+- **Applies to**: `/api/apply` and `/api/extract` endpoints
+- **Response**: Returns HTTP 429 with error message when limit is exceeded
+
+**Rate limit response:**
+```json
+{
+  "success": false,
+  "error": "Too many requests, please try again later."
+}
+```
+
+Rate limit information is returned in response headers:
+- `RateLimit-Limit`: Maximum number of requests allowed
+- `RateLimit-Remaining`: Number of requests remaining in current window
+- `RateLimit-Reset`: Time when the rate limit window resets
+
 ## API Endpoints
 
 ### 1. Health Check

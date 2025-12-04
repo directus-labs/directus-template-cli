@@ -4,6 +4,7 @@
 
 import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { healthCheck, applyTemplate, extractTemplate } from './handlers.js';
 import { logger } from '../lib/utils/logger.js';
 import { VERSION } from './constants.js';
@@ -13,6 +14,19 @@ import { VERSION } from './constants.js';
  */
 export function createApp(): Express {
   const app = express();
+
+  // Rate limiting middleware for API endpoints
+  // Limit to 10 requests per minute per IP for apply/extract endpoints
+  const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10, // Limit each IP to 10 requests per windowMs
+    message: {
+      success: false,
+      error: 'Too many requests, please try again later.',
+    },
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  });
 
   // Middleware
   app.use(cors());
@@ -39,9 +53,9 @@ export function createApp(): Express {
     });
   });
 
-  // API routes
-  app.post('/api/apply', applyTemplate);
-  app.post('/api/extract', extractTemplate);
+  // API routes (with rate limiting)
+  app.post('/api/apply', apiLimiter, applyTemplate);
+  app.post('/api/extract', apiLimiter, extractTemplate);
 
   // Error handling middleware
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
