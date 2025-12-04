@@ -13,6 +13,18 @@ import { getLocalTemplate, getCommunityTemplates, getGithubTemplate } from '../l
 import { logger } from '../lib/utils/logger.js';
 import type { ApplyTemplateRequest, ExtractTemplateRequest, ApiResponse, HealthResponse } from './types.js';
 import { generatePackageJsonContent, generateReadmeContent } from '../lib/utils/template-defaults.js';
+import { VERSION } from './constants.js';
+
+/**
+ * Helper function to build boolean defaults for flags
+ * Returns an object where each field defaults to true unless explicitly set to false
+ */
+function buildBooleanDefaults(body: any, fields: string[]): Record<string, boolean> {
+  return fields.reduce((acc, field) => {
+    acc[field] = body[field] !== false;
+    return acc;
+  }, {} as Record<string, boolean>);
+}
 
 /**
  * Health check endpoint
@@ -20,7 +32,7 @@ import { generatePackageJsonContent, generateReadmeContent } from '../lib/utils/
 export async function healthCheck(req: Request, res: Response<HealthResponse>) {
   res.json({
     status: 'ok',
-    version: process.env.npm_package_version || '0.7.4',
+    version: VERSION,
     timestamp: new Date().toISOString(),
   });
 }
@@ -89,25 +101,26 @@ export async function applyTemplate(req: Request, res: Response<ApiResponse>) {
       });
     }
 
-    // Build flags object
+    // Build flags object with defaults (all true unless explicitly set to false)
+    const booleanFlags = buildBooleanDefaults(body, ['content', 'dashboards', 'extensions', 'files', 'flows', 'permissions', 'schema', 'settings', 'users']);
     const flags = {
       directusUrl: body.directusUrl,
-      directusToken: body.directusToken,
-      userEmail: body.userEmail,
-      userPassword: body.userPassword,
+      directusToken: body.directusToken || '',
+      userEmail: body.userEmail || '',
+      userPassword: body.userPassword || '',
       templateLocation: body.templateLocation,
       templateType,
       programmatic: true,
       partial: body.partial || false,
-      content: body.content !== false,
-      dashboards: body.dashboards !== false,
-      extensions: body.extensions !== false,
-      files: body.files !== false,
-      flows: body.flows !== false,
-      permissions: body.permissions !== false,
-      schema: body.schema !== false,
-      settings: body.settings !== false,
-      users: body.users !== false,
+      content: booleanFlags.content,
+      dashboards: booleanFlags.dashboards,
+      extensions: booleanFlags.extensions,
+      files: booleanFlags.files,
+      flows: booleanFlags.flows,
+      permissions: booleanFlags.permissions,
+      schema: booleanFlags.schema,
+      settings: booleanFlags.settings,
+      users: booleanFlags.users,
     };
 
     // Validate flags using existing validation

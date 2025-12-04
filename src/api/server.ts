@@ -6,6 +6,7 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import cors from 'cors';
 import { healthCheck, applyTemplate, extractTemplate } from './handlers.js';
 import { logger } from '../lib/utils/logger.js';
+import { VERSION } from './constants.js';
 
 /**
  * Create and configure the Express application
@@ -29,7 +30,7 @@ export function createApp(): Express {
   app.get('/', (req: Request, res: Response) => {
     res.json({
       message: 'Directus Template CLI API',
-      version: process.env.npm_package_version || '0.7.4',
+      version: VERSION,
       endpoints: {
         health: 'GET /health',
         apply: 'POST /api/apply',
