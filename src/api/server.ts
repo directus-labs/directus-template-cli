@@ -6,6 +6,7 @@ import express, { type Express, type Request, type Response, type NextFunction }
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { healthCheck, applyTemplate, extractTemplate } from './handlers.js';
+import { authMiddleware, isAuthEnabled } from './middleware/auth.js';
 import { logger } from '../lib/utils/logger.js';
 import { VERSION } from './constants.js';
 
@@ -45,6 +46,7 @@ export function createApp(): Express {
     res.json({
       message: 'Directus Template CLI API',
       version: VERSION,
+      authEnabled: isAuthEnabled(),
       endpoints: {
         health: 'GET /health',
         apply: 'POST /api/apply',
@@ -53,9 +55,9 @@ export function createApp(): Express {
     });
   });
 
-  // API routes (with rate limiting)
-  app.post('/api/apply', apiLimiter, applyTemplate);
-  app.post('/api/extract', apiLimiter, extractTemplate);
+  // API routes (with rate limiting and authentication)
+  app.post('/api/apply', apiLimiter, authMiddleware, applyTemplate);
+  app.post('/api/extract', apiLimiter, authMiddleware, extractTemplate);
 
   // Error handling middleware
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -84,15 +86,17 @@ export function createApp(): Express {
  */
 export function startServer(port: number = 3000): void {
   const app = createApp();
+  const authEnabled = isAuthEnabled();
 
   app.listen(port, () => {
     console.log(`\n🚀 Directus Template CLI API Server`);
     console.log(`📡 Server running on http://localhost:${port}`);
+    console.log(`🔐 Authentication: ${authEnabled ? 'ENABLED' : 'DISABLED (set API_AUTH_TOKEN to enable)'}`);
     console.log(`\nAvailable endpoints:`);
     console.log(`  GET  /              - API information`);
     console.log(`  GET  /health        - Health check`);
-    console.log(`  POST /api/apply     - Apply a template`);
-    console.log(`  POST /api/extract   - Extract a template`);
+    console.log(`  POST /api/apply     - Apply a template${authEnabled ? ' (requires auth)' : ''}`);
+    console.log(`  POST /api/extract   - Extract a template${authEnabled ? ' (requires auth)' : ''}`);
     console.log(`\nPress Ctrl+C to stop the server\n`);
   });
 }

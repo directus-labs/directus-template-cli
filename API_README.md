@@ -54,6 +54,71 @@ Rate limit information is returned in response headers:
 - `RateLimit-Remaining`: Number of requests remaining in current window
 - `RateLimit-Reset`: Time when the rate limit window resets
 
+## Authentication
+
+The API supports optional token-based authentication to protect the `/api/apply` and `/api/extract` endpoints.
+
+### Enabling Authentication
+
+Set the `API_AUTH_TOKEN` environment variable to enable authentication:
+
+```bash
+API_AUTH_TOKEN=your-secret-token npm start
+```
+
+When enabled:
+- All requests to `/api/apply` and `/api/extract` require a valid token
+- The `/health` and `/` endpoints remain public
+- The root endpoint (`/`) will show `"authEnabled": true`
+
+### Providing the Token
+
+You can provide the authentication token in three ways:
+
+**1. Bearer Token (recommended):**
+```bash
+curl -X POST http://localhost:3000/api/apply \
+  -H "Authorization: Bearer your-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{"directusUrl": "...", ...}'
+```
+
+**2. Direct Authorization Header:**
+```bash
+curl -X POST http://localhost:3000/api/apply \
+  -H "Authorization: your-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{"directusUrl": "...", ...}'
+```
+
+**3. X-API-Key Header:**
+```bash
+curl -X POST http://localhost:3000/api/apply \
+  -H "X-API-Key: your-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{"directusUrl": "...", ...}'
+```
+
+### Authentication Errors
+
+**Missing token (401 Unauthorized):**
+```json
+{
+  "success": false,
+  "error": "Unauthorized",
+  "message": "Authentication token is required. Provide it via Authorization header or X-API-Key header."
+}
+```
+
+**Invalid token (403 Forbidden):**
+```json
+{
+  "success": false,
+  "error": "Forbidden",
+  "message": "Invalid authentication token."
+}
+```
+
 ## API Endpoints
 
 ### 1. Health Check
@@ -92,6 +157,7 @@ curl http://localhost:3000/
 {
   "message": "Directus Template CLI API",
   "version": "0.7.4",
+  "authEnabled": false,
   "endpoints": {
     "health": "GET /health",
     "apply": "POST /api/apply",

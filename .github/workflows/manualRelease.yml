@@ -6,31 +6,46 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
-      - name: Conventional Changelog Action
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@d360fad3a42feca6462f72c97c165d60a02d4bf2
-        # overriding some of the basic behaviors to just get the changelog
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          git-user-name: svc-cli-bot
-          git-user-email: svc_cli_bot@salesforce.com
-          github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
-          output-file: false
-          # always do the release, even if there are no semantic commits
-          skip-on-empty: false
-          tag-prefix: ''
-      - uses: notiz-dev/github-action-json-property@2192e246737701f108a4571462b76c75e7376216
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@face-to-face-it'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm run build
+      
+      - name: Get package version
         id: packageVersion
-        with:
-          path: 'package.json'
-          prop_path: 'version'
-      - name: Create Github Release
-        uses: actions/create-release@v1
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Publish to GitHub Packages
+        run: pnpm publish --no-git-checks
         env:
-          GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create Github Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.packageVersion.outputs.prop }}
-          release_name: ${{ steps.packageVersion.outputs.prop }}
+          tag_name: v${{ steps.packageVersion.outputs.version }}
+          name: v${{ steps.packageVersion.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

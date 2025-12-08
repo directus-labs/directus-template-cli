@@ -1,16 +1,22 @@
 {
-  "name": "directus-template-cli",
-  "version": "0.7.4",
+  "name": "@face-to-face-it/directus-template-cli",
+  "version": "0.7.4-ftf.1",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "type": "module",
   "bin": {
     "directus-template-cli": "./bin/run.js"
   },
-  "homepage": "https://github.com/directus-labs/directus-template-cli",
+  "homepage": "https://github.com/Face-to-Face-IT/directus-template-api",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "directus-labs/directus-template-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Face-to-Face-IT/directus-template-api.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "files": [
     "/bin",
     "/dist",
@@ -92,7 +98,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "bugs": "https://github.com/directus-labs/directus-template-cli/issues",
+  "bugs": "https://github.com/Face-to-Face-IT/directus-template-api/issues",
   "keywords": [
     "directus",
     "templates",
