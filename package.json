@@ -1,6 +1,6 @@
 {
   "name": "@face-to-face-it/directus-template-cli",
-  "version": "0.7.4-ftf.2",
+  "version": "0.7.4-ftf.2a",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "type": "module",
