@@ -289,9 +289,11 @@ curl -X POST http://localhost:3000/api/apply \
 
 **Endpoint:** `POST /api/extract`
 
-Extract a template from a Directus instance.
+Extract a template from a Directus instance. Supports two modes:
+1. **Save to disk**: Extract and save the template to a local directory
+2. **Return archive**: Extract and return a gzipped tar archive
 
-**Request Body:**
+**Request Body (Save to disk):**
 ```json
 {
   "directusUrl": "http://localhost:8055",
@@ -301,20 +303,34 @@ Extract a template from a Directus instance.
 }
 ```
 
+**Request Body (Return archive):**
+```json
+{
+  "directusUrl": "http://localhost:8055",
+  "directusToken": "your-admin-token",
+  "templateName": "My Template",
+  "returnArchive": true,
+  "archiveFormat": "binary"
+}
+```
+
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `directusUrl` | string | Yes | URL of the Directus instance |
-| `directusToken` | string | No* | Admin token for authentication |
-| `userEmail` | string | No* | Email for authentication |
-| `userPassword` | string | No* | Password for authentication |
-| `templateLocation` | string | Yes | Directory to extract the template to |
-| `templateName` | string | Yes | Name of the template |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `directusUrl` | string | Yes | - | URL of the Directus instance |
+| `directusToken` | string | No* | - | Admin token for authentication |
+| `userEmail` | string | No* | - | Email for authentication |
+| `userPassword` | string | No* | - | Password for authentication |
+| `templateName` | string | Yes | - | Name of the template |
+| `templateLocation` | string | No** | - | Directory to extract the template to |
+| `returnArchive` | boolean | No | false | If true, returns a gzipped tar archive instead of saving to disk |
+| `archiveFormat` | string | No | "binary" | Format for archive response: "binary" (file download) or "base64" (JSON with base64 data) |
 
 *Either `directusToken` or both `userEmail` and `userPassword` are required.
+**Required when `returnArchive` is not set or is false.
 
-**Example with curl:**
+**Example - Save to disk:**
 ```bash
 curl -X POST http://localhost:3000/api/extract \
   -H "Content-Type: application/json" \
@@ -326,7 +342,33 @@ curl -X POST http://localhost:3000/api/extract \
   }'
 ```
 
-**Success Response:**
+**Example - Download archive:**
+```bash
+curl -X POST http://localhost:3000/api/extract \
+  -H "Content-Type: application/json" \
+  -o my-template.tar.gz \
+  -d '{
+    "directusUrl": "http://localhost:8055",
+    "directusToken": "your-admin-token",
+    "templateName": "my-template",
+    "returnArchive": true
+  }'
+```
+
+**Example - Get base64 archive:**
+```bash
+curl -X POST http://localhost:3000/api/extract \
+  -H "Content-Type: application/json" \
+  -d '{
+    "directusUrl": "http://localhost:8055",
+    "directusToken": "your-admin-token",
+    "templateName": "my-template",
+    "returnArchive": true,
+    "archiveFormat": "base64"
+  }'
+```
+
+**Success Response (Save to disk):**
 ```json
 {
   "success": true,
@@ -337,6 +379,26 @@ curl -X POST http://localhost:3000/api/extract \
   }
 }
 ```
+
+**Success Response (base64 archive):**
+```json
+{
+  "success": true,
+  "message": "Template extracted successfully",
+  "data": {
+    "templateName": "my-template",
+    "filename": "my-template.tar.gz",
+    "contentType": "application/gzip",
+    "size": 12345,
+    "archive": "H4sIAAAAAAAAA+3OMQ..."
+  }
+}
+```
+
+**Success Response (binary archive):**
+Returns the raw gzipped tar file with headers:
+- `Content-Type: application/gzip`
+- `Content-Disposition: attachment; filename="my-template.tar.gz"`
 
 **Error Response:**
 ```json

@@ -26,8 +26,12 @@ export interface ExtractTemplateRequest {
   directusToken?: string;
   userEmail?: string;
   userPassword?: string;
-  templateLocation: string;
+  templateLocation?: string;
   templateName: string;
+  /** If true, returns the template as a gzipped tar archive instead of saving to disk */
+  returnArchive?: boolean;
+  /** Format for archive response: 'binary' (default) or 'base64' */
+  archiveFormat?: 'binary' | 'base64';
 }
 
 export interface ApiResponse<T = any> {
