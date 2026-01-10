@@ -1,5 +1,5 @@
 import {text, select, intro, log} from '@clack/prompts'
-import {ux} from '@oclif/core'
+import {Flags, ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
 import chalk from 'chalk'
 import fs from 'node:fs'
@@ -12,6 +12,7 @@ import { BaseCommand } from './base.js'
 import { track, shutdown } from '../services/posthog.js'
 
 import extract from '../lib/extract/index.js'
+import {type ExtractFlags, validateExtractFlags} from '../lib/extract/extract-flags.js'
 import {getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags, getDirectusEmailAndPassword} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
 import {
@@ -19,16 +20,7 @@ import {
   generateReadmeContent,
 } from '../lib/utils/template-defaults.js'
 
-export interface ExtractFlags {
-  directusToken: string;
-  directusUrl: string;
-  programmatic: boolean;
-  templateLocation: string;
-  templateName: string;
-  userEmail: string;
-  userPassword: string;
-  disableTelemetry?: boolean;
-}
+export type {ExtractFlags} from '../lib/extract/extract-flags.js'
 
 export default class ExtractCommand extends BaseCommand {
   static description = 'Extract a template from a Directus instance.'
@@ -36,16 +28,68 @@ export default class ExtractCommand extends BaseCommand {
   static examples = [
     '$ directus-template-cli extract',
     '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
+    '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --partial --no-content --no-users',
   ]
 
   static flags = {
+    content: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract Content (data)',
+    }),
+    dashboards: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract Dashboards (dashboards, panels)',
+    }),
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
+    extensions: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract Extensions',
+    }),
+    files: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract Files (files, folders)',
+    }),
+    flows: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract Flows (operations, flows)',
+    }),
+    partial: Flags.boolean({
+      dependsOn: ['programmatic'],
+      description: 'Enable partial template extraction (all components enabled by default)',
+      summary: 'Enable partial template extraction',
+    }),
+    permissions: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract permissions data. Collections include: directus_roles, directus_policies, directus_access, directus_permissions.',
+      summary: 'Extract permissions (roles, policies, access, permissions)',
+    }),
     programmatic: customFlags.programmatic,
+    schema: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract schema (collections, fields, relations)',
+    }),
+    settings: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract settings (project settings, translations, presets)',
+    }),
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
     userPassword: customFlags.userPassword,
+    users: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract users',
+    }),
     disableTelemetry: customFlags.disableTelemetry,
   }
 
@@ -110,7 +154,7 @@ export default class ExtractCommand extends BaseCommand {
 
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
-    await extract(directory)
+    await extract(directory, flags)
 
     ux.action.stop()
 
@@ -147,6 +191,8 @@ export default class ExtractCommand extends BaseCommand {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
+    const validatedFlags = validateExtractFlags(flags)
+
     await animatedBunny('Let\'s extract a template!')
 
     intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Extract Template`)
@@ -168,7 +214,7 @@ export default class ExtractCommand extends BaseCommand {
 
     // Get Directus URL
     const directusUrl = await getDirectusUrl()
-    flags.directusUrl = directusUrl as string
+    validatedFlags.directusUrl = directusUrl as string
 
     // Prompt for login method
     const loginMethod = await select({
@@ -181,18 +227,18 @@ export default class ExtractCommand extends BaseCommand {
 
     if (loginMethod === 'token') {
       const directusToken = await getDirectusToken(directusUrl as string)
-      flags.directusToken = directusToken as string
+      validatedFlags.directusToken = directusToken as string
     } else {
       const {userEmail, userPassword} = await getDirectusEmailAndPassword()
-      flags.userEmail = userEmail as string
-      flags.userPassword = userPassword as string
+      validatedFlags.userEmail = userEmail as string
+      validatedFlags.userPassword = userPassword as string
     }
 
     ux.stdout(SEPARATOR)
 
-    await initializeDirectusApi(flags)
+    await initializeDirectusApi(validatedFlags)
 
-    await this.extractTemplate(templateName as string, directory as string, flags)
+    await this.extractTemplate(templateName as string, directory as string, validatedFlags)
   }
 
   /**
@@ -202,12 +248,13 @@ export default class ExtractCommand extends BaseCommand {
    */
   private async runProgrammatic(flags: ExtractFlags): Promise<void> {
     this.validateProgrammaticFlags(flags)
+    const validatedFlags = validateExtractFlags(flags)
 
-    const {templateLocation, templateName} = flags
+    const {templateLocation, templateName} = validatedFlags
 
-    await initializeDirectusApi(flags)
+    await initializeDirectusApi(validatedFlags)
 
-    await this.extractTemplate(templateName, templateLocation, flags)
+    await this.extractTemplate(templateName, templateLocation, validatedFlags)
   }
 
   /**

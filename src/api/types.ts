@@ -32,6 +32,16 @@ export interface ExtractTemplateRequest {
   returnArchive?: boolean;
   /** Format for archive response: 'binary' (default) or 'base64' */
   archiveFormat?: 'binary' | 'base64';
+  /** Partial extraction flags - all default to true unless explicitly set to false */
+  content?: boolean;
+  dashboards?: boolean;
+  extensions?: boolean;
+  files?: boolean;
+  flows?: boolean;
+  permissions?: boolean;
+  schema?: boolean;
+  settings?: boolean;
+  users?: boolean;
 }
 
 export interface ApiResponse<T = any> {

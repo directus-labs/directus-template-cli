@@ -20,8 +20,9 @@ import extractSchema from './extract-schema.js'
 import extractSettings from './extract-settings.js'
 import extractTranslations from './extract-translations.js'
 import extractUsers from './extract-users.js'
+import type {ExtractOptions} from './extract-flags.js'
 
-export default async function extract(dir: string) {
+export default async function extract(dir: string, flags: ExtractOptions) {
   // Get the destination directory for the actual files
   const destination = `${dir}/src`
 
@@ -31,37 +32,56 @@ export default async function extract(dir: string) {
     fs.mkdirSync(destination, {recursive: true})
   }
 
-  await extractSchema(destination)
+  if (flags.schema) {
+    await extractSchema(destination)
+    await extractCollections(destination)
+    await extractFields(destination)
+    await extractRelations(destination)
+  }
 
-  await extractCollections(destination)
-  await extractFields(destination)
-  await extractRelations(destination)
+  if (flags.files) {
+    await extractFolders(destination)
+    await extractFiles(destination)
+  }
 
-  await extractFolders(destination)
-  await extractFiles(destination)
+  if (flags.permissions || flags.users) {
+    await extractRoles(destination)
+    await extractPermissions(destination)
+    await extractPolicies(destination)
+    await extractAccess(destination)
 
-  await extractUsers(destination)
-  await extractRoles(destination)
-  await extractPermissions(destination)
-  await extractPolicies(destination)
-  await extractAccess(destination)
+    if (flags.users) {
+      await extractUsers(destination)
+    }
+  }
 
-  await extractPresets(destination)
+  if (flags.settings) {
+    await extractPresets(destination)
+    await extractTranslations(destination)
+    await extractSettings(destination)
+  }
 
-  await extractTranslations(destination)
+  if (flags.flows) {
+    await extractFlows(destination)
+    await extractOperations(destination)
+  }
 
-  await extractFlows(destination)
-  await extractOperations(destination)
+  if (flags.dashboards) {
+    await extractDashboards(destination)
+    await extractPanels(destination)
+  }
 
-  await extractDashboards(destination)
-  await extractPanels(destination)
+  if (flags.extensions) {
+    await extractExtensions(destination)
+  }
 
-  await extractSettings(destination)
-  await extractExtensions(destination)
+  if (flags.content) {
+    await extractContent(destination)
+  }
 
-  await extractContent(destination)
-
-  await downloadAllFiles(destination)
+  if (flags.files) {
+    await downloadAllFiles(destination)
+  }
 
   return {}
 }

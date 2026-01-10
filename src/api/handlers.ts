@@ -266,8 +266,11 @@ export async function extractTemplate(req: Request, res: Response) {
     fs.writeFileSync(packageJSONPath, packageJSONContent);
     fs.writeFileSync(readmePath, readmeContent);
 
+    // Build extract flags with defaults (all true unless explicitly set to false)
+    const extractBooleanFlags = buildBooleanDefaults(body, ['content', 'dashboards', 'extensions', 'files', 'flows', 'permissions', 'schema', 'settings', 'users']);
+
     // Extract the template
-    await extract(directory);
+    await extract(directory, extractBooleanFlags);
 
     // If returning archive, create gzip and send it
     if (body.returnArchive) {
