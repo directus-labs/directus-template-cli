@@ -1,10 +1,10 @@
-import {spinner, log} from '@clack/prompts'
-import {execa} from 'execa'
+import { spinner, log } from '@clack/prompts'
+import { execa } from 'execa'
 import net from 'node:net'
-import {ux} from '@oclif/core'
+import { ux } from '@oclif/core'
 import path from 'pathe'
 import catchError from '../lib/utils/catch-error.js'
-import {waitFor} from '../lib/utils/wait.js'
+import { waitFor } from '../lib/utils/wait.js'
 
 export interface DockerConfig {
   composeFile: string
@@ -44,7 +44,7 @@ async function checkPort(port: number): Promise<PortCheck> {
       if (err.code === 'EADDRINUSE') {
         // Try to get information about what's using the port
         try {
-          const {stdout} = await execa('lsof', ['-i', `:${port}`])
+          const { stdout } = await execa('lsof', ['-i', `:${port}`])
           const process = stdout.split('\n')[1]?.split(/\s+/)[0] // Get process name
           resolve({ inUse: true, process })
         } catch {
@@ -76,7 +76,7 @@ async function checkRequiredPorts(): Promise<void> {
 
   let hasConflicts = false
 
-  for (const {port, name} of portsToCheck) {
+  for (const { port, name } of portsToCheck) {
     const status = await checkPort(port)
     if (status.inUse) {
       hasConflicts = true
@@ -96,29 +96,31 @@ async function checkRequiredPorts(): Promise<void> {
  * @returns {Promise<DockerCheckResult>} Docker installation and running status
  */
 async function checkDocker(): Promise<DockerCheckResult> {
+  // First check if Docker is installed
   try {
-    // Check if Docker is installed
-    const versionResult = await execa('docker', ['--version'])
-    const isInstalled = versionResult.exitCode === 0
-
-    if (!isInstalled) {
-      return {installed: false, message: 'Docker is not installed. Please install Docker at https://docs.docker.com/get-started/get-docker/', running: false}
+    await execa('docker', ['--version'])
+  } catch {
+    // Docker is not installed
+    return {
+      installed: false,
+      message: 'Docker is not installed. Please install Docker at https://docs.docker.com/get-started/get-docker/',
+      running: false,
     }
+  }
 
-    // Check if Docker daemon is running
-    const statusResult = await execa('docker', ['info'])
-    const isRunning = statusResult.exitCode === 0
-
+  // Docker is installed, now check if it's running
+  try {
+    await execa('docker', ['info'])
     return {
       installed: true,
       message: 'Docker is installed and running.',
-      running: isRunning,
+      running: true,
     }
   } catch {
-    // If any command fails, Docker is either not installed or not running
+    // Docker is installed but not running
     return {
-      installed: false,
-      message: 'Docker is not running. Please start Docker and try again.',
+      installed: true,
+      message: 'Docker is installed but not running. Please start Docker before running the init command.',
       running: false,
     }
   }
@@ -209,7 +211,7 @@ async function startContainers(cwd: string): Promise<void> {
   } catch (error) {
     s.stop('Error starting Docker containers.') // Stop spinner on error
     catchError(error, {
-      context: {cwd, function: 'startContainers'},
+      context: { cwd, function: 'startContainers' },
       fatal: true,
       logToFile: true,
     })
@@ -226,10 +228,10 @@ async function stopContainers(cwd: string): Promise<void> {
   try {
     return execa('docker', ['compose', 'down'], {
       cwd,
-    }).then(() => {})
+    }).then(() => { })
   } catch (error) {
     catchError(error, {
-      context: {cwd, function: 'stopContainers'},
+      context: { cwd, function: 'stopContainers' },
       fatal: false,
       logToFile: true,
     })
@@ -269,7 +271,7 @@ function createWaitForHealthy(config: DockerConfig) {
     } catch (error) {
       s.stop('')
       catchError(error, {
-        context: {function: 'waitForHealthy', url: healthCheckUrl},
+        context: { function: 'waitForHealthy', url: healthCheckUrl },
         fatal: true,
         logToFile: true,
       })

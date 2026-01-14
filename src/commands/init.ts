@@ -103,6 +103,17 @@ export default class InitCommand extends BaseCommand {
     await animatedBunny('Let\'s create a new Directus project!')
     intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Create Project`)
 
+    // Check Docker availability before proceeding
+    const {createDocker} = await import('../services/docker.js')
+    const {DOCKER_CONFIG} = await import('../lib/init/config.js')
+    const dockerService = createDocker(DOCKER_CONFIG)
+    const dockerStatus = await dockerService.checkDocker()
+
+    if (!dockerStatus.installed || !dockerStatus.running) {
+      cancel(dockerStatus.message || 'Docker is required to initialize a Directus project.')
+      process.exit(1)
+    }
+
     // Create GitHub service
     const github = createGitHub()
 
