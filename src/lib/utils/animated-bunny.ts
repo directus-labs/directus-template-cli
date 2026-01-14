@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import logUpdate from 'log-update'
 
-import {DIRECTUS_PINK} from '../constants.js'
+import { DIRECTUS_PINK } from '../constants.js'
 
 export const RANDOM_SAYINGS = [
   'One does not simply write backends...',
@@ -56,8 +56,8 @@ export async function animatedBunny(customMessage?: string) {
   }, 25)
 
   try {
-    // Run the animation for the duration of typing plus 1 second
-    await new Promise(resolve => setTimeout(resolve, saying.length * 25 + 1000))
+    // Run the animation for the duration of typing plus 500ms
+    await new Promise(resolve => setTimeout(resolve, saying.length * 25 + 500))
   } finally {
     cleanup()
     // Remove the event listeners
