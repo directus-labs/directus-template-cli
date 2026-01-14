@@ -1,22 +1,23 @@
-import {note, outro, spinner, log as clackLog} from '@clack/prompts'
+import {log as clackLog, note, outro, spinner} from '@clack/prompts'
 import {ux} from '@oclif/core'
 import chalk from 'chalk'
+import dotenv from 'dotenv'
 import {execa} from 'execa'
-import {type DownloadTemplateResult, downloadTemplate} from 'giget'
+import {downloadTemplate, type DownloadTemplateResult} from 'giget'
 import {glob} from 'glob'
 import fs from 'node:fs'
 import {detectPackageManager, installDependencies, type PackageManager} from 'nypm'
 import path from 'pathe'
-import dotenv from 'dotenv'
+
+import type {InitFlags} from '../../commands/init.js'
 
 import ApplyCommand from '../../commands/apply.js'
 import {createDocker} from '../../services/docker.js'
+import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, pinkText} from '../constants.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
 import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
-import type {InitFlags} from '../../commands/init.js'
-import {BSL_LICENSE_TEXT, BSL_LICENSE_HEADLINE, BSL_LICENSE_CTA, pinkText} from '../constants.js'
 
 
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
@@ -31,7 +32,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
   const isDirectUrl = flags.template?.startsWith('http')
   const directusDir = path.join(dir, 'directus')
   let template: DownloadTemplateResult
-  let packageManager: PackageManager | null = null
+  let packageManager: null | PackageManager = null
 
   try {
     // Download the template from GitHub
@@ -46,8 +47,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     // For direct URLs, we need to check if there's a directus directory
     // If not, assume the entire repo is a directus template
-    if (isDirectUrl) {
-      if (!fs.existsSync(directusDir)) {
+    if (isDirectUrl && !fs.existsSync(directusDir)) {
         // Move all files to directus directory
         fs.mkdirSync(directusDir, {recursive: true})
         const files = fs.readdirSync(dir)
@@ -57,7 +57,6 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
           }
         }
       }
-    }
 
     // Read template configuration
     const templateInfo = readTemplateConfig(dir)

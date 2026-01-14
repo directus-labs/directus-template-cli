@@ -40,7 +40,7 @@ class Logger {
   }
 
   private sanitize(obj: Record<string, any>): Record<string, any> {
-    const sensitiveFields = new Set(['password', 'token', 'secret', 'key', 'authorization', 'email', 'access_token', 'refresh_token'])
+    const sensitiveFields = new Set(['access_token', 'authorization', 'email', 'key', 'password', 'refresh_token', 'secret', 'token'])
     return Object.fromEntries(
       Object.entries(obj).map(([key, value]) => {
         if (sensitiveFields.has(key.toLowerCase())) {

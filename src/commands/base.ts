@@ -2,10 +2,11 @@ import { Command, type Config } from '@oclif/core';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'pathe';
+
 import { setExecutionContext } from '../services/execution-context.js';
 
 interface UserConfig {
-  distinctId?: string | null;
+  distinctId?: null | string;
 }
 
 interface BaseFlags {
@@ -26,15 +27,27 @@ export abstract class BaseCommand extends Command {
     await super.init();
 
     const { flags } = await this.parse({
-      flags: this.ctor.flags,
       args: this.ctor.args,
+      flags: this.ctor.flags,
       strict: false,
     });
 
     setExecutionContext({
-      distinctId: this.userConfig.distinctId ?? undefined,
       disableTelemetry: (flags as BaseFlags)?.disableTelemetry ?? false,
+      distinctId: this.userConfig.distinctId ?? undefined,
     });
+  }
+
+  /**
+   * Save the current user configuration to disk
+   */
+  protected saveUserConfig(): void {
+    try {
+      const configPath = path.join(this.config.configDir, 'config.json');
+      fs.writeFileSync(configPath, JSON.stringify(this.userConfig, null, 2));
+    } catch (error) {
+      this.warn(`Failed to save user config: ${error}`);
+    }
   }
 
   private loadUserConfig(): void {
@@ -53,18 +66,6 @@ export abstract class BaseCommand extends Command {
       }
     } catch (error) {
       this.warn(`Failed to load user config: ${error}`);
-    }
-  }
-
-  /**
-   * Save the current user configuration to disk
-   */
-  protected saveUserConfig(): void {
-    try {
-      const configPath = path.join(this.config.configDir, 'config.json');
-      fs.writeFileSync(configPath, JSON.stringify(this.userConfig, null, 2));
-    } catch (error) {
-      this.warn(`Failed to save user config: ${error}`);
     }
   }
 }

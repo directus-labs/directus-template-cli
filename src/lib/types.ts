@@ -4,17 +4,17 @@ export interface DirectusTemplateFrontend {
 }
 
 export interface DirectusTemplateConfig {
-  name: string
   description: string
-  template: string | null
   frontends: {
     [key: string]: DirectusTemplateFrontend
   }
+  name: string
+  template: null | string
 }
 
 export interface TemplatePackageJson {
-  name: string
-  version: string
   description: string
   'directus:template'?: DirectusTemplateConfig
+  name: string
+  version: string
 }

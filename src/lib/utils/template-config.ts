@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'pathe'
+
 import type {DirectusTemplateConfig, TemplatePackageJson} from '../types.js'
 
 export interface TemplateInfo {
@@ -17,7 +18,7 @@ export interface TemplateInfo {
  * @returns Template configuration and frontend options
  * @throws Error if package.json is missing or invalid
  */
-export function readTemplateConfig(dir: string): TemplateInfo | null {
+export function readTemplateConfig(dir: string): null | TemplateInfo {
   try {
     const packageJsonPath = path.join(dir, 'package.json')
     if (!fs.existsSync(packageJsonPath)) {
@@ -42,7 +43,7 @@ export function readTemplateConfig(dir: string): TemplateInfo | null {
       config: templateConfig,
       frontendOptions,
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }

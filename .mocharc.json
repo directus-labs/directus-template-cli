@@ -1,15 +1,8 @@
 {
-  "require": [
-    "test/helpers/init.js"
-  ],
-  "watch-extensions": [
-    "ts"
-  ],
+  "require": ["test/helpers/init.js"],
+  "watch-extensions": ["ts"],
   "recursive": true,
   "reporter": "spec",
   "timeout": 60000,
-  "node-option": [
-    "experimental-specifier-resolution=node",
-    "loader=ts-node/esm"
-  ]
+  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"]
 }

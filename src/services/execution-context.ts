@@ -2,8 +2,8 @@
  * Defines the structure for the execution context, holding telemetry information.
  */
 export interface ExecutionContext {
-  distinctId?: string;
   disableTelemetry?: boolean;
+  distinctId?: string;
 }
 
 // Module-level variable to hold the current context.

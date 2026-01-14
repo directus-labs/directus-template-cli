@@ -36,7 +36,7 @@ function cleanGitHubUrl(url: string): string {
     parsed.hash = ''
 
     return parsed.toString()
-  } catch (error) {
+  } catch {
     // If URL parsing fails, just remove .git suffix
     return url.replace(/\.git$/, '')
   }
@@ -98,7 +98,7 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
       // Ensure path is undefined if empty string
       if (path === '') path = undefined;
 
-      return {owner, repo, path, ref}
+      return {owner, path, ref, repo}
     } catch (error: any) {
       throw new Error(`Invalid GitHub URL: ${url}. Error: ${error.message}`)
     }
@@ -110,7 +110,7 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
     const [owner, repo, ...rest] = parts
     const path = rest.length > 0 ? rest.join('/') : undefined
     // Assume default branch for simple paths unless we add ref detection here too
-    return {owner, repo, path, ref: DEFAULT_BRANCH}
+    return {owner, path, ref: DEFAULT_BRANCH, repo}
   }
 
   // Handle simple template names using DEFAULT_REPO

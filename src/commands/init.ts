@@ -1,27 +1,28 @@
-import {confirm, intro, select, text, isCancel, cancel, log as clackLog} from '@clack/prompts'
+import {cancel, log as clackLog, confirm, intro, isCancel, select, text} from '@clack/prompts'
 import {Args, Flags, ux} from '@oclif/core'
 import chalk from 'chalk'
+import {downloadTemplate} from 'giget'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'pathe'
+
 import {disableTelemetry} from '../flags/common.js'
 import {DIRECTUS_PURPLE} from '../lib/constants.js'
 import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
-import {createGitHub} from '../services/github.js'
-import {readTemplateConfig} from '../lib/utils/template-config.js'
 import {createGigetString, parseGitHubUrl} from '../lib/utils/parse-github-url.js'
-import {downloadTemplate} from 'giget'
+import {readTemplateConfig} from '../lib/utils/template-config.js'
+import {createGitHub} from '../services/github.js'
+import { shutdown, track } from '../services/posthog.js'
 import { BaseCommand } from './base.js'
-import { track, shutdown } from '../services/posthog.js'
 
 export interface InitFlags {
+  disableTelemetry?: boolean
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
   overwriteDir?: boolean
   template?: string
-  disableTelemetry?: boolean
 }
 
 export interface InitArgs {
@@ -36,17 +37,15 @@ export default class InitCommand extends BaseCommand {
       required: false,
     }),
   }
-
-  static description = 'Initialize a new Directus + Frontend monorepo using official or community starters.'
-
-  static examples = [
+static description = 'Initialize a new Directus + Frontend monorepo using official or community starters.'
+static examples = [
     '$ directus-template-cli init',
     '$ directus-template-cli init my-project',
     '$ directus-template-cli init --frontend=nextjs --template=simple-cms',
     '$ directus-template-cli init my-project --frontend=nextjs --template=simple-cms',
   ]
-
-  static flags = {
+static flags = {
+    disableTelemetry,
     frontend: Flags.string({
       description: 'Frontend framework to use (e.g., nextjs, nuxt, astro)',
     }),
@@ -71,10 +70,8 @@ export default class InitCommand extends BaseCommand {
     template: Flags.string({
       description: 'Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/simple-cms)',
     }),
-    disableTelemetry: disableTelemetry,
   }
-
-  private targetDir = '.'
+private targetDir = '.'
 
   /**
    * Entrypoint for the command.
@@ -141,8 +138,8 @@ export default class InitCommand extends BaseCommand {
 
     if (fs.existsSync(this.targetDir) && !flags.overwriteDir) {
       const overwriteDirResponse = await confirm({
-        message: 'Directory already exists. Would you like to overwrite it?',
         initialValue: false,
+        message: 'Directory already exists. Would you like to overwrite it?',
       })
 
       if (isCancel(overwriteDirResponse) || overwriteDirResponse === false) {
@@ -160,16 +157,16 @@ export default class InitCommand extends BaseCommand {
 
     // 2. Prompt for template if not provided
     let {template} = flags // This will store the chosen template ID
-    let chosenTemplateObject: { id: string; name: string; description?: string } | undefined;
+    let chosenTemplateObject: undefined | { description?: string; id: string; name: string; };
 
 
     if (!template) {
       const templateResponse = await select<any>({ // Explicit types for clarity
         message: 'Which Directus backend template would you like to use?',
         options: availableTemplates.map(tmpl => ({
-          value: tmpl.id, // The value submitted will be the ID (directory name)
-          label: tmpl.name, // Display the friendly name
           hint: tmpl.description, // Show the description as a hint
+          label: tmpl.name, // Display the friendly name
+          value: tmpl.id, // The value submitted will be the ID (directory name)
         })),
       })
 
@@ -223,13 +220,13 @@ export default class InitCommand extends BaseCommand {
       if (templateInfo?.frontendOptions.length > 0 && (!chosenFrontend || !templateInfo.frontendOptions.find(f => f.id === chosenFrontend))) {
         const frontendResponse = await select({
           message: 'Which frontend framework do you want to use?',
-          options: [
-            ...templateInfo.frontendOptions.map(frontend => ({
+          options: 
+            templateInfo.frontendOptions.map(frontend => ({
               label: frontend.name,
               value: frontend.id,
-            })),
+            }))
             // { label: 'No frontend', value: '' },
-          ],
+          ,
         })
 
         if (isCancel(frontendResponse)) {
@@ -244,7 +241,7 @@ export default class InitCommand extends BaseCommand {
     } finally {
       // Clean up temporary directory
       if (fs.existsSync(tempDir)) {
-        fs.rmSync(tempDir, { recursive: true, force: true })
+        fs.rmSync(tempDir, { force: true, recursive: true })
       }
     }
 
@@ -275,17 +272,17 @@ export default class InitCommand extends BaseCommand {
     // Track the command start unless telemetry is disabled
     if (!flags.disableTelemetry) {
       await track({
-        lifecycle: 'start',
-        distinctId: this.userConfig.distinctId,
         command: 'init',
+        config: this.config,
+        distinctId: this.userConfig.distinctId,
         flags: {
           frontend: chosenFrontend,
           gitInit: initGit,
           installDeps,
           template,
         },
+        lifecycle: 'start',
         runId: this.runId,
-        config: this.config,
       });
     }
 
@@ -296,8 +293,8 @@ export default class InitCommand extends BaseCommand {
         frontend: chosenFrontend,
         gitInit: initGit,
         installDeps,
-        template,
         overwriteDir: flags.overwriteDir,
+        template,
       },
 
     })
@@ -306,17 +303,17 @@ export default class InitCommand extends BaseCommand {
     if (!flags.disableTelemetry) {
       await track({
         command: 'init',
-        lifecycle: 'complete',
+        config: this.config,
         distinctId: this.userConfig.distinctId,
         flags: {
           frontend: chosenFrontend,
           gitInit: initGit,
           installDeps,
-          template,
           overwriteDir: flags.overwriteDir,
+          template,
         },
+        lifecycle: 'complete',
         runId: this.runId,
-        config: this.config,
       });
 
       await shutdown()

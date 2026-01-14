@@ -16,6 +16,7 @@ export class DirectusError extends Error {
   message: string
   response: Response
   status: number
+
   constructor(response: Response) {
     super(response.statusText)
     this.name = 'DirectusError'
@@ -57,7 +58,7 @@ export class DirectusError extends Error {
 }
 
 class Api {
-  public client: (RestClient<Schema> & AuthenticationClient<Schema>) | undefined
+  public client: (AuthenticationClient<Schema> & RestClient<Schema>) | undefined
   private authData: AuthenticationData | null = null
   private limiter: Bottleneck
 
