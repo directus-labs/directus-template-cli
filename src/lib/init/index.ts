@@ -193,7 +193,9 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     const directusUrl = directusInfo.url ?? 'http://localhost:8055'
 
     const directusText = `- Directus is running on ${directusUrl}. \n`
-    const directusLoginText = `- You can login with the email: ${pinkText(directusInfo.email)} and password: ${pinkText(directusInfo.password)}. \n`
+    const directusLoginText = directusInfo.email && directusInfo.password
+      ? `- You can login with the email: ${pinkText(directusInfo.email)} and password: ${pinkText(directusInfo.password)}. \n`
+      : `- Complete the onboarding form at ${pinkText(directusInfo.url || 'http://localhost:8055')} to create your admin account. \n`;
     const frontendText = flags.frontend ? `- To start the frontend, run ${pinkText(`cd ${flags.frontend}`)} and then ${pinkText(`${packageManager?.name} run dev`)}. \n` : ''
     const projectText = `- Navigate to your project directory using ${pinkText(`cd ${relativeDir}`)}. \n`
     const readmeText = '- Review the \`./README.md\` file for more information and next steps.'
