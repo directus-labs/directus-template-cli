@@ -1,11 +1,11 @@
+import {isCancel, log, password, text} from '@clack/prompts'
 import {readMe} from '@directus/sdk'
-import {text, log, isCancel, password} from '@clack/prompts'
 import {ux} from '@oclif/core'
 
+import { DEFAULT_DIRECTUS_URL } from '../../lib/constants.js'
 import {api} from '../sdk.js'
 import catchError from './catch-error.js'
 import validateUrl from './validate-url.js'
-import { DEFAULT_DIRECTUS_URL } from '../../lib/constants.js'
 interface AuthFlags {
   directusToken?: string;
   directusUrl: string;
@@ -19,8 +19,8 @@ interface AuthFlags {
  */
 export async function getDirectusUrl() {
   const directusUrl = await text({
-    placeholder: DEFAULT_DIRECTUS_URL,
     message: 'What is your Directus URL?',
+    placeholder: DEFAULT_DIRECTUS_URL,
   })
 
 
@@ -52,8 +52,8 @@ export async function getDirectusUrl() {
  */
 export async function getDirectusToken(directusUrl: string) {
   const directusToken = await text({
-    placeholder: 'admin-token-here',
     message: 'What is your Directus Admin Token?',
+    placeholder: 'admin-token-here',
   })
 
   if (isCancel(directusToken)) {
@@ -114,7 +114,7 @@ export async function getDirectusEmailAndPassword() {
  * Initialize the Directus API with the provided flags and log in the user
  * @param flags - The validated ApplyFlags
  * @returns {Promise<void>} - Returns nothing
-*/
+ */
 export async function initializeDirectusApi(flags: AuthFlags): Promise<void> {
   api.initialize(flags.directusUrl)
 
@@ -135,10 +135,10 @@ export async function initializeDirectusApi(flags: AuthFlags): Promise<void> {
 }
 
 /**
-* Validate the authentication flags
-* @param flags - The AuthFlags
-* @returns {void} - Errors if the flags are invalid
-*/
+ * Validate the authentication flags
+ * @param flags - The AuthFlags
+ * @returns {void} - Errors if the flags are invalid
+ */
 export function validateAuthFlags(flags: AuthFlags): void {
   if (!flags.directusUrl) {
     ux.error('Directus URL is required.')

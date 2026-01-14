@@ -7,6 +7,7 @@ export interface ApplyFlags {
   dashboards: boolean;
   directusToken: string;
   directusUrl: string;
+  disableTelemetry?: boolean;
   extensions: boolean;
   files: boolean;
   flows: boolean;
@@ -20,7 +21,6 @@ export interface ApplyFlags {
   userEmail: string;
   userPassword: string;
   users?: boolean;
-  disableTelemetry?: boolean;
 }
 
 export const loadFlags = [

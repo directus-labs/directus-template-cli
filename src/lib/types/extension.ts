@@ -13,10 +13,10 @@ export interface ExtensionSchema {
     name: string;
     type: ExtensionType;
   }>;
-  entrypoint: {
+  entrypoint: string | {
     api: string;
     app: string;
-  } | string;
+  };
   host: string;
   local: boolean;
   name: string;

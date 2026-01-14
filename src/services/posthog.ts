@@ -1,11 +1,13 @@
-import {ux} from '@oclif/core'
 import type {Config} from '@oclif/core'
+
+import {ux} from '@oclif/core'
 import {PostHog} from 'posthog-node'
-import {POSTHOG_PUBLIC_KEY, POSTHOG_HOST} from '../lib/constants.js'
+
+import {POSTHOG_HOST, POSTHOG_PUBLIC_KEY} from '../lib/constants.js'
 import {sanitizeFlags} from '../lib/utils/sanitize-flags.js'
 
 // Create a singleton client using module scope
-let client: PostHog | null = null
+let client: null | PostHog = null
 
 /**
  * Initialize and get the PostHog client
@@ -19,8 +21,8 @@ export function getClient(debug = false): PostHog {
     client = new PostHog(
       POSTHOG_PUBLIC_KEY,
       {
-        host: POSTHOG_HOST,
         disableGeoip: false,
+        host: POSTHOG_HOST,
       },
     )
 
@@ -65,25 +67,25 @@ export async function shutdown(debug = false): Promise<void> {
  * @param options.debug Whether to log debug information
  */
 export function track({
-  lifecycle,
-  distinctId,
   command,
-  flags,
-  runId,
-  message,
   config,
+  debug = false,
+  distinctId,
+  flags,
+  lifecycle,
+  message,
   properties = {},
-  debug = false
+  runId
 }: {
-  lifecycle: 'start' | 'complete' | 'error',
-  message?: string,
-  distinctId: string,
   command?: string,
-  flags?: Record<string, unknown>,
-  runId?: string,
   config?: Config,
-  properties?: Record<string, unknown>,
   debug?: boolean
+  distinctId: string,
+  flags?: Record<string, unknown>,
+  lifecycle: 'complete' | 'error' | 'start',
+  message?: string,
+  properties?: Record<string, unknown>,
+  runId?: string,
 }): void {
   if (debug) ux.stdout('Tracking event...')
 
@@ -91,8 +93,8 @@ export function track({
 
   const eventProperties = command
     ? {
-        runId,
         message,
+        runId,
         ...properties,
         ...getEnvironmentInfo(config),
         // Always sanitize sensitive flags
@@ -122,15 +124,15 @@ export function track({
  * @param debug Whether to log debug information
  */
 export function captureException({
-  error,
+  debug = false,
   distinctId,
-  properties = {},
-  debug = false
+  error,
+  properties = {}
 }: {
-  error: unknown,
-  distinctId: string,
-  properties?: Record<string, unknown>,
   debug?: boolean
+  distinctId: string,
+  error: unknown,
+  properties?: Record<string, unknown>,
 }): void {
   if (debug) ux.stdout('Capturing exception...')
 

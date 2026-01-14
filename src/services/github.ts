@@ -1,9 +1,9 @@
+import {ux} from '@oclif/core'
 import {Octokit} from '@octokit/rest'
 import {Buffer} from 'node:buffer'
 
 import {DEFAULT_REPO} from '../lib/constants.js'
 import {parseGitHubUrl} from '../lib/utils/parse-github-url.js'
-import {ux} from '@oclif/core'
 
 interface GitHubUrlParts {
   owner: string
@@ -13,9 +13,9 @@ interface GitHubUrlParts {
 }
 
 export interface TemplateInfo {
+  description?: string
   id: string
   name: string
-  description?: string
 }
 
 export interface GitHubService {
@@ -42,9 +42,9 @@ export function createGitHub(token?: string) {
       try {
         const {data} = await octokit.rest.repos.getContent({
           owner: repo.owner,
-          repo: repo.repo,
           path: repo.path || '',
           ref: repo.ref,
+          repo: repo.repo,
         })
 
         if (!Array.isArray(data)) return []
@@ -54,7 +54,7 @@ export function createGitHub(token?: string) {
         return data
         .filter(item => item.type === 'dir')
         .map(item => item.name)
-      } catch (error) {
+      } catch {
         // If we can't get contents, return empty array
         // This indicates no frontends are available
         return []
@@ -78,7 +78,7 @@ export function createGitHub(token?: string) {
       return data
       .filter(item => item.type === 'dir' && item.name !== 'directus')
       .map(item => item.name)
-    } catch (error) {
+    } catch {
       // If we can't get contents, return empty array
       return []
     }
@@ -101,13 +101,13 @@ export function createGitHub(token?: string) {
 
       try {
         const {data: packageJsonContent} = await octokit.rest.repos.getContent({
-          owner: parsed.owner,
-          repo: parsed.repo,
-          path: packageJsonPath,
-          ref: parsed.ref,
           mediaType: {
             format: 'raw',
           },
+          owner: parsed.owner,
+          path: packageJsonPath,
+          ref: parsed.ref,
+          repo: parsed.repo,
         })
 
         // getContent with mediaType: raw returns string directly
@@ -118,6 +118,7 @@ export function createGitHub(token?: string) {
           if (templateConfig?.name) {
             name = templateConfig.name
           }
+
           if (templateConfig?.description) {
             description = templateConfig.description
           }
@@ -132,7 +133,7 @@ export function createGitHub(token?: string) {
       }
 
       // Return a single item array for the direct URL case
-      return [{id: customUrl, name, description}]
+      return [{description, id: customUrl, name}]
     }
 
     const repo = customUrl ? parseGitHubUrl(customUrl) : DEFAULT_REPO
@@ -149,21 +150,21 @@ export function createGitHub(token?: string) {
     const directories = rootContent.filter(item => item.type === 'dir')
 
     // Fetch package.json for each directory concurrently
-    let templateInfos = await Promise.all(
+    const templateInfos = await Promise.all(
       directories.map(async (dir): Promise<TemplateInfo> => {
         const packageJsonPath = joinPath(repo.path || '', dir.path, 'package.json')
-        let name = dir.name
+        let {name} = dir
         let description: string | undefined
 
         try {
           const {data: packageJsonContent} = await octokit.rest.repos.getContent({
-            owner: repo.owner,
-            repo: repo.repo,
-            path: packageJsonPath,
-            ref: repo.ref,
             mediaType: {
               format: 'raw',
             },
+            owner: repo.owner,
+            path: packageJsonPath,
+            ref: repo.ref,
+            repo: repo.repo,
           })
 
           // getContent with mediaType: raw returns string directly
@@ -174,6 +175,7 @@ export function createGitHub(token?: string) {
             if (templateConfig?.name) {
               name = templateConfig.name
             }
+
             if (templateConfig?.description) {
               description = templateConfig.description
             }
@@ -186,9 +188,9 @@ export function createGitHub(token?: string) {
         }
 
         return {
+          description,
           id: dir.name,
           name,
-          description,
         }
       })
     )

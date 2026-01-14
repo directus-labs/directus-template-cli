@@ -1,6 +1,6 @@
 import fs from 'node:fs'
-import path from 'pathe'
 import {cwd} from 'node:process'
+import path from 'pathe'
 
 /**
  * Resolves a given path to an absolute path and checks if it exists.

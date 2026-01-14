@@ -49,12 +49,12 @@ const removeRequiredorIsNullable = (field:Field) => {
   }
 
   if (field.schema?.is_nullable === false) {
-    // eslint-disable-next-line camelcase
+     
     field.schema.is_nullable = true
   }
 
   if (field.schema?.is_unique === true) {
-    // eslint-disable-next-line camelcase
+     
     field.schema.is_unique = false
   }
 

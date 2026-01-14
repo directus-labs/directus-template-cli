@@ -27,12 +27,12 @@ const customDefu = createDefu((obj, key, value) => {
 
 function mergeArrays(key: string, current: any[], incoming: any[]): any[] {
   const mergeKeys = {
-    /* eslint-disable camelcase */
+     
     basemaps: ['key'],
     custom_aspect_ratios: ['key'],
     module_bar: ['id', 'type'],
     storage_asset_presets: ['key'],
-    /* eslint-enable camelcase */
+     
   }
 
   const keys = mergeKeys[key as keyof typeof mergeKeys]

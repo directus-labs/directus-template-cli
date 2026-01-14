@@ -8,7 +8,7 @@ interface Template {
 
 export async function readTemplate(
   directoryPath: string,
-): Promise<Template | null> {
+): Promise<null | Template> {
   const packageFilePath = path.join(directoryPath, 'package.json')
 
   try {

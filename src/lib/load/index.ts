@@ -1,5 +1,7 @@
 import {ux} from '@oclif/core'
 
+import type { ApplyFlags } from './apply-flags.js'
+
 import checkTemplate from '../utils/check-template.js'
 import loadAccess from './load-access.js'
 import loadCollections from './load-collections.js'
@@ -18,7 +20,6 @@ import loadSettings from './load-settings.js'
 import loadTranslations from './load-translations.js'
 import loadUsers from './load-users.js'
 import updateRequiredFields from './update-required-fields.js'
-import type { ApplyFlags } from './apply-flags.js'
 
 
 export default async function apply(dir: string, flags: ApplyFlags) {

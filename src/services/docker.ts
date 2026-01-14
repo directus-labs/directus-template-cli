@@ -1,8 +1,9 @@
-import { spinner, log } from '@clack/prompts'
+import { log, spinner } from '@clack/prompts'
+import { ux } from '@oclif/core'
 import { execa } from 'execa'
 import net from 'node:net'
-import { ux } from '@oclif/core'
 import path from 'pathe'
+
 import catchError from '../lib/utils/catch-error.js'
 import { waitFor } from '../lib/utils/wait.js'
 
@@ -70,13 +71,13 @@ async function checkPort(port: number): Promise<PortCheck> {
  */
 async function checkRequiredPorts(): Promise<void> {
   const portsToCheck = [
-    { port: 8055, name: 'Directus API' },
-    { port: 5432, name: 'PostgreSQL' },
+    { name: 'Directus API', port: 8055 },
+    { name: 'PostgreSQL', port: 5432 },
   ]
 
   let hasConflicts = false
 
-  for (const { port, name } of portsToCheck) {
+  for (const { name, port } of portsToCheck) {
     const status = await checkPort(port)
     if (status.inUse) {
       hasConflicts = true
@@ -157,6 +158,7 @@ async function checkImagesExist(imageNames: string[]): Promise<boolean> {
   if (imageNames.length === 0) {
     return true; // No images to check, technically they all "exist"
   }
+
   try {
     // Use Promise.allSettled to check all images even if some commands fail
     const results = await Promise.allSettled(
@@ -169,7 +171,7 @@ async function checkImagesExist(imageNames: string[]): Promise<boolean> {
     // This catch block might be redundant due to allSettled, but good for safety
     log.error('Error checking for Docker images.');
     catchError(error, {
-      context: { imageNames, function: 'checkImagesExist' },
+      context: { function: 'checkImagesExist', imageNames },
       fatal: false,
       logToFile: true,
     });
