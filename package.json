@@ -1,6 +1,6 @@
 {
   "name": "@face-to-face-it/directus-template-cli",
-  "version": "0.7.4-f2f.1",
+  "version": "0.7.4",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "contributors": [
@@ -18,7 +18,7 @@
     "url": "https://github.com/Face-to-Face-IT/directus-template-cli.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com/"
   },
   "files": [
     "/bin",
