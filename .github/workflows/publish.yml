@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout
@@ -29,6 +30,14 @@ jobs:
           scope: '@face-to-face-it'
           cache: 'pnpm'
 
+      - name: Verify npm config
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" > ~/.npmrc
+          echo "@face-to-face-it:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          cat ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -36,6 +45,6 @@ jobs:
         run: pnpm build
 
       - name: Publish to GitHub Packages
-        run: pnpm publish --no-git-checks --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
