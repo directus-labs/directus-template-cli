@@ -19,7 +19,10 @@ export default async function extractCollections(dir: string) {
     )
     await writeToFile('collections', collections, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_collections'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

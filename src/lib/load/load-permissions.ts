@@ -30,7 +30,10 @@ export default async function loadPermissions(
         await api.client.request(createPermissions(newPermissions))
       }
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_permissions'},
+      fatal: true,
+    })
     }
   }
 

@@ -19,7 +19,10 @@ export async function extractDashboards(dir: string) {
     const dashboards = filterFields(response, directusDashboardFields)
     await writeToFile('dashboards', dashboards, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_dashboards'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
@@ -36,7 +39,10 @@ export async function extractPanels(dir: string) {
     const panels = filterFields(response, directusPanelFields)
     await writeToFile('panels', panels, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_dashboards'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

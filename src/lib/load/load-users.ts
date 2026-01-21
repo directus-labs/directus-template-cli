@@ -61,7 +61,10 @@ export default async function loadUsers(
       try {
         await api.client.request(createUser(user))
       } catch (error) {
-        catchError(error)
+        catchError(error, {
+      context: {operation: 'load_users'},
+      fatal: true,
+    })
       }
     }
   }

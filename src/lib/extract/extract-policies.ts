@@ -24,7 +24,10 @@ export default async function extractPolicies(dir: string) {
 
     await writeToFile('policies', response, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_policies'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
