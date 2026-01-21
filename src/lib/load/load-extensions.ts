@@ -52,7 +52,10 @@ export default async function loadExtensions(dir: string): Promise<void> {
             })
             return `-- Installed ${ext.schema?.name}`
           } catch (error) {
-            catchError(error)
+            catchError(error, {
+      context: {operation: 'load_extensions'},
+      fatal: true,
+    })
             return `-- Failed to install ${ext.schema?.name}`
           }
         }))

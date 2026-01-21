@@ -38,7 +38,10 @@ async function processCollections(collectionsToAdd: any[], fieldsToAdd: any[]) {
 
       await (existingCollection ? addNewFieldsToExistingCollection(collection.collection, fieldsToAdd, existingFields) : addNewCollectionWithFields(collection, fieldsToAdd))
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_collections'},
+      fatal: true,
+    })
     }
   }
 }
@@ -85,7 +88,10 @@ async function addNewFieldsToExistingCollection(collectionName: string, fieldsTo
         // @ts-ignore - ignore
         await api.client.request(createField(collectionName, field))
       } catch (error) {
-        catchError(error)
+        catchError(error, {
+      context: {operation: 'load_collections'},
+      fatal: true,
+    })
       }
     }
   }
@@ -103,7 +109,10 @@ async function updateCollections(collections: any[]) {
         await api.client.request(updateCollection(collection.collection, pl))
       }
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_collections'},
+      fatal: true,
+    })
     }
   }
 }
@@ -126,7 +135,10 @@ async function addCustomFieldsOnSystemCollections(fields: any[]) {
         await api.client.request(createField(field.collection, field))
       }
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_collections'},
+      fatal: true,
+    })
     }
   }
 }

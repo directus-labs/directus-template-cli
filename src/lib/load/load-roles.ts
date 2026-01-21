@@ -43,7 +43,10 @@ export default async function loadRoles(dir: string) {
         existingRoleIds.add(role.id)
         existingRoleNames.add(role.name.toLowerCase())
       } catch (error) {
-        catchError(error)
+        catchError(error, {
+      context: {operation: 'load_roles'},
+      fatal: true,
+    })
       }
     }
 
@@ -59,7 +62,10 @@ export default async function loadRoles(dir: string) {
         const simplifiedRole = {parent: role.parent}
         await api.client.request(updateRole(role.id, simplifiedRole))
       } catch (error) {
-        catchError(error)
+        catchError(error, {
+      context: {operation: 'load_roles'},
+      fatal: true,
+    })
       }
     }
   }

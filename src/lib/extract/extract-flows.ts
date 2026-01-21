@@ -19,7 +19,10 @@ export async function extractFlows(dir: string) {
     const flows = filterFields(response, directusFlowFields)
     await writeToFile('flows', flows, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_flows'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
@@ -36,7 +39,10 @@ export async function extractOperations(dir: string) {
     const operations = filterFields(response, directusOperationFields)
     await writeToFile('operations', operations, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_flows'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
