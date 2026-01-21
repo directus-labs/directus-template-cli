@@ -39,7 +39,10 @@ export default async function loadFlows(dir: string) {
 
       await loadOperations(newOperations)
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_flows'},
+      fatal: true,
+    })
     } finally {
       ux.action.stop()
     }
@@ -72,6 +75,9 @@ export async function loadOperations(operations: any[]) {
       }
     }
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'load_flows'},
+      fatal: true,
+    })
   }
 }

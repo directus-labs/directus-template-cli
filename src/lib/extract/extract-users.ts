@@ -19,7 +19,10 @@ export default async function extractUsers(dir: string) {
     const users = filterFields(response, directusUserFields)
     await writeToFile('users', users, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_users'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

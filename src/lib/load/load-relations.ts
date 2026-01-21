@@ -46,7 +46,10 @@ async function addRelations(relations: any[]) {
     try {
       await api.client.request(createRelation(relation))
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_relations'},
+      fatal: true,
+    })
     }
   }
 }

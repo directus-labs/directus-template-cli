@@ -19,7 +19,10 @@ export default async function extractSchema(dir: string) {
     const schema = await api.client.request(schemaSnapshot())
     await writeToFile('schema/snapshot', schema, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_schema'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

@@ -54,11 +54,17 @@ export default async function loadFiles(dir: string) {
         try {
           await api.client.request(uploadFiles(form as any))
         } catch (error) {
-          catchError(error)
+          catchError(error, {
+      context: {operation: 'load_files'},
+      fatal: true,
+    })
         }
       }))
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_files'},
+      fatal: true,
+    })
     }
   }
 
