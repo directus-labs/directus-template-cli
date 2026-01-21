@@ -36,6 +36,6 @@ jobs:
         run: pnpm build
 
       - name: Publish to GitHub Packages
-        run: pnpm publish --no-git-checks --access restricted
+        run: pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
