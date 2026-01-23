@@ -49,3 +49,8 @@ export const disableTelemetry = Flags.boolean({
   description: 'Disable telemetry',
   env: 'DISABLE_TELEMETRY',
 })
+
+export const githubToken = Flags.string({
+  description: 'GitHub token for accessing private repositories',
+  env: 'GIGET_AUTH',
+})

@@ -11,6 +11,7 @@ export interface ApplyFlags {
   extensions: boolean;
   files: boolean;
   flows: boolean;
+  githubToken?: string;
   partial: boolean;
   permissions: boolean;
   programmatic: boolean;
