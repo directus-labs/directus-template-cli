@@ -56,6 +56,7 @@ static flags = {
       default: undefined,
       description: 'Load Flows (operations, flows)',
     }),
+    githubToken: customFlags.githubToken,
     partial: Flags.boolean({
       dependsOn: ['programmatic'],
       description: 'Enable partial template application (all components enabled by default)',
@@ -147,9 +148,9 @@ static flags = {
 
     case 'github': {
       const ghTemplateUrl = await text({
-        message: 'What is the public GitHub repository URL?',
+        message: 'What is the GitHub repository URL?',
       })
-      template = await getGithubTemplate(ghTemplateUrl as string)
+      template = await getGithubTemplate(ghTemplateUrl as string, validatedFlags.githubToken)
       break
     }
 
@@ -267,7 +268,7 @@ static flags = {
     }
 
     case 'github': {
-      template = await getGithubTemplate(validatedFlags.templateLocation)
+      template = await getGithubTemplate(validatedFlags.templateLocation, validatedFlags.githubToken)
       break
     }
 

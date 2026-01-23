@@ -97,9 +97,9 @@ async function findNestedTemplates(dir: string, depth: number): Promise<Template
   return templates
 }
 
-export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template> {
+export async function getGithubTemplate(ghTemplateUrl: string, authToken?: string): Promise<Template> {
   try {
-    const ghString = await transformGitHubUrl(ghTemplateUrl)
+    const ghString = transformGitHubUrl(ghTemplateUrl)
     const downloadDir = resolvePathAndCheckExistence(path.join(__dirname, '..', 'downloads', 'github'), false)
 
     if (!downloadDir) {
@@ -107,6 +107,7 @@ export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template
     }
 
     const {dir} = await downloadTemplate(ghString, {
+      auth: authToken,
       dir: downloadDir,
       force: true,
       forceClean: true,
