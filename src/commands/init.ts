@@ -310,8 +310,6 @@ export default class InitCommand extends BaseCommand {
 
       await shutdown()
     }
-
-    ux.exit(0)
   }
 
 }

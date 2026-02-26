@@ -166,7 +166,7 @@ export default class ApplyCommand extends BaseCommand {
     case 'directus-plus': {
       openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
       log.info('Redirecting to Directus website.')
-      ux.exit(0)
+      return
     }
     }
 
@@ -246,7 +246,6 @@ export default class ApplyCommand extends BaseCommand {
       log.info(BSL_LICENSE_CTA)
 
       ux.stdout('Template applied successfully.')
-      ux.exit(0)
     }
   }
 
@@ -336,8 +335,6 @@ export default class ApplyCommand extends BaseCommand {
     // log.warn(BSL_LICENSE_HEADLINE)
     // log.info(BSL_LICENSE_TEXT)
     // log.info(BSL_LICENSE_CTA)
-
-    ux.exit(0)
   }
 
   /**
