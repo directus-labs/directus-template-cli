@@ -1,5 +1,5 @@
 import {intro, log, select, text} from '@clack/prompts'
-import {ux} from '@oclif/core'
+import {Flags, ux} from '@oclif/core'
 import slugify from '@sindresorhus/slugify'
 import chalk from 'chalk'
 import fs from 'node:fs'
@@ -8,6 +8,7 @@ import path from 'pathe'
 import * as customFlags from '../flags/common.js'
 import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
 import extract from '../lib/extract/index.js'
+import {type ExtractFlags, validateExtractFlags} from '../lib/extract/extract-flags.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {getDirectusEmailAndPassword, getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
@@ -18,32 +19,75 @@ import {
 import { shutdown, track } from '../services/posthog.js'
 import { BaseCommand } from './base.js'
 
-export interface ExtractFlags {
-  directusToken: string;
-  directusUrl: string;
-  disableTelemetry?: boolean;
-  programmatic: boolean;
-  templateLocation: string;
-  templateName: string;
-  userEmail: string;
-  userPassword: string;
-}
+export type {ExtractFlags} from '../lib/extract/extract-flags.js'
 
 export default class ExtractCommand extends BaseCommand {
   static description = 'Extract a template from a Directus instance.'
-static examples = [
+
+  static examples = [
     '$ directus-template-cli extract',
     '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
+    '$ directus-template-cli extract -p --partial --no-content --no-users --templateName="Schema Only" --templateLocation="./schema-template" --directusToken="token" --directusUrl="http://localhost:8055"',
   ]
-static flags = {
+
+  static flags = {
+    content: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract content (data)',
+    }),
+    dashboards: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract dashboards and panels',
+    }),
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
     disableTelemetry: customFlags.disableTelemetry,
+    extensions: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract extensions',
+    }),
+    files: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract files and folders',
+    }),
+    flows: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract flows and operations',
+    }),
+    partial: Flags.boolean({
+      dependsOn: ['programmatic'],
+      description: 'Enable partial extraction (select components with --no-* flags)',
+    }),
+    permissions: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract permissions (roles, policies, access)',
+    }),
     programmatic: customFlags.programmatic,
+    schema: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract schema (collections, fields, relations)',
+    }),
+    settings: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract settings (project settings, translations, presets)',
+    }),
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
     userPassword: customFlags.userPassword,
+    users: Flags.boolean({
+      allowNo: true,
+      default: undefined,
+      description: 'Extract users',
+    }),
   }
 
   /**
@@ -107,7 +151,7 @@ static flags = {
 
     ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
 
-    await extract(directory)
+    await extract(directory, flags)
 
     ux.action.stop()
 
@@ -199,12 +243,13 @@ static flags = {
    */
   private async runProgrammatic(flags: ExtractFlags): Promise<void> {
     this.validateProgrammaticFlags(flags)
+    const validatedFlags = validateExtractFlags(flags)
 
-    const {templateLocation, templateName} = flags
+    const {templateLocation, templateName} = validatedFlags
 
-    await initializeDirectusApi(flags)
+    await initializeDirectusApi(validatedFlags)
 
-    await this.extractTemplate(templateName, templateLocation, flags)
+    await this.extractTemplate(templateName, templateLocation, validatedFlags)
   }
 
   /**
