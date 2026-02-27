@@ -56,6 +56,10 @@ static flags = {
       default: undefined,
       description: 'Load Flows (operations, flows)',
     }),
+    noExit: Flags.boolean({
+      default: false,
+      hidden: true,
+    }),
     partial: Flags.boolean({
       dependsOn: ['programmatic'],
       description: 'Enable partial template application (all components enabled by default)',
@@ -164,7 +168,8 @@ static flags = {
     case 'directus-plus': {
       openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
       log.info('Redirecting to Directus website.')
-      ux.exit(0)
+      if (!validatedFlags.noExit) process.exit(0)
+      return
     }
     }
 
@@ -244,7 +249,8 @@ static flags = {
       log.info(BSL_LICENSE_CTA)
 
       ux.stdout('Template applied successfully.')
-      ux.exit(0)
+      if (!validatedFlags.noExit) process.exit(0)
+      return
     }
   }
 
@@ -329,13 +335,12 @@ static flags = {
 
     ux.stdout(SEPARATOR)
     ux.stdout('Template applied successfully.')
+    if (!validatedFlags.noExit) process.exit(0)
 
     // Hide BSL license info if running programatically for now
     // log.warn(BSL_LICENSE_HEADLINE)
     // log.info(BSL_LICENSE_TEXT)
     // log.info(BSL_LICENSE_CTA)
-
-    ux.exit(0)
   }
 
   /**

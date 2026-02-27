@@ -319,7 +319,7 @@ private targetDir = '.'
       await shutdown()
     }
 
-    ux.exit(0)
+    process.exit(0)
   }
 
 }

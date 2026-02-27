@@ -1,6 +1,7 @@
 import {isCancel, log, password, text} from '@clack/prompts'
 import {readMe} from '@directus/sdk'
 import {ux} from '@oclif/core'
+import process from 'node:process'
 
 import { DEFAULT_DIRECTUS_URL } from '../../lib/constants.js'
 import {api} from '../sdk.js'
@@ -26,7 +27,7 @@ export async function getDirectusUrl() {
 
   if (isCancel(directusUrl)) {
     log.info('Exiting...')
-    ux.exit(0)
+    process.exit(0)
   }
 
   if (!directusUrl) {
@@ -58,7 +59,7 @@ export async function getDirectusToken(directusUrl: string) {
 
   if (isCancel(directusToken)) {
     log.info('Exiting...')
-    ux.exit(0)
+    process.exit(0)
   }
 
   // Validate token by fetching the user
@@ -90,7 +91,7 @@ export async function getDirectusEmailAndPassword() {
 
   if (isCancel(userEmail)) {
     log.info('Exiting...')
-    ux.exit(0)
+    process.exit(0)
   }
 
   const userPassword = await password({
@@ -104,7 +105,7 @@ export async function getDirectusEmailAndPassword() {
 
   if (isCancel(userPassword)) {
     log.info('Exiting...')
-    ux.exit(0)
+    process.exit(0)
   }
 
   return {userEmail, userPassword}
