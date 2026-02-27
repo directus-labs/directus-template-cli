@@ -147,6 +147,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
           await ApplyCommand.run([
             `--directusUrl=${directusInfo.url || 'http://localhost:8055'}`,
             '-p',
+            '--noExit',
             `--userEmail=${directusInfo.email}`,
             `--userPassword=${directusInfo.password}`,
             `--templateLocation=${templatePath}`,

@@ -10,6 +10,7 @@ export interface ApplyFlags {
   extensions: boolean;
   files: boolean;
   flows: boolean;
+  noExit?: boolean;
   partial: boolean;
   permissions: boolean;
   programmatic: boolean;

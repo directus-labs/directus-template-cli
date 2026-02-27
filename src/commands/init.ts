@@ -310,6 +310,8 @@ export default class InitCommand extends BaseCommand {
 
       await shutdown()
     }
+
+    process.exit(0)
   }
 
 }

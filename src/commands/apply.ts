@@ -57,6 +57,10 @@ export default class ApplyCommand extends BaseCommand {
       default: undefined,
       description: 'Load Flows (operations, flows)',
     }),
+    noExit: Flags.boolean({
+      default: false,
+      hidden: true,
+    }),
     partial: Flags.boolean({
       dependsOn: ['programmatic'],
       description: 'Enable partial template application (all components enabled by default)',
@@ -166,6 +170,7 @@ export default class ApplyCommand extends BaseCommand {
     case 'directus-plus': {
       openUrl('https://directus.io/plus?utm_source=directus-template-cli&utm_content=apply-command')
       log.info('Redirecting to Directus website.')
+      if (!validatedFlags.noExit) process.exit(0)
       return
     }
     }
@@ -246,6 +251,8 @@ export default class ApplyCommand extends BaseCommand {
       log.info(BSL_LICENSE_CTA)
 
       ux.stdout('Template applied successfully.')
+      if (!validatedFlags.noExit) process.exit(0)
+      return
     }
   }
 
@@ -330,6 +337,7 @@ export default class ApplyCommand extends BaseCommand {
 
     ux.stdout(SEPARATOR)
     ux.stdout('Template applied successfully.')
+    if (!validatedFlags.noExit) process.exit(0)
 
     // Hide BSL license info if running programatically for now
     // log.warn(BSL_LICENSE_HEADLINE)
