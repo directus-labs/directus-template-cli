@@ -33,7 +33,10 @@ export default async function loadPresets(dir: string) {
       try {
         await api.client.request(createPresets(presetsToAdd))
       } catch (error) {
-        catchError(error)
+        catchError(error, {
+      context: {operation: 'load_presets'},
+      fatal: true,
+    })
       }
     } else {
     // ux.stdout('-- No new presets to create')

@@ -19,7 +19,10 @@ export default async function extractRoles(dir: string) {
     const roles = filterFields(response, directusRoleFields)
     await writeToFile('roles', roles, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_roles'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

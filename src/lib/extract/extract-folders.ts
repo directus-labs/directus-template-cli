@@ -19,7 +19,10 @@ export default async function extractFolders(dir: string) {
     const folders = filterFields(response, directusFolderFields)
     await writeToFile('folders', folders, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_folders'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
