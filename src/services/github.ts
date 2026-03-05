@@ -147,7 +147,7 @@ export function createGitHub(token?: string) {
 
     if (!Array.isArray(rootContent)) return []
 
-    const directories = rootContent.filter(item => item.type === 'dir')
+    const directories = rootContent.filter(item => item.type === 'dir' && !item.name.startsWith('.') && !item.name.startsWith('_'))
 
     // Fetch package.json for each directory concurrently
     const templateInfos = await Promise.all(
