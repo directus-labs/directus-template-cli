@@ -1,6 +1,5 @@
 import { readFiles, uploadFiles } from '@directus/sdk'
 import { ux } from '@oclif/core'
-import { FormData } from 'formdata-node'
 import { readFileSync } from 'node:fs'
 import path from 'pathe'
 

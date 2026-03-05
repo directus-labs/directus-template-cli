@@ -49,9 +49,6 @@ importers:
       execa:
         specifier: 9.5.2
         version: 9.5.2
-      formdata-node:
-        specifier: ^6.0.3
-        version: 6.0.3
       giget:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2522,11 +2519,6 @@ packages:
     resolution:
       {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
-
-  formdata-node@6.0.3:
-    resolution:
-      {integrity: sha512-8e1++BCiTzUno9v5IZ2J6bv4RU+3UKDmqWUQD0MIMVCd9AdhWkO1gw57oo1mNEX1dMq2EGI+FbWz4B92pscSQg==}
-    engines: {node: '>= 18'}
 
   fs-extra@8.1.0:
     resolution:
@@ -7171,8 +7163,6 @@ snapshots:
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
-
-  formdata-node@6.0.3: {}
 
   fs-extra@8.1.0:
     dependencies:
