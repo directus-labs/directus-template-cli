@@ -19,7 +19,10 @@ async function getDataFromCollection(collection: string, dir: string) {
     const response = await api.client.request(readItems(collection as never, {limit: -1}))
     await writeToFile(`${collection}`, response, `${dir}/content/`)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_content'},
+      fatal: true,
+    })
   }
 }
 
@@ -29,7 +32,10 @@ export async function extractContent(dir: string) {
     const collections = await getCollections()
     await Promise.all(collections.map(collection => getDataFromCollection(collection, dir)))
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_content'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

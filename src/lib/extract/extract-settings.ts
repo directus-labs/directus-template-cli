@@ -16,7 +16,10 @@ export default async function extractSettings(dir: string) {
     const settings = await api.client.request(readSettings({limit: -1}))
     await writeToFile('settings', settings, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_settings'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

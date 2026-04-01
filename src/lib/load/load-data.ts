@@ -79,7 +79,10 @@ async function getExistingPrimaryKeys(collection: string, primaryKeyField: strin
       if (response.length < limit) break
       page++
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_data'},
+      fatal: true,
+    })
       break
     }
   }
@@ -91,7 +94,10 @@ async function uploadBatch(collection: string, batch: any[], method: Function) {
   try {
     await api.client.request(method(collection, batch))
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'load_data'},
+      fatal: true,
+    })
   }
 }
 
@@ -134,7 +140,10 @@ async function loadSingletons(dir:string) {
 
       await api.client.request(updateSingleton(name, cleanedData))
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+      context: {operation: 'load_data'},
+      fatal: true,
+    })
     }
   }))
 

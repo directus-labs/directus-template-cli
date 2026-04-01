@@ -36,10 +36,16 @@ export async function downloadAllFiles(dir: string) {
 
     const fileList = await getAssetList()
     await Promise.all(fileList.map(file => downloadFile(file, dir).catch(error => {
-      catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
+      catchError(`Error downloading ${file.filename_disk}: ${error.message}`, {
+        context: {fileId: file.id, filename: file.filename_disk, operation: 'downloadFile'},
+        fatal: false,
+      })
     })))
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_assets'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

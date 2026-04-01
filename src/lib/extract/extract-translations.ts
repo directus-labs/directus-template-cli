@@ -16,7 +16,10 @@ export default async function extractTranslations(dir: string) {
     const translations = await api.client.request(readTranslations({limit: -1}))
     await writeToFile('translations', translations, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_translations'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

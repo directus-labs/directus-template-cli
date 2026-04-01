@@ -30,7 +30,10 @@ export default async function extractPresets(dir: string) {
     })
     await writeToFile('presets', presets, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_presets'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

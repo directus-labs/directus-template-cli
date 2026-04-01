@@ -16,7 +16,10 @@ export default async function extractExtensions(dir: string) {
     const response = await api.client.request(readExtensions())
     await writeToFile('extensions', response, dir)
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {operation: 'extract_extensions'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()
