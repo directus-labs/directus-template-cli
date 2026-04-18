@@ -53,7 +53,7 @@ export default async function loadFiles(dir: string) {
           if (asset.folder) form.append('folder', asset.folder)
           form.append('type', mimeType)
 
-          form.append('file', file as any, fileName)
+          form.append('file', file as any)
 
           try {
             await api.client.request(uploadFiles(form as any))
