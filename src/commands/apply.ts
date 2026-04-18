@@ -10,7 +10,7 @@ import apply from '../lib/load/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {getDirectusEmailAndPassword, getDirectusToken, getDirectusUrl, initializeDirectusApi} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
-import {getCommunityTemplates, getGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template.js'
+import {getCommunityTemplates, getGithubTemplate, getInteractiveGithubTemplate, getInteractiveLocalTemplate, getLocalTemplate} from '../lib/utils/get-template.js'
 import {logger} from '../lib/utils/logger.js'
 import openUrl from '../lib/utils/open-url.js'
 import { shutdown, track } from '../services/posthog.js'
@@ -153,7 +153,7 @@ static flags = {
       const ghTemplateUrl = await text({
         message: 'What is the public GitHub repository URL?',
       })
-      template = await getGithubTemplate(ghTemplateUrl as string)
+      template = await this.selectGithubTemplate(ghTemplateUrl as string)
       break
     }
 
@@ -349,6 +349,29 @@ static flags = {
    * @param localTemplateDir - The local template directory path
    * @returns {Promise<Template>} - Returns the selected template
    */
+  private async selectGithubTemplate(ghTemplateUrl: string): Promise<Template> {
+    try {
+      const templates = await getInteractiveGithubTemplate(ghTemplateUrl)
+
+      if (templates.length === 1) {
+        return templates[0]
+      }
+
+      log.info('Multiple Directus templates found in this repository.')
+      const selectedTemplate = await select({
+        message: 'Select a template.',
+        options: templates.map(t => ({label: t.templateName, value: t})),
+      })
+      return selectedTemplate as Template
+    } catch (error) {
+      if (error instanceof Error) {
+        ux.error(error.message)
+      } else {
+        ux.error('An unknown error occurred while getting the GitHub template.')
+      }
+    }
+  }
+
   private async selectLocalTemplate(localTemplateDir: string): Promise<Template> {
     try {
       const templates = await getInteractiveLocalTemplate(localTemplateDir)

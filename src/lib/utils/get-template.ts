@@ -4,9 +4,10 @@ import {fileURLToPath} from 'node:url'
 import path, {dirname} from 'pathe'
 
 import {COMMUNITY_TEMPLATE_REPO} from '../constants.js'
+import {logger} from './logger.js'
 import resolvePathAndCheckExistence from './path.js'
 import {readAllTemplates, readTemplate} from './read-templates.js'
-import {transformGitHubUrl} from './transform-github-url.js'
+import {parseGitHubUrl, transformGitHubUrl} from './transform-github-url.js'
 
 // Create __dirname equivalent for ESM
 const __filename = fileURLToPath(import.meta.url)
@@ -97,27 +98,93 @@ async function findNestedTemplates(dir: string, depth: number): Promise<Template
   return templates
 }
 
+async function downloadGithubTemplate(ghTemplateUrl: string): Promise<string> {
+  const ghString = transformGitHubUrl(ghTemplateUrl)
+  const downloadDir = resolvePathAndCheckExistence(path.join(__dirname, '..', 'downloads', 'github'), false)
+
+  if (!downloadDir) {
+    throw new Error(`Invalid download directory: ${path.join(__dirname, '..', 'downloads', 'github')}`)
+  }
+
+  const {dir} = await downloadTemplate(ghString, {
+    dir: downloadDir,
+    force: true,
+    forceClean: true,
+  })
+
+  const resolvedDir = resolvePathAndCheckExistence(dir)
+  if (!resolvedDir) {
+    throw new Error(`Downloaded template directory does not exist: ${dir}`)
+  }
+
+  return resolvedDir
+}
+
+function buildSubpathUrl(ghTemplateUrl: string, templatePath: string): string {
+  const {owner, ref, repo} = parseGitHubUrl(ghTemplateUrl)
+  const normalizedPath = templatePath.split(path.sep).join('/')
+  return `https://github.com/${owner}/${repo}/tree/${ref || 'main'}/${normalizedPath}`
+}
+
 export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template> {
   try {
-    const ghString = await transformGitHubUrl(ghTemplateUrl)
-    const downloadDir = resolvePathAndCheckExistence(path.join(__dirname, '..', 'downloads', 'github'), false)
+    const resolvedDir = await downloadGithubTemplate(ghTemplateUrl)
 
-    if (!downloadDir) {
-      throw new Error(`Invalid download directory: ${path.join(__dirname, '..', 'downloads', 'github')}`)
+    const template = await readTemplate(resolvedDir)
+    if (template) {
+      return template
     }
 
-    const {dir} = await downloadTemplate(ghString, {
-      dir: downloadDir,
-      force: true,
-      forceClean: true,
-    })
+    const nested = await findNestedTemplates(resolvedDir, 3)
 
-    const resolvedDir = resolvePathAndCheckExistence(dir)
-    if (!resolvedDir) {
-      throw new Error(`Downloaded template directory does not exist: ${dir}`)
+    if (nested.length === 1) {
+      const subpath = path.relative(resolvedDir, nested[0].directoryPath)
+      const pinnedUrl = buildSubpathUrl(ghTemplateUrl, subpath)
+      logger.log(
+        'warn',
+        `Auto-selected nested template "${nested[0].templateName}" at ${subpath}. Pin --templateLocation="${pinnedUrl}" to avoid ambiguity if more templates are added.`,
+      )
+      return nested[0]
     }
 
-    return readTemplate(resolvedDir)
+    if (nested.length > 1) {
+      const list = nested
+        .map(t => {
+          const subpath = path.relative(resolvedDir, t.directoryPath)
+          return `  --templateLocation="${buildSubpathUrl(ghTemplateUrl, subpath)}"   # ${t.templateName}`
+        })
+        .join('\n')
+      throw new Error(
+        `Found multiple Directus templates in ${ghTemplateUrl}. Re-run with one of:\n${list}`,
+      )
+    }
+
+    throw new Error(
+      `No Directus template found at ${ghTemplateUrl}. A Directus template needs a package.json with a "templateName" field.`,
+    )
+  } catch (error) {
+    throw new Error(`Failed to download GitHub template: ${error}`)
+  }
+}
+
+export async function getInteractiveGithubTemplate(ghTemplateUrl: string): Promise<Template[]> {
+  try {
+    const resolvedDir = await downloadGithubTemplate(ghTemplateUrl)
+
+    const template = await readTemplate(resolvedDir)
+    if (template) {
+      return [template]
+    }
+
+    const nested = await findNestedTemplates(resolvedDir, 3)
+
+    if (nested.length === 0) {
+      throw new Error(
+        `No Directus template found at ${ghTemplateUrl}. A Directus template needs a package.json with a "templateName" field.`,
+      )
+    }
+
+    return nested
   } catch (error) {
     throw new Error(`Failed to download GitHub template: ${error}`)
   }

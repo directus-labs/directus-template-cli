@@ -1,13 +1,26 @@
-export function transformGitHubUrl(url: string): string {
-  // Regular expression to capture the repository name and any subsequent path after the 'tree'
-  const regex = /github\.com\/([^/]+\/[^/]+)(?:\/tree\/[^/]+\/(.*))?$/
-  const match = url.match(regex)
+export interface ParsedGitHubUrl {
+  owner: string
+  ref?: string
+  repo: string
+  subpath?: string
+}
 
-  if (match) {
-    const repo = match[1]
-    const subpath = match[2] ? match[2] : ''
-    return `github:${repo}/${subpath}`
+export function parseGitHubUrl(url: string): ParsedGitHubUrl {
+  const cleaned = url.trim().replace(/\.git$/, '').replace(/\/+$/, '')
+  const regex = /github\.com\/([^/]+)\/([^/]+)(?:\/tree\/([^/]+)(?:\/(.+))?)?$/
+  const match = cleaned.match(regex)
+
+  if (!match) {
+    throw new Error(`Invalid GitHub URL: ${url}`)
   }
 
-  return 'Invalid URL'
+  const [, owner, repo, ref, subpath] = match
+  return {owner, ref, repo, subpath}
+}
+
+export function transformGitHubUrl(url: string): string {
+  const {owner, ref, repo, subpath} = parseGitHubUrl(url)
+  const pathPart = subpath ? `/${subpath}` : ''
+  const refPart = ref ? `#${ref}` : ''
+  return `github:${owner}/${repo}${pathPart}${refPart}`
 }
