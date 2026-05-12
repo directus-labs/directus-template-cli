@@ -2,6 +2,7 @@ import {readFields, readRelations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import writeToFile from '../utils/write-to-file.js'
@@ -10,7 +11,7 @@ import writeToFile from '../utils/write-to-file.js'
  * Extract relations from the Directus instance
  */
 
-export default async function extractRelations(dir: string) {
+export default async function extractRelations(dir: string, plan?: TemplatePlan) {
   ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting relations'))
   try {
     const response = await api.client.request(readRelations())
@@ -33,6 +34,9 @@ export default async function extractRelations(dir: string) {
             f.collection === i.collection && f.field === i.field,
         ),
     )
+    .filter((i: any) => includesCollection(i.collection, plan))
+    // Phase 4 relation strategies may keep relations to excluded collections for ids/deep behavior.
+    .filter((i: any) => !i.related_collection || includesCollection(i.related_collection, plan))
     .map(i => {
       delete i.meta.id
       return i

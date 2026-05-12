@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 
-import {buildTemplatePlan, createTemplateMetadata} from '../src/lib/template-plan/index.js'
+import {applyMetadataToPlan, buildTemplatePlan, createTemplateMetadata} from '../src/lib/template-plan/index.js'
 
 describe('template plan', () => {
   it('defaults to full template', () => {
@@ -78,5 +78,20 @@ describe('template plan', () => {
 
     expect(metadata.excludedCollections).to.deep.equal(['directus_files'])
     expect(metadata).not.to.have.property('excludeCollections')
+  })
+
+  it('applies metadata as available template bounds', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({collections: 'posts,pages', files: false}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'posts,authors'}), metadata)
+
+    expect(plan.components.files).to.equal(false)
+    expect(plan.collections).to.deep.equal(['posts'])
+  })
+
+  it('merges requested and metadata excluded collections', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files'}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({excludeCollections: 'analytics_events'}), metadata)
+
+    expect(plan.excludeCollections).to.deep.equal(['analytics_events', 'directus_files'])
   })
 })

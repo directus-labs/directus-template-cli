@@ -3,12 +3,14 @@ import {updateField} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
 
-export default async function updateRequiredFields(dir: string) {
+export default async function updateRequiredFields(dir: string, plan?: TemplatePlan) {
   const fieldsToUpdate = readFile('fields', dir)
+  .filter(field => includesCollection(field.collection, plan))
   .filter(field => field.meta.required === true || field.schema?.is_nullable === false || field.schema?.is_unique === true)
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Updating ${fieldsToUpdate.length} fields to required`))

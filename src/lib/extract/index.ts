@@ -32,9 +32,9 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
 
   if (plan.components.schema) {
     await extractSchema(destination)
-    await extractCollections(destination)
-    await extractFields(destination)
-    await extractRelations(destination)
+    await extractCollections(destination, plan)
+    await extractFields(destination, plan)
+    await extractRelations(destination, plan)
   }
 
   if (plan.components.files) {

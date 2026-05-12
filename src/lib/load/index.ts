@@ -2,7 +2,7 @@ import {ux} from '@oclif/core'
 
 import type {ApplyFlags} from './apply-flags.js'
 
-import {buildTemplatePlan, componentNames, readTemplateMetadata} from '../template-plan/index.js'
+import {applyMetadataToPlan, buildTemplatePlan, readTemplateMetadata} from '../template-plan/index.js'
 import checkTemplate from '../utils/check-template.js'
 import loadAccess from './load-access.js'
 import loadCollections from './load-collections.js'
@@ -26,13 +26,11 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   const source = `${dir}/src`
   const metadata = readTemplateMetadata(source)
   const requestedPlan = buildTemplatePlan(flags)
-  const components = {...requestedPlan.components}
+  const effectivePlan = applyMetadataToPlan(requestedPlan, metadata)
+  const components = effectivePlan.components
 
   if (metadata?.partial) {
     ux.warn('Template metadata indicates this is a partial template.')
-    for (const component of componentNames) {
-      components[component] = components[component] && metadata.components[component]
-    }
   }
 
   if (!metadata || components.schema) {
@@ -45,8 +43,8 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   }
 
   if (components.schema) {
-    await loadCollections(source)
-    await loadRelations(source)
+    await loadCollections(source, effectivePlan)
+    await loadRelations(source, effectivePlan)
   }
 
   if (components.permissions || components.users) {
@@ -67,11 +65,11 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   }
 
   if (components.content) {
-    await loadData(source)
+    await loadData(source, effectivePlan)
   }
 
   if (components.schema) {
-    await updateRequiredFields(source)
+    await updateRequiredFields(source, effectivePlan)
   }
 
   if (components.dashboards) {

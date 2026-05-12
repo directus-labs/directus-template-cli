@@ -6,6 +6,7 @@ import {
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
@@ -15,9 +16,11 @@ import readFile from '../utils/read-file.js'
  * @param dir - The directory to read the collections and fields from
  * @returns {Promise<void>} - Returns nothing
  */
-export default async function loadCollections(dir: string) {
+export default async function loadCollections(dir: string, plan?: TemplatePlan) {
   const collectionsToAdd = readFile('collections', dir)
+  .filter(collection => includesCollection(collection.collection, plan))
   const fieldsToAdd = readFile('fields', dir)
+  .filter(field => includesCollection(field.collection, plan))
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${collectionsToAdd.length} collections and ${fieldsToAdd.length} fields`))
 

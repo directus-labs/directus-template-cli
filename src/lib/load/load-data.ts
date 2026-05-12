@@ -3,6 +3,7 @@ import {ux} from '@oclif/core'
 import path from 'pathe'
 
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import {chunkArray} from '../utils/chunk-array.js'
@@ -10,24 +11,29 @@ import readFile from '../utils/read-file.js'
 
 const BATCH_SIZE = 50
 
-export default async function loadData(dir:string) {
-  const collections = readFile('collections', dir)
+export default async function loadData(dir:string, plan?: TemplatePlan) {
+  const collections = getUserCollections(dir, plan)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading data for ${collections.length} collections`))
 
-  await loadSkeletonRecords(dir)
-  await loadFullData(dir)
-  await loadSingletons(dir)
+  await loadSkeletonRecords(dir, plan)
+  await loadFullData(dir, plan)
+  await loadSingletons(dir, plan)
 
   ux.action.stop()
 }
 
-async function loadSkeletonRecords(dir: string) {
-  ux.action.status = 'Loading skeleton records'
+function getUserCollections(dir: string, plan?: TemplatePlan) {
   const collections = readFile('collections', dir)
-  const primaryKeyMap = await getCollectionPrimaryKeys(dir)
-  const userCollections = collections
+  return collections
   .filter(item => !item.collection.startsWith('directus_', 0))
   .filter(item => item.schema !== null)
+  .filter(item => includesCollection(item.collection, plan))
+}
+
+async function loadSkeletonRecords(dir: string, plan?: TemplatePlan) {
+  ux.action.status = 'Loading skeleton records'
+  const primaryKeyMap = await getCollectionPrimaryKeys(dir)
+  const userCollections = getUserCollections(dir, plan)
   .filter(item => !item.meta.singleton)
 
   await Promise.all(userCollections.map(async collection => {
@@ -95,12 +101,9 @@ async function uploadBatch(collection: string, batch: any[], method: Function) {
   }
 }
 
-async function loadFullData(dir:string) {
+async function loadFullData(dir:string, plan?: TemplatePlan) {
   ux.action.status = 'Updating records with full data'
-  const collections = readFile('collections', dir)
-  const userCollections = collections
-  .filter(item => !item.collection.startsWith('directus_', 0))
-  .filter(item => item.schema !== null)
+  const userCollections = getUserCollections(dir, plan)
   .filter(item => !item.meta.singleton)
 
   await Promise.all(userCollections.map(async collection => {
@@ -118,11 +121,9 @@ async function loadFullData(dir:string) {
   ux.action.status = 'Updated records with full data'
 }
 
-async function loadSingletons(dir:string) {
+async function loadSingletons(dir:string, plan?: TemplatePlan) {
   ux.action.status = 'Loading data for singleton collections'
-  const collections = readFile('collections', dir)
-  const singletonCollections = collections
-  .filter(item => !item.collection.startsWith('directus_', 0))
+  const singletonCollections = getUserCollections(dir, plan)
   .filter(item => item.meta.singleton)
 
   await Promise.all(singletonCollections.map(async collection => {

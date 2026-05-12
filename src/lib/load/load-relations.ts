@@ -2,6 +2,7 @@ import {createRelation, readRelations} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
@@ -11,8 +12,11 @@ import readFile from '../utils/read-file.js'
  * @param dir - The directory to read the relations from
  * @returns {Promise<void>} - Returns nothing
  */
-export default async function loadRelations(dir: string) {
+export default async function loadRelations(dir: string, plan?: TemplatePlan) {
   const relations = readFile('relations', dir)
+  .filter(relation => includesCollection(relation.collection, plan))
+  // Phase 4 relation strategies may keep relations to excluded collections for ids/deep behavior.
+  .filter(relation => !relation.related_collection || includesCollection(relation.related_collection, plan))
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${relations.length} relations`))
 
   if (relations && relations.length > 0) {

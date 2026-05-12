@@ -1,9 +1,8 @@
 import {readCollections, readItems} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
-import type {TemplatePlan} from '../template-plan/index.js'
-
 import {DIRECTUS_PINK} from '../constants.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import writeToFile from '../utils/write-to-file.js'
@@ -14,8 +13,7 @@ async function getCollections(plan?: TemplatePlan) {
     .filter((item) => !item.collection.startsWith('directus_', 0))
     .filter((item) => item.schema != null)
     .map((i) => i.collection)
-    .filter((collection) => !plan?.collections || plan.collections.includes(collection))
-    .filter((collection) => !plan?.excludeCollections?.includes(collection))
+    .filter((collection) => includesCollection(collection, plan))
 }
 
 async function getDataFromCollection(collection: string, dir: string) {
