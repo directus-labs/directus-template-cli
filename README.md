@@ -151,11 +151,10 @@ Using email/password:
 npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="admin" --templateLocation="./my-template" --templateType="local"
 ```
 
-Partial apply (apply only some of the parts of a template to the instance):
+Partial apply (apply only some parts of a template):
 
 ```
-npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --partial --schema --permissions --no-content
-
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --schema --permissions --no-content
 ```
 
 Available flags:
@@ -166,7 +165,7 @@ Available flags:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Location of the template to apply (required)
 - `--templateType`: Type of template to apply. Options: community, local, github. Defaults to `local`.
-- `--partial`: Enable partial template application
+- `--partial`: Enable partial template mode explicitly. Component and collection flags also imply partial mode.
 - `--content`: Load Content (data)
 - `--dashboards`: Load Dashboards
 - `--extensions`: Load Extensions
@@ -176,6 +175,11 @@ Available flags:
 - `--schema`: Load Schema
 - `--settings`: Load Settings
 - `--users`: Load Users
+- `--collections`: Only apply these comma-separated collections
+- `--excludeCollections`: Exclude these comma-separated collections
+- `--relationStrategy`: How to handle omitted relation targets. Options: `empty`, `ids`, `deep`.
+- `--allowBrokenRelations`: Apply templates that intentionally preserve references to omitted records
+- `--noAssets`: Shorthand for `--no-files` and excluding `directus_files`
 - `--disableTelemetry`: Disable telemetry collection
 
 When using `--partial`, you can also use `--no` flags to exclude specific components from being applied. For example:
@@ -197,28 +201,21 @@ This command will apply the template but exclude content and users. Available `-
 - `--no-users`: Skip loading Users
 
 
-#### Template Component Dependencies
+#### Partial Templates and Relations
 
-When applying templates, certain components have dependencies on others. Here are the key relationships to be aware of:
+Partial templates can intentionally omit components or collections. The CLI writes and reads `src/template-meta.json` so apply can understand what was extracted.
 
-- `--users`: Depends on `--permissions`. If you include users, permissions will automatically be included.
-- `--permissions`: Depends on `--schema`. If you include permissions, the schema will automatically be included.
-- `--content`: Depends on `--schema`. If you include content, the schema will automatically be included.
-- `--files`: No direct dependencies, but often related to content. Consider including `--content` if you're including files.
-- `--flows`: No direct dependencies, but may interact with other components. Consider your specific use case.
-- `--dashboards`: No direct dependencies, but often rely on data from other components.
-- `--extensions`: No direct dependencies, but may interact with other components.
-- `--settings`: No direct dependencies, but affects the overall system configuration.
+Relation strategies:
 
-When using the `--partial` flag, keep these dependencies in mind. For example:
+- `empty`: Relations to omitted collections are exported as `null` or `[]`.
+- `ids`: Relation IDs are preserved, but omitted related records are not exported. Apply requires `--allowBrokenRelations` when metadata reports these references.
+- `deep`: Related collections are added recursively where possible. Explicit exclusions still win.
+
+Skip assets safely:
 
 ```
-npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --users
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --content --collections posts,pages --noAssets --relationStrategy empty
 ```
-
-This command will automatically include `--permissions` and `--schema` along with `--users`, even if not explicitly specified.
-
-If you use `--no-` flags, be cautious about excluding dependencies. For instance, using `--no-schema` while including `--content` may lead to errors or incomplete application of the template.
 
 #### Using Environment Variables
 
@@ -254,7 +251,7 @@ For data in your own user-created collections, if an item has the same primary k
 
 The CLI can also extract a template from a Directus instance so that it can be applied to other instances.
 
-Note: We do not currently support partial extraction. The entire template will be extracted. We thought it better to have the data and not need it, than need it and not have it.
+Full extraction remains the default. Partial extraction is available with component flags, collection filters, and relation strategies.
 
 1. Make sure you remove any sensitive data from the Directus instance you don't want to include in the template.
 2. Login and create a Static Access Token for the admin user.
@@ -289,7 +286,42 @@ Available flags:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Directory to extract the template to (required)
 - `--templateName`: Name of the template (required)
+- `--partial`: Enable partial template mode explicitly. Component and collection flags also imply partial mode.
+- `--schema` / `--no-schema`: Include or skip schema
+- `--content` / `--no-content`: Include or skip content
+- `--files` / `--no-files`: Include or skip files and assets
+- `--flows` / `--no-flows`: Include or skip flows
+- `--dashboards` / `--no-dashboards`: Include or skip dashboards
+- `--permissions` / `--no-permissions`: Include or skip permissions
+- `--settings` / `--no-settings`: Include or skip settings
+- `--extensions` / `--no-extensions`: Include or skip extensions
+- `--users` / `--no-users`: Include or skip users
+- `--collections`: Only extract these comma-separated collections
+- `--excludeCollections`: Exclude these comma-separated collections
+- `--relationStrategy`: How to handle omitted relation targets. Options: `empty`, `ids`, `deep`.
+- `--allowBrokenRelations`: Mark intentionally incomplete relation references as allowed in metadata
+- `--noAssets`: Shorthand for `--no-files` and excluding `directus_files`
 - `--disableTelemetry`: Disable telemetry collection
+
+Examples:
+
+Skip assets safely:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --noAssets --relationStrategy empty
+```
+
+Preserve asset IDs but do not export assets:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --noAssets --relationStrategy ids --allowBrokenRelations
+```
+
+Portable partial snapshot:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --relationStrategy deep
+```
 
 #### Using Environment Variables
 

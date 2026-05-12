@@ -7,10 +7,13 @@ import {includesCollection, type TemplatePlan, type TemplateWarning} from '../te
 import catchError from '../utils/catch-error.js'
 import writeToFile from '../utils/write-to-file.js'
 
+// Content items are JSON-only, so pages can be larger than asset download pages.
+const PAGE_SIZE = 500
+
 interface RelationInfo {
   collection: string
   field: string
-  related_collection?: string
+  related_collection?: null | string
 }
 
 async function getCollections(plan?: TemplatePlan) {
@@ -20,6 +23,21 @@ async function getCollections(plan?: TemplatePlan) {
     .filter((item) => item.schema !== null)
     .map((i) => i.collection)
     .filter((collection) => includesCollection(collection, plan))
+}
+
+async function getCollectionItems(collection: string): Promise<Record<string, unknown>[]> {
+  const items: Record<string, unknown>[] = []
+  let page = 1
+
+  while (true) {
+    const response = await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page})) as Record<string, unknown>[]
+    items.push(...response)
+
+    if (response.length < PAGE_SIZE) break
+    page++
+  }
+
+  return items
 }
 
 function getExcludedRelationFields(collection: string, relations: RelationInfo[], plan?: TemplatePlan): RelationInfo[] {
@@ -69,7 +87,8 @@ async function getDataFromCollection(
   plan?: TemplatePlan,
 ): Promise<TemplateWarning[]> {
   try {
-    const response = await api.client.request(readItems(collection as never, {limit: -1})) as Record<string, unknown>[]
+    ux.action.status = `Extracting content: ${collection}`
+    const response = await getCollectionItems(collection)
     const excludedRelations = getExcludedRelationFields(collection, relations, plan)
 
     if (plan?.relationStrategy === 'empty') {
@@ -90,18 +109,19 @@ async function getDataFromCollection(
 
 export async function extractContent(dir: string, plan?: TemplatePlan): Promise<TemplateWarning[]> {
   ux.action.start(ux.colorize(DIRECTUS_PINK, 'Extracting content'))
+  const warnings: TemplateWarning[] = []
+
   try {
     const collections = await getCollections(plan)
     const relations = await api.client.request(readRelations()) as RelationInfo[]
-    const warnings = await Promise.all(
-      collections.map((collection) => getDataFromCollection(collection, dir, relations, plan)),
-    )
-    ux.action.stop()
-    return warnings.flat()
+
+    for (const collection of collections) {
+      warnings.push(...await getDataFromCollection(collection, dir, relations, plan))
+    }
   } catch (error) {
     catchError(error)
   }
 
   ux.action.stop()
-  return []
+  return warnings
 }
