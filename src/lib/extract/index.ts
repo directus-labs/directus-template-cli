@@ -1,6 +1,7 @@
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
+import {buildTemplatePlan, type TemplatePlan, writeTemplateMetadata} from '../template-plan/index.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
 import extractCollections from './extract-collections.js'
@@ -21,47 +22,64 @@ import extractSettings from './extract-settings.js'
 import extractTranslations from './extract-translations.js'
 import extractUsers from './extract-users.js'
 
-export default async function extract(dir: string) {
-  // Get the destination directory for the actual files
+export default async function extract(dir: string, plan: TemplatePlan = buildTemplatePlan()) {
   const destination = `${dir}/src`
 
-  // Check if directory exists, if not, then create it.
   if (!fs.existsSync(destination)) {
     ux.stdout(`Attempting to create directory at: ${destination}`)
     fs.mkdirSync(destination, {recursive: true})
   }
 
-  await extractSchema(destination)
+  if (plan.components.schema) {
+    await extractSchema(destination)
+    await extractCollections(destination)
+    await extractFields(destination)
+    await extractRelations(destination)
+  }
 
-  await extractCollections(destination)
-  await extractFields(destination)
-  await extractRelations(destination)
+  if (plan.components.files) {
+    await extractFolders(destination)
+    await extractFiles(destination)
+    await downloadAllFiles(destination)
+  }
 
-  await extractFolders(destination)
-  await extractFiles(destination)
+  if (plan.components.users || plan.components.permissions) {
+    await extractRoles(destination)
+    await extractPermissions(destination)
+    await extractPolicies(destination)
 
-  await extractUsers(destination)
-  await extractRoles(destination)
-  await extractPermissions(destination)
-  await extractPolicies(destination)
-  await extractAccess(destination)
+    if (plan.components.users) {
+      await extractUsers(destination)
+    }
 
-  await extractPresets(destination)
+    await extractAccess(destination)
+  }
 
-  await extractTranslations(destination)
+  if (plan.components.settings) {
+    await extractPresets(destination)
+    await extractTranslations(destination)
+    await extractSettings(destination)
+  }
 
-  await extractFlows(destination)
-  await extractOperations(destination)
+  if (plan.components.flows) {
+    await extractFlows(destination)
+    await extractOperations(destination)
+  }
 
-  await extractDashboards(destination)
-  await extractPanels(destination)
+  if (plan.components.dashboards) {
+    await extractDashboards(destination)
+    await extractPanels(destination)
+  }
 
-  await extractSettings(destination)
-  await extractExtensions(destination)
+  if (plan.components.extensions) {
+    await extractExtensions(destination)
+  }
 
-  await extractContent(destination)
+  if (plan.components.content) {
+    await extractContent(destination, plan)
+  }
 
-  await downloadAllFiles(destination)
+  await writeTemplateMetadata(destination, plan)
 
   return {}
 }

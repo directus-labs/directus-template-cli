@@ -1,7 +1,8 @@
 import {ux} from '@oclif/core'
 
-import type { ApplyFlags } from './apply-flags.js'
+import type {ApplyFlags} from './apply-flags.js'
 
+import {buildTemplatePlan, componentNames, readTemplateMetadata} from '../template-plan/index.js'
 import checkTemplate from '../utils/check-template.js'
 import loadAccess from './load-access.js'
 import loadCollections from './load-collections.js'
@@ -21,59 +22,73 @@ import loadTranslations from './load-translations.js'
 import loadUsers from './load-users.js'
 import updateRequiredFields from './update-required-fields.js'
 
-
 export default async function apply(dir: string, flags: ApplyFlags) {
   const source = `${dir}/src`
-  const isTemplateOk = await checkTemplate(source)
-  if (!isTemplateOk) {
-    ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
+  const metadata = readTemplateMetadata(source)
+  const requestedPlan = buildTemplatePlan(flags)
+  const components = {...requestedPlan.components}
+
+  if (metadata?.partial) {
+    ux.warn('Template metadata indicates this is a partial template.')
+    for (const component of componentNames) {
+      components[component] = components[component] && metadata.components[component]
+    }
   }
 
-  if (flags.schema) {
+  if (!metadata || components.schema) {
+    const isTemplateOk = await checkTemplate(source)
+    if (!isTemplateOk) {
+      ux.error(
+        'The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...',
+      )
+    }
+  }
+
+  if (components.schema) {
     await loadCollections(source)
     await loadRelations(source)
   }
 
-  if (flags.permissions || flags.users) {
+  if (components.permissions || components.users) {
     await loadRoles(source)
     await loadPolicies(source)
     await loadPermissions(source)
 
-    if (flags.users) {
+    if (components.users) {
       await loadUsers(source)
     }
 
     await loadAccess(source)
   }
 
-  if (flags.files) {
+  if (components.files) {
     await loadFolders(source)
     await loadFiles(source)
   }
 
-  if (flags.content) {
+  if (components.content) {
     await loadData(source)
   }
 
-  if (flags.schema) {
+  if (components.schema) {
     await updateRequiredFields(source)
   }
 
-  if (flags.dashboards) {
+  if (components.dashboards) {
     await loadDashboards(source)
   }
 
-  if (flags.flows) {
+  if (components.flows) {
     await loadFlows(source)
   }
 
-  if (flags.settings) {
+  if (components.settings) {
     await loadSettings(source)
     await loadTranslations(source)
     await loadPresets(source)
   }
 
-  if (flags.extensions) {
+  if (components.extensions) {
     await loadExtensions(source)
   }
 
