@@ -1,7 +1,5 @@
 import {ux} from '@oclif/core'
 
-import {buildTemplatePlan, componentNames} from '../template-plan/index.js'
-
 export interface ApplyFlags {
   allowBrokenRelations?: boolean
   collections?: string
@@ -29,7 +27,17 @@ export interface ApplyFlags {
   users?: boolean
 }
 
-export const loadFlags = componentNames
+export const loadFlags = [
+  'content',
+  'dashboards',
+  'extensions',
+  'files',
+  'flows',
+  'permissions',
+  'schema',
+  'settings',
+  'users',
+] as const
 
 export function validateProgrammaticFlags(flags: ApplyFlags): ApplyFlags {
   const {directusToken, directusUrl, templateLocation, userEmail, userPassword} = flags
@@ -39,20 +47,9 @@ export function validateProgrammaticFlags(flags: ApplyFlags): ApplyFlags {
     ux.error('Either Directus token or email and password are required for programmatic mode.')
   if (!templateLocation) ux.error('Template location is required for programmatic mode.')
 
-  return applyTemplatePlan(flags)
+  return flags
 }
 
 export function validateInteractiveFlags(flags: ApplyFlags): ApplyFlags {
-  return applyTemplatePlan(flags)
-}
-
-function applyTemplatePlan(flags: ApplyFlags): ApplyFlags {
-  const plan = buildTemplatePlan(flags)
-  const nextFlags = {...flags, partial: plan.partial}
-
-  for (const flag of loadFlags) nextFlags[flag] = plan.components[flag]
-
-  if (plan.partial) ux.warn('Applying partial template. Missing components will not be auto-enabled.')
-
-  return nextFlags
+  return flags
 }

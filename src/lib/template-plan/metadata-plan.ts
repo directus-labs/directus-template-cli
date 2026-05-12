@@ -1,8 +1,13 @@
-import {componentNames} from './flags.js'
 import type {TemplateMetadata, TemplatePlan} from './types.js'
 
+import {componentNames} from './flags.js'
+
 function intersectCollections(requested?: string[], available?: string[]): string[] | undefined {
-  if (requested && available) return requested.filter(collection => available.includes(collection))
+  if (requested && available) {
+    const collections = requested.filter(collection => available.includes(collection))
+    return collections.length > 0 ? collections : undefined
+  }
+
   return requested || available
 }
 
@@ -19,11 +24,13 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
     components[component] = components[component] && metadata.components[component]
   }
 
+  const partial = metadata.partial || componentNames.some(component => components[component] !== plan.components[component])
+
   return {
     ...plan,
     collections: intersectCollections(plan.collections, metadata.collections),
     components,
     excludeCollections: mergeExcludedCollections(plan.excludeCollections, metadata.excludedCollections),
-    partial: plan.partial || metadata.partial,
+    partial,
   }
 }

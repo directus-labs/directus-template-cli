@@ -2,6 +2,7 @@ import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
 import {buildTemplatePlan, type TemplatePlan, type TemplateWarning, writeTemplateMetadata} from '../template-plan/index.js'
+import catchError from '../utils/catch-error.js'
 import {expandDeepPlan} from './expand-deep-plan.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
@@ -29,7 +30,11 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
 
   if (!fs.existsSync(destination)) {
     ux.stdout(`Attempting to create directory at: ${destination}`)
-    fs.mkdirSync(destination, {recursive: true})
+    try {
+      fs.mkdirSync(destination, {recursive: true})
+    } catch (error) {
+      catchError(error, {context: {destination}, fatal: true})
+    }
   }
 
   if (effectivePlan.components.schema) {
@@ -80,14 +85,22 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
   const warnings: TemplateWarning[] = []
 
   if (effectivePlan.components.content) {
-    warnings.push(...await extractContent(destination, effectivePlan))
+    const contentWarnings = await extractContent(destination, effectivePlan)
+    warnings.push(...contentWarnings)
   }
 
   for (const warning of warnings) {
     ux.warn(`Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`)
   }
 
-  await writeTemplateMetadata(destination, effectivePlan, warnings)
+  try {
+    await writeTemplateMetadata(destination, effectivePlan, warnings)
+  } catch (error) {
+    catchError(error, {
+      context: {function: 'writeTemplateMetadata'},
+      fatal: true,
+    })
+  }
 
   return {}
 }

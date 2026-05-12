@@ -29,12 +29,14 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   const effectivePlan = applyMetadataToPlan(requestedPlan, metadata)
   const {components} = effectivePlan
 
-  if (metadata?.partial) {
+  if (!metadata) {
+    ux.warn('No template-meta.json found. Treating as a full template — relation integrity check skipped.')
+  } else if (metadata.partial) {
     ux.warn('Template metadata indicates this is a partial template.')
   }
 
   const brokenRelationWarnings = metadata?.warnings?.filter(warning => warning.type === 'excluded_relation') || []
-  if (brokenRelationWarnings.length > 0 && !effectivePlan.allowBrokenRelations) {
+  if (components.content && brokenRelationWarnings.length > 0 && !effectivePlan.allowBrokenRelations) {
     ux.error('This partial template contains excluded relation references. Re-run with --allow-broken-relations to apply anyway.')
   }
 

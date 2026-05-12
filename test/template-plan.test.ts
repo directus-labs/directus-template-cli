@@ -130,4 +130,33 @@ describe('template plan', () => {
 
     expect(metadata.warnings).to.have.length(1)
   })
+
+  it('returns plan unchanged when no metadata (legacy fallback)', () => {
+    const plan = buildTemplatePlan({content: true, schema: true})
+    const result = applyMetadataToPlan(plan)
+
+    expect(result).to.equal(plan)
+  })
+
+  it('re-derives partial when metadata disables a component', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({files: false}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({}), metadata)
+
+    expect(plan.partial).to.equal(true)
+    expect(plan.components.files).to.equal(false)
+  })
+
+  it('does not apply requested collections outside metadata bounds', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({collections: 'posts,pages'}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'posts,authors'}), metadata)
+
+    expect(plan.collections).to.deep.equal(['posts'])
+  })
+
+  it('returns undefined collections when requested has no overlap with metadata', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({collections: 'posts'}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'authors'}), metadata)
+
+    expect(plan.collections).to.equal(undefined)
+  })
 })

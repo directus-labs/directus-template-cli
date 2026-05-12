@@ -3,6 +3,8 @@ import path from 'pathe'
 
 import type {TemplateMetadata, TemplatePlan, TemplateWarning} from './types.js'
 
+import catchError from '../utils/catch-error.js'
+
 const META_FILE = 'template-meta.json'
 
 export function createTemplateMetadata(plan: TemplatePlan, warnings: TemplateWarning[] = []): TemplateMetadata {
@@ -26,7 +28,16 @@ export function readTemplateMetadata(dir: string): TemplateMetadata | undefined 
   const filePath = getTemplateMetadataPath(dir)
   if (!fs.existsSync(filePath)) return undefined
 
-  return JSON.parse(fs.readFileSync(filePath, 'utf8')) as TemplateMetadata
+  try {
+    const metadata = JSON.parse(fs.readFileSync(filePath, 'utf8')) as TemplateMetadata
+    if (metadata.version !== 2) {
+      catchError(new Error(`Unsupported template metadata version: ${metadata.version}`), {fatal: true})
+    }
+
+    return metadata
+  } catch (error) {
+    catchError(error, {fatal: true})
+  }
 }
 
 export async function writeTemplateMetadata(

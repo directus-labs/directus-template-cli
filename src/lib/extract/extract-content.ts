@@ -30,6 +30,7 @@ async function getCollectionItems(collection: string): Promise<Record<string, un
   let page = 1
 
   while (true) {
+    // eslint-disable-next-line no-await-in-loop
     const response = await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page})) as Record<string, unknown>[]
     items.push(...response)
 
@@ -70,7 +71,8 @@ function getBrokenRelationWarnings(
   relations: RelationInfo[],
 ): TemplateWarning[] {
   return relations
-    .map((relation) => ({
+    .filter((relation): relation is RelationInfo & {related_collection: string} => Boolean(relation.related_collection))
+    .map((relation): TemplateWarning => ({
       collection,
       count: items.filter((item) => hasValue(item[relation.field])).length,
       field: relation.field,
@@ -102,7 +104,10 @@ async function getDataFromCollection(
     await writeToFile(`${collection}`, response, `${dir}/content/`)
     return warnings
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {collection, function: 'getDataFromCollection'},
+      fatal: true,
+    })
     return []
   }
 }
@@ -116,10 +121,15 @@ export async function extractContent(dir: string, plan?: TemplatePlan): Promise<
     const relations = await api.client.request(readRelations()) as RelationInfo[]
 
     for (const collection of collections) {
-      warnings.push(...await getDataFromCollection(collection, dir, relations, plan))
+      // eslint-disable-next-line no-await-in-loop
+      const collectionWarnings = await getDataFromCollection(collection, dir, relations, plan)
+      warnings.push(...collectionWarnings)
     }
   } catch (error) {
-    catchError(error)
+    catchError(error, {
+      context: {function: 'extractContent'},
+      fatal: true,
+    })
   }
 
   ux.action.stop()

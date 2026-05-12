@@ -13,6 +13,7 @@ function parseList(value?: string | string[]): string[] | undefined {
   return values.length > 0 ? values : undefined
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasPartialOnlyFlags(flags: any): boolean {
   return Boolean(
     flags.collections ||
@@ -23,10 +24,12 @@ function hasPartialOnlyFlags(flags: any): boolean {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasComponentFlags(flags: any): boolean {
   return componentNames.some((component) => flags[component] !== undefined)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildComponents(flags: any, partial: boolean): TemplateComponents {
   const components = {} as TemplateComponents
   const enabled = componentNames.filter((component) => flags[component] === true)
@@ -50,6 +53,7 @@ function buildComponents(flags: any, partial: boolean): TemplateComponents {
   return components
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildTemplatePlan(flags: any = {}): TemplatePlan {
   const collections = parseList(flags.collections)
   const excludeCollections = parseList(flags.excludeCollections) || (flags.noAssets ? [] : undefined)
@@ -76,6 +80,6 @@ export function buildTemplatePlan(flags: any = {}): TemplatePlan {
 
 export * from './collections.js'
 export * from './flags.js'
-export * from './metadata.js'
 export * from './metadata-plan.js'
+export * from './metadata.js'
 export * from './types.js'

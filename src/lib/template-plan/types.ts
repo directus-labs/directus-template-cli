@@ -21,12 +21,12 @@ export interface TemplatePlan {
   relationStrategy: RelationStrategy
 }
 
-export interface TemplateWarning {
-  collection?: string
-  count?: number
-  field?: string
-  relatedCollection?: string
-  type: string
+export type TemplateWarning = {
+  collection: string
+  count: number
+  field: string
+  relatedCollection: string
+  type: 'excluded_relation'
 }
 
 export interface TemplateMetadata extends Omit<TemplatePlan, 'excludeCollections'> {

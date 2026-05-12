@@ -46,8 +46,9 @@ export default async function loadRelations(dir: string, plan?: TemplatePlan) {
 type TemplateRelation = Parameters<typeof createRelation>[0]
 
 async function addRelations(relations: TemplateRelation[]) {
-  for await (const relation of relations) {
+  for (const relation of relations) {
     try {
+      // eslint-disable-next-line no-await-in-loop
       await api.client.request(createRelation(relation))
     } catch (error) {
       catchError(error)
