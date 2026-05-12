@@ -2,6 +2,7 @@ import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
 import {buildTemplatePlan, type TemplatePlan, type TemplateWarning, writeTemplateMetadata} from '../template-plan/index.js'
+import {expandDeepPlan} from './expand-deep-plan.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
 import extractCollections from './extract-collections.js'
@@ -24,68 +25,69 @@ import extractUsers from './extract-users.js'
 
 export default async function extract(dir: string, plan: TemplatePlan = buildTemplatePlan()) {
   const destination = `${dir}/src`
+  const effectivePlan = await expandDeepPlan(plan)
 
   if (!fs.existsSync(destination)) {
     ux.stdout(`Attempting to create directory at: ${destination}`)
     fs.mkdirSync(destination, {recursive: true})
   }
 
-  if (plan.components.schema) {
+  if (effectivePlan.components.schema) {
     await extractSchema(destination)
-    await extractCollections(destination, plan)
-    await extractFields(destination, plan)
-    await extractRelations(destination, plan)
+    await extractCollections(destination, effectivePlan)
+    await extractFields(destination, effectivePlan)
+    await extractRelations(destination, effectivePlan)
   }
 
-  if (plan.components.files) {
+  if (effectivePlan.components.files) {
     await extractFolders(destination)
     await extractFiles(destination)
     await downloadAllFiles(destination)
   }
 
-  if (plan.components.users || plan.components.permissions) {
+  if (effectivePlan.components.users || effectivePlan.components.permissions) {
     await extractRoles(destination)
     await extractPermissions(destination)
     await extractPolicies(destination)
 
-    if (plan.components.users) {
+    if (effectivePlan.components.users) {
       await extractUsers(destination)
     }
 
     await extractAccess(destination)
   }
 
-  if (plan.components.settings) {
+  if (effectivePlan.components.settings) {
     await extractPresets(destination)
     await extractTranslations(destination)
     await extractSettings(destination)
   }
 
-  if (plan.components.flows) {
+  if (effectivePlan.components.flows) {
     await extractFlows(destination)
     await extractOperations(destination)
   }
 
-  if (plan.components.dashboards) {
+  if (effectivePlan.components.dashboards) {
     await extractDashboards(destination)
     await extractPanels(destination)
   }
 
-  if (plan.components.extensions) {
+  if (effectivePlan.components.extensions) {
     await extractExtensions(destination)
   }
 
   const warnings: TemplateWarning[] = []
 
-  if (plan.components.content) {
-    warnings.push(...await extractContent(destination, plan))
+  if (effectivePlan.components.content) {
+    warnings.push(...await extractContent(destination, effectivePlan))
   }
 
   for (const warning of warnings) {
     ux.warn(`Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`)
   }
 
-  await writeTemplateMetadata(destination, plan, warnings)
+  await writeTemplateMetadata(destination, effectivePlan, warnings)
 
   return {}
 }

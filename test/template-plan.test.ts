@@ -107,7 +107,13 @@ describe('template plan', () => {
     expect(includesRelation('posts', 'assets', plan)).to.equal(false)
   })
 
-  it('drops relations to excluded collections for deep strategy until traversal is implemented', () => {
+  it('keeps relations to included collections for deep strategy', () => {
+    const plan = buildTemplatePlan({collections: 'posts,assets', relationStrategy: 'deep'})
+
+    expect(includesRelation('posts', 'assets', plan)).to.equal(true)
+  })
+
+  it('drops relations to excluded collections for deep strategy', () => {
     const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'deep'})
 
     expect(includesRelation('posts', 'assets', plan)).to.equal(false)
