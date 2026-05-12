@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 
-import {applyMetadataToPlan, buildTemplatePlan, createTemplateMetadata} from '../src/lib/template-plan/index.js'
+import {applyMetadataToPlan, buildTemplatePlan, createTemplateMetadata, includesRelation} from '../src/lib/template-plan/index.js'
 
 describe('template plan', () => {
   it('defaults to full template', () => {
@@ -89,9 +89,39 @@ describe('template plan', () => {
   })
 
   it('merges requested and metadata excluded collections', () => {
-    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files'}))
-    const plan = applyMetadataToPlan(buildTemplatePlan({excludeCollections: 'analytics_events'}), metadata)
+    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files,assets'}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({excludeCollections: 'analytics_events,assets'}), metadata)
 
-    expect(plan.excludeCollections).to.deep.equal(['analytics_events', 'directus_files'])
+    expect(plan.excludeCollections).to.deep.equal(['analytics_events', 'assets', 'directus_files'])
+  })
+
+  it('keeps relations to excluded collections for ids strategy', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'ids'})
+
+    expect(includesRelation('posts', 'assets', plan)).to.equal(true)
+  })
+
+  it('drops relations to excluded collections for empty strategy', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'empty'})
+
+    expect(includesRelation('posts', 'assets', plan)).to.equal(false)
+  })
+
+  it('drops relations to excluded collections for deep strategy until traversal is implemented', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'deep'})
+
+    expect(includesRelation('posts', 'assets', plan)).to.equal(false)
+  })
+
+  it('preserves metadata warnings', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files'}), [{
+      collection: 'posts',
+      count: 1,
+      field: 'image',
+      relatedCollection: 'directus_files',
+      type: 'excluded_relation',
+    }])
+
+    expect(metadata.warnings).to.have.length(1)
   })
 })

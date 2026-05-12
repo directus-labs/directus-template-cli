@@ -27,10 +27,15 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   const metadata = readTemplateMetadata(source)
   const requestedPlan = buildTemplatePlan(flags)
   const effectivePlan = applyMetadataToPlan(requestedPlan, metadata)
-  const components = effectivePlan.components
+  const {components} = effectivePlan
 
   if (metadata?.partial) {
     ux.warn('Template metadata indicates this is a partial template.')
+  }
+
+  const brokenRelationWarnings = metadata?.warnings?.filter(warning => warning.type === 'excluded_relation') || []
+  if (brokenRelationWarnings.length > 0 && !effectivePlan.allowBrokenRelations) {
+    ux.error('This partial template contains excluded relation references. Re-run with --allow-broken-relations to apply anyway.')
   }
 
   if (!metadata || components.schema) {

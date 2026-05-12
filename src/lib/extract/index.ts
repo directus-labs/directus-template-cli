@@ -1,7 +1,7 @@
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
-import {buildTemplatePlan, type TemplatePlan, writeTemplateMetadata} from '../template-plan/index.js'
+import {buildTemplatePlan, type TemplatePlan, type TemplateWarning, writeTemplateMetadata} from '../template-plan/index.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
 import extractCollections from './extract-collections.js'
@@ -75,11 +75,17 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
     await extractExtensions(destination)
   }
 
+  const warnings: TemplateWarning[] = []
+
   if (plan.components.content) {
-    await extractContent(destination, plan)
+    warnings.push(...await extractContent(destination, plan))
   }
 
-  await writeTemplateMetadata(destination, plan)
+  for (const warning of warnings) {
+    ux.warn(`Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`)
+  }
+
+  await writeTemplateMetadata(destination, plan, warnings)
 
   return {}
 }
