@@ -1,5 +1,3 @@
-import {expect, test} from '@oclif/test'
-
 describe('apply', () => {
   // test
   // .stdout()
