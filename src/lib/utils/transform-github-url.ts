@@ -6,15 +6,34 @@ export interface ParsedGitHubUrl {
 }
 
 export function parseGitHubUrl(url: string): ParsedGitHubUrl {
-  const cleaned = url.trim().replace(/\.git$/, '').replace(/\/+$/, '')
-  const regex = /github\.com\/([^/]+)\/([^/]+)(?:\/tree\/([^/]+)(?:\/(.+))?)?$/
-  const match = cleaned.match(regex)
+  const cleaned = url.trim().replace(/\/+$/, '')
+  const urlToParse = /^https?:\/\//i.test(cleaned) ? cleaned : `https://${cleaned}`
+  let parsed: URL
 
-  if (!match) {
+  try {
+    parsed = new URL(urlToParse)
+  } catch {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
 
-  const [, owner, repo, ref, subpath] = match
+  if (!['github.com', 'www.github.com'].includes(parsed.hostname.toLowerCase())) {
+    throw new Error(`Invalid GitHub URL: ${url}`)
+  }
+
+  const pathParts = parsed.pathname.split('/').filter(Boolean)
+  const [owner, rawRepo, tree, ref, ...subpathParts] = pathParts
+  const repo = rawRepo?.replace(/\.git$/, '')
+
+  if (!owner || !repo || pathParts.length > 2 && tree !== 'tree') {
+    throw new Error(`Invalid GitHub URL: ${url}`)
+  }
+
+  if (tree === 'tree' && !ref) {
+    throw new Error(`Invalid GitHub URL: ${url}`)
+  }
+
+  const subpath = subpathParts.length > 0 ? subpathParts.join('/') : undefined
+
   return {owner, ref, repo, subpath}
 }
 

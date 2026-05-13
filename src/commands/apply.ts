@@ -345,8 +345,8 @@ static flags = {
 
   /**
    * INTERACTIVE
-   * Select a local template from the given directory
-   * @param localTemplateDir - The local template directory path
+   * Select a template from the given GitHub repository
+   * @param ghTemplateUrl - The GitHub repository URL
    * @returns {Promise<Template>} - Returns the selected template
    */
   private async selectGithubTemplate(ghTemplateUrl: string): Promise<Template> {
@@ -369,6 +369,8 @@ static flags = {
       } else {
         ux.error('An unknown error occurred while getting the GitHub template.')
       }
+
+      throw error
     }
   }
 
@@ -394,6 +396,8 @@ static flags = {
       } else {
         ux.error('An unknown error occurred while getting the local template.')
       }
+
+      throw error
     }
   }
 }

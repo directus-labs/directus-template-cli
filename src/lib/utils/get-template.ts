@@ -123,7 +123,11 @@ async function downloadGithubTemplate(ghTemplateUrl: string): Promise<string> {
 function buildSubpathUrl(ghTemplateUrl: string, templatePath: string): string {
   const {owner, ref, repo} = parseGitHubUrl(ghTemplateUrl)
   const normalizedPath = templatePath.split(path.sep).join('/')
-  return `https://github.com/${owner}/${repo}/tree/${ref || 'main'}/${normalizedPath}`
+  return `https://github.com/${owner}/${repo}/tree/${ref || 'HEAD'}/${normalizedPath}`
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
 }
 
 export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template> {
@@ -163,7 +167,7 @@ export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template
       `No Directus template found at ${ghTemplateUrl}. A Directus template needs a package.json with a "templateName" field.`,
     )
   } catch (error) {
-    throw new Error(`Failed to download GitHub template: ${error}`)
+    throw new Error(`Failed to download GitHub template: ${getErrorMessage(error)}`, {cause: error})
   }
 }
 
@@ -186,6 +190,6 @@ export async function getInteractiveGithubTemplate(ghTemplateUrl: string): Promi
 
     return nested
   } catch (error) {
-    throw new Error(`Failed to download GitHub template: ${error}`)
+    throw new Error(`Failed to download GitHub template: ${getErrorMessage(error)}`, {cause: error})
   }
 }

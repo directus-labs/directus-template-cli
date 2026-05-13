@@ -1,4 +1,5 @@
-const path = require('node:path')
+import path from 'node:path'
+
 process.env.TS_NODE_PROJECT = path.resolve('test/tsconfig.json')
 process.env.NODE_ENV = 'development'
 
