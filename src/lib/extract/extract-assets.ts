@@ -20,6 +20,7 @@ async function getAssetPage(page: number): Promise<DirectusFile[]> {
 }
 
 async function downloadFile(file: DirectusFile, dir: string) {
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins
   const response: Response | string = await api.client.request(() => ({
     method: 'GET',
     path: `/assets/${file.id}`,
@@ -45,8 +46,12 @@ export async function downloadAllFiles(dir: string) {
     let page = 1
     while (true) {
       ux.action.status = `Downloading assets page ${page}`
+      // Intentional: page asset metadata sequentially to avoid queuing all downloads at once.
+      // eslint-disable-next-line no-await-in-loop
       const fileList = await getAssetPage(page)
 
+      // Intentional: finish one asset page before fetching the next page.
+      // eslint-disable-next-line no-await-in-loop
       await Promise.all(
         fileList.map((file) =>
           downloadFile(file, dir).catch((error) => {

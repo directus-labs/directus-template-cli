@@ -7,14 +7,22 @@ import {includesSchemaCollection, type TemplatePlan} from '../template-plan/inde
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
 
+interface TemplateCollection {
+  collection: string
+  meta?: {
+    [key: string]: unknown
+    group?: null | string
+  }
+}
+
 export default async function finalizeCollections(dir: string, plan?: TemplatePlan) {
-  const collections = readFile('collections', dir)
-    .filter((collection: any) => includesSchemaCollection(collection.collection, plan))
-    .filter((collection: any) => !collection.collection.startsWith('directus_'))
+  const collections = (readFile('collections', dir) as TemplateCollection[])
+    .filter((collection) => includesSchemaCollection(collection.collection, plan))
+    .filter((collection) => !collection.collection.startsWith('directus_'))
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Finalizing metadata for ${collections.length} collections`))
 
-  const collectionNames = new Set(collections.map((collection: any) => collection.collection))
+  const collectionNames = new Set(collections.map((collection) => collection.collection))
 
   for await (const collection of collections) {
     const meta = {...collection.meta}

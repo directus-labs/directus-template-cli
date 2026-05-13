@@ -30,9 +30,9 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
   return {
     ...plan,
     collections: intersectCollections(plan.collections, metadata.collections),
-    schemaCollections: intersectCollections(plan.schemaCollections, metadata.schemaCollections),
     components,
     excludeCollections: mergeExcludedCollections(plan.excludeCollections, metadata.excludedCollections),
     partial,
+    schemaCollections: intersectCollections(plan.schemaCollections, metadata.schemaCollections),
   }
 }

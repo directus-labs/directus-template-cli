@@ -11,11 +11,11 @@ export function createTemplateMetadata(plan: TemplatePlan, warnings: TemplateWar
   return {
     allowBrokenRelations: plan.allowBrokenRelations,
     collections: plan.collections,
-    schemaCollections: plan.schemaCollections,
     components: plan.components,
     excludedCollections: plan.excludeCollections,
     partial: plan.partial,
     relationStrategy: plan.relationStrategy,
+    schemaCollections: plan.schemaCollections,
     version: 2,
     warnings,
   }

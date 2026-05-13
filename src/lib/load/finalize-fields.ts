@@ -7,8 +7,17 @@ import {includesSchemaCollection, type TemplatePlan} from '../template-plan/inde
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
 
+interface TemplateField {
+  collection: string
+  field: string
+  meta?: Record<string, unknown>
+  schema?: Record<string, unknown>
+}
+
 export default async function finalizeFields(dir: string, plan?: TemplatePlan) {
-  const fields = readFile('fields', dir).filter((field: any) => includesSchemaCollection(field.collection, plan))
+  const fields = (readFile('fields', dir) as TemplateField[]).filter((field) =>
+    includesSchemaCollection(field.collection, plan),
+  )
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Finalizing metadata for ${fields.length} fields`))
 

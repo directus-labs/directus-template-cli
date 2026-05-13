@@ -10,7 +10,7 @@ interface CollectionInfo {
   meta?: {
     group?: null | string
   }
-  schema?: Record<string, unknown> | null
+  schema?: null | Record<string, unknown>
 }
 
 interface RelationInfo {
