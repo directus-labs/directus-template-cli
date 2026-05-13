@@ -46,20 +46,24 @@ export const collections = Flags.string({
 })
 
 export const excludeCollections = Flags.string({
+  aliases: ['exclude-collections'],
   description: 'Exclude these comma-separated collections',
 })
 
 export const relationStrategy = Flags.string({
+  aliases: ['relation-strategy'],
   description: 'How to handle relations to omitted data',
-  options: ['empty', 'ids', 'deep'],
+  options: ['empty', 'preserve', 'deep'],
 })
 
 export const allowBrokenRelations = Flags.boolean({
+  aliases: ['allow-broken-relations'],
   default: false,
   description: 'Allow intentionally incomplete relation references',
 })
 
 export const noAssets = Flags.boolean({
+  aliases: ['no-assets'],
   default: undefined,
   description: 'Shorthand for --no-files and --exclude-collections directus_files',
 })

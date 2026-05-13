@@ -1,17 +1,18 @@
 import {createItems, readItems, updateItemsBatch, updateSingleton} from '@directus/sdk'
 import {ux} from '@oclif/core'
+import fs from 'node:fs'
 import path from 'pathe'
 
 import {DIRECTUS_PINK} from '../constants.js'
-import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
+import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 import {chunkArray} from '../utils/chunk-array.js'
 import readFile from '../utils/read-file.js'
 
 const BATCH_SIZE = 50
 
-export default async function loadData(dir:string, plan?: TemplatePlan) {
+export default async function loadData(dir: string, plan?: TemplatePlan) {
   const collections = getUserCollections(dir, plan)
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading data for ${collections.length} collections`))
 
@@ -22,44 +23,91 @@ export default async function loadData(dir:string, plan?: TemplatePlan) {
   ux.action.stop()
 }
 
+function getContentCollections(dir: string): Set<string> {
+  const contentDir = path.resolve(dir, 'content')
+  if (!fs.existsSync(contentDir)) return new Set()
+
+  return new Set(
+    fs
+      .readdirSync(contentDir)
+      .filter((file) => file.endsWith('.json'))
+      .map((file) => path.basename(file, '.json')),
+  )
+}
+
+function getBrokenJunctionCollections(dir: string, plan?: TemplatePlan): Set<string> {
+  if (!plan?.partial) return new Set()
+
+  const relations: Array<{
+    collection: string
+    meta?: {junction_field?: null | string}
+    related_collection?: null | string
+  }> = readFile('relations', dir)
+
+  const junctionCollections = new Set(relations.filter((r) => r.meta?.junction_field).map((r) => r.collection))
+
+  const broken = new Set<string>()
+  for (const junction of junctionCollections) {
+    const targets = relations
+      .filter((r) => r.collection === junction && r.related_collection)
+      .map((r) => r.related_collection as string)
+
+    if (targets.some((target) => !target.startsWith('directus_') && !includesCollection(target, plan))) {
+      broken.add(junction)
+    }
+  }
+
+  return broken
+}
+
 function getUserCollections(dir: string, plan?: TemplatePlan) {
+  const contentCollections = getContentCollections(dir)
   const collections = readFile('collections', dir)
+  const brokenJunctions = getBrokenJunctionCollections(dir, plan)
+
+  if (brokenJunctions.size > 0) {
+    ux.warn(`Skipping junction collections with excluded FK targets: ${[...brokenJunctions].join(', ')}`)
+  }
+
   return collections
-  .filter(item => !item.collection.startsWith('directus_', 0))
-  .filter(item => item.schema !== null)
-  .filter(item => includesCollection(item.collection, plan))
+    .filter((item) => contentCollections.has(item.collection))
+    .filter((item) => !item.collection.startsWith('directus_', 0))
+    .filter((item) => item.schema !== null)
+    .filter((item) => includesCollection(item.collection, plan))
+    .filter((item) => !brokenJunctions.has(item.collection))
 }
 
 async function loadSkeletonRecords(dir: string, plan?: TemplatePlan) {
   ux.action.status = 'Loading skeleton records'
   const primaryKeyMap = await getCollectionPrimaryKeys(dir)
-  const userCollections = getUserCollections(dir, plan)
-  .filter(item => !item.meta.singleton)
+  const userCollections = getUserCollections(dir, plan).filter((item) => !item.meta.singleton)
 
-  await Promise.all(userCollections.map(async collection => {
-    const name = collection.collection
-    const primaryKeyField = getPrimaryKey(primaryKeyMap, name)
-    const sourceDir = path.resolve(dir, 'content')
-    const data = readFile(name, sourceDir)
+  await Promise.all(
+    userCollections.map(async (collection) => {
+      const name = collection.collection
+      const primaryKeyField = getPrimaryKey(primaryKeyMap, name)
+      const sourceDir = path.resolve(dir, 'content')
+      const data = readFile(name, sourceDir)
 
-    // Fetch existing primary keys
-    const existingPrimaryKeys = await getExistingPrimaryKeys(name, primaryKeyField)
+      // Fetch existing primary keys
+      const existingPrimaryKeys = await getExistingPrimaryKeys(name, primaryKeyField)
 
-    // Filter out existing records
-    const newData = data.filter(entry => !existingPrimaryKeys.has(entry[primaryKeyField]))
+      // Filter out existing records
+      const newData = data.filter((entry) => !existingPrimaryKeys.has(entry[primaryKeyField]))
 
-    if (newData.length === 0) {
-      // ux.stdout(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
-      return
-    }
+      if (newData.length === 0) {
+        // ux.stdout(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
+        return
+      }
 
-    const batches = chunkArray(newData, BATCH_SIZE).map(batch =>
-      batch.map(entry => ({[primaryKeyField]: entry[primaryKeyField]})),
-    )
+      const batches = chunkArray(newData, BATCH_SIZE).map((batch) =>
+        batch.map((entry) => ({[primaryKeyField]: entry[primaryKeyField]})),
+      )
 
-    await Promise.all(batches.map(batch => uploadBatch(name, batch, createItems)))
-    // ux.stdout(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
-  }))
+      await Promise.all(batches.map((batch) => uploadBatch(name, batch, createItems)))
+      // ux.stdout(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
+    }),
+  )
 
   ux.action.status = 'Loaded skeleton records'
 }
@@ -72,11 +120,13 @@ async function getExistingPrimaryKeys(collection: string, primaryKeyField: strin
   while (true) {
     try {
       // @ts-ignore
-      const response = await api.client.request(readItems(collection, {
-        fields: [primaryKeyField],
-        limit,
-        page,
-      }))
+      const response = await api.client.request(
+        readItems(collection, {
+          fields: [primaryKeyField],
+          limit,
+          page,
+        }),
+      )
 
       if (response.length === 0) break
 
@@ -101,43 +151,45 @@ async function uploadBatch(collection: string, batch: any[], method: Function) {
   }
 }
 
-async function loadFullData(dir:string, plan?: TemplatePlan) {
+async function loadFullData(dir: string, plan?: TemplatePlan) {
   ux.action.status = 'Updating records with full data'
-  const userCollections = getUserCollections(dir, plan)
-  .filter(item => !item.meta.singleton)
+  const userCollections = getUserCollections(dir, plan).filter((item) => !item.meta.singleton)
 
-  await Promise.all(userCollections.map(async collection => {
-    const name = collection.collection
-    const sourceDir = path.resolve(dir, 'content')
-    const data = readFile(name, sourceDir)
+  await Promise.all(
+    userCollections.map(async (collection) => {
+      const name = collection.collection
+      const sourceDir = path.resolve(dir, 'content')
+      const data = readFile(name, sourceDir)
 
-    const batches = chunkArray(data, BATCH_SIZE).map(batch =>
-      batch.map(({user_created, user_updated, ...cleanedRow}) => cleanedRow),
-    )
+      const batches = chunkArray(data, BATCH_SIZE).map((batch) =>
+        batch.map(({user_created, user_updated, ...cleanedRow}) => cleanedRow),
+      )
 
-    await Promise.all(batches.map(batch => uploadBatch(name, batch, updateItemsBatch)))
-  }))
+      await Promise.all(batches.map((batch) => uploadBatch(name, batch, updateItemsBatch)))
+    }),
+  )
 
   ux.action.status = 'Updated records with full data'
 }
 
-async function loadSingletons(dir:string, plan?: TemplatePlan) {
+async function loadSingletons(dir: string, plan?: TemplatePlan) {
   ux.action.status = 'Loading data for singleton collections'
-  const singletonCollections = getUserCollections(dir, plan)
-  .filter(item => item.meta.singleton)
+  const singletonCollections = getUserCollections(dir, plan).filter((item) => item.meta.singleton)
 
-  await Promise.all(singletonCollections.map(async collection => {
-    const name = collection.collection
-    const sourceDir = path.resolve(dir, 'content')
-    const data = readFile(name, sourceDir)
-    try {
-      const {user_created, user_updated, ...cleanedData} = data as any
+  await Promise.all(
+    singletonCollections.map(async (collection) => {
+      const name = collection.collection
+      const sourceDir = path.resolve(dir, 'content')
+      const data = readFile(name, sourceDir)
+      try {
+        const {user_created, user_updated, ...cleanedData} = data as any
 
-      await api.client.request(updateSingleton(name, cleanedData))
-    } catch (error) {
-      catchError(error)
-    }
-  }))
+        await api.client.request(updateSingleton(name, cleanedData))
+      } catch (error) {
+        catchError(error)
+      }
+    }),
+  )
 
   ux.action.status = 'Loaded data for singleton collections'
 }

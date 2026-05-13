@@ -13,29 +13,32 @@ import readFile from '../utils/read-file.js'
  * @returns {Promise<void>} - Returns nothing
  */
 export default async function loadRelations(dir: string, plan?: TemplatePlan) {
-  const relations = readFile('relations', dir)
-  .filter(relation => includesRelation(relation.collection, relation.related_collection, plan))
+  const relations = readFile('relations', dir).filter((relation) =>
+    includesRelation(relation.collection, relation.related_collection, plan),
+  )
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Loading ${relations.length} relations`))
 
   if (relations && relations.length > 0) {
     // Fetch existing relations
     const existingRelations = await api.client.request(readRelations())
-    const existingRelationKeys = new Set(existingRelations.map(relation =>
-      `${relation.collection}:${relation.field}:${relation.related_collection}`,
-    ))
+    const existingRelationKeys = new Set(
+      existingRelations.map((relation) => `${relation.collection}:${relation.field}:${relation.related_collection}`),
+    )
 
-    const relationsToAdd = relations.filter(relation => {
-      const key = `${relation.collection}:${relation.field}:${relation.related_collection}`
-      if (existingRelationKeys.has(key)) {
-        return false
-      }
+    const relationsToAdd = relations
+      .filter((relation) => {
+        const key = `${relation.collection}:${relation.field}:${relation.related_collection}`
+        if (existingRelationKeys.has(key)) {
+          return false
+        }
 
-      return true
-    }).map(relation => {
-      const cleanRelation = {...relation}
-      cleanRelation.meta.id = undefined
-      return cleanRelation
-    })
+        return true
+      })
+      .map((relation) => {
+        const cleanRelation = {...relation}
+        cleanRelation.meta.id = undefined
+        return cleanRelation
+      })
 
     await addRelations(relationsToAdd)
   }

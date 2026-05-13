@@ -5,6 +5,14 @@ import {api} from '../sdk.js'
 import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 
+interface CollectionInfo {
+  collection: string
+  meta?: {
+    group?: null | string
+  }
+  schema?: Record<string, unknown> | null
+}
+
 interface RelationInfo {
   collection: string
   meta?: {
@@ -14,30 +22,31 @@ interface RelationInfo {
   related_collection?: null | string
 }
 
-export async function expandDeepPlan(plan: TemplatePlan): Promise<TemplatePlan> {
-  if (!plan.partial || plan.relationStrategy !== 'deep' || !plan.collections) return plan
+export async function expandSchemaPlan(plan: TemplatePlan): Promise<TemplatePlan> {
+  if (!plan.partial || !plan.collections) return plan
 
   try {
-    const collections = await api.client.request(readCollections())
+    const collections = (await api.client.request(readCollections())) as CollectionInfo[]
     const availableCollections = collections
       .filter((collection) => !collection.collection.startsWith('directus_', 0))
-      .filter((collection) => collection.schema !== null)
       .map((collection) => collection.collection)
       .filter((collection) => includesCollection(collection, {...plan, collections: undefined}))
+    const collectionMap = new Map(collections.map((collection) => [collection.collection, collection]))
 
     const available = new Set(availableCollections)
-    const missingCollections = plan.collections.filter((collection) => !available.has(collection))
-    if (missingCollections.length > 0) {
-      ux.warn(`Requested collections not found or excluded: ${missingCollections.join(', ')}`)
-    }
-
     const selected = new Set(plan.collections.filter((collection) => available.has(collection)))
     const relations = (await api.client.request(readRelations())) as RelationInfo[]
 
     let changed = true
     while (changed) {
       changed = false
+
       const candidates: string[] = []
+
+      for (const collection of selected) {
+        const group = collectionMap.get(collection)?.meta?.group
+        if (group) candidates.push(group)
+      }
 
       for (const relation of relations) {
         candidates.push(
@@ -60,16 +69,16 @@ export async function expandDeepPlan(plan: TemplatePlan): Promise<TemplatePlan> 
       }
     }
 
-    const expandedCollections = [...selected]
-    const addedCollections = expandedCollections.filter((collection) => !plan.collections?.includes(collection))
+    const schemaCollections = [...selected]
+    const addedCollections = schemaCollections.filter((collection) => !plan.collections?.includes(collection))
 
     if (addedCollections.length > 0) {
-      ux.warn(`Deep relation strategy expanded collections: ${addedCollections.join(', ')}`)
+      ux.warn(`Schema scope expanded collections: ${addedCollections.join(', ')}`)
     }
 
     return {
       ...plan,
-      collections: expandedCollections,
+      schemaCollections,
     }
   } catch (error) {
     catchError(error, {fatal: true})

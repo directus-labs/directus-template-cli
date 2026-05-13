@@ -13,16 +13,50 @@ const PAGE_SIZE = 500
 interface RelationInfo {
   collection: string
   field: string
+  meta?: {
+    junction_field?: null | string
+    one_field?: null | string
+  }
   related_collection?: null | string
 }
 
-async function getCollections(plan?: TemplatePlan) {
+interface ExcludedRelationField {
+  field: string
+  relatedCollection: string
+  type: 'alias' | 'm2o'
+}
+
+function getJunctionCollectionsWithBrokenFKs(relations: RelationInfo[], plan?: TemplatePlan): Set<string> {
+  if (!plan?.partial) return new Set()
+
+  // Directus sets meta.junction_field on both FK legs of an M2M to point to the other FK.
+  // Any collection appearing as `collection` on such a relation is a junction table.
+  const junctionCollections = new Set(relations.filter((r) => r.meta?.junction_field).map((r) => r.collection))
+
+  const broken = new Set<string>()
+  for (const junction of junctionCollections) {
+    const targets = relations
+      .filter((r) => r.collection === junction && r.related_collection)
+      .map((r) => r.related_collection as string)
+
+    // System collections always exist on every instance — never treat them as broken FK targets.
+    if (targets.some((target) => !target.startsWith('directus_') && !includesCollection(target, plan))) {
+      broken.add(junction)
+    }
+  }
+
+  return broken
+}
+
+async function getCollections(relations: RelationInfo[], plan?: TemplatePlan) {
   const response = await api.client.request(readCollections())
+  const brokenJunctions = getJunctionCollectionsWithBrokenFKs(relations, plan)
   return response
     .filter((item) => !item.collection.startsWith('directus_', 0))
     .filter((item) => item.schema !== null)
     .map((i) => i.collection)
     .filter((collection) => includesCollection(collection, plan))
+    .filter((collection) => !brokenJunctions.has(collection))
 }
 
 async function getCollectionItems(collection: string): Promise<Record<string, unknown>[]> {
@@ -31,7 +65,10 @@ async function getCollectionItems(collection: string): Promise<Record<string, un
 
   while (true) {
     // eslint-disable-next-line no-await-in-loop
-    const response = await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page})) as Record<string, unknown>[]
+    const response = (await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page}))) as Record<
+      string,
+      unknown
+    >[]
     items.push(...response)
 
     if (response.length < PAGE_SIZE) break
@@ -41,14 +78,34 @@ async function getCollectionItems(collection: string): Promise<Record<string, un
   return items
 }
 
-function getExcludedRelationFields(collection: string, relations: RelationInfo[], plan?: TemplatePlan): RelationInfo[] {
+function getExcludedRelationFields(
+  collection: string,
+  relations: RelationInfo[],
+  plan?: TemplatePlan,
+): ExcludedRelationField[] {
   if (!plan?.partial || plan.relationStrategy === 'deep') return []
 
-  return relations.filter((relation) =>
-    relation.collection === collection &&
-    relation.related_collection &&
-    !includesCollection(relation.related_collection, plan),
-  )
+  const m2oFields = relations
+    .filter((relation) => relation.collection === collection)
+    .filter((relation): relation is RelationInfo & {related_collection: string} => Boolean(relation.related_collection))
+    .filter((relation) => !includesCollection(relation.related_collection, plan))
+    .map((relation) => ({
+      field: relation.field,
+      relatedCollection: relation.related_collection,
+      type: 'm2o' as const,
+    }))
+
+  const aliasFields = relations
+    .filter((relation) => relation.related_collection === collection)
+    .filter((relation): relation is RelationInfo & {meta: {one_field: string}} => Boolean(relation.meta?.one_field))
+    .filter((relation) => !includesCollection(relation.collection, plan))
+    .map((relation) => ({
+      field: relation.meta.one_field,
+      relatedCollection: relation.collection,
+      type: 'alias' as const,
+    }))
+
+  return [...m2oFields, ...aliasFields]
 }
 
 function hasValue(value: unknown): boolean {
@@ -56,11 +113,16 @@ function hasValue(value: unknown): boolean {
   return value !== null && value !== undefined
 }
 
-function emptyExcludedRelations(items: Record<string, unknown>[], relations: RelationInfo[]): void {
+function emptyExcludedRelations(items: Record<string, unknown>[], relations: ExcludedRelationField[]): void {
   for (const item of items) {
     for (const relation of relations) {
       if (!(relation.field in item)) continue
-      item[relation.field] = Array.isArray(item[relation.field]) ? [] : null
+
+      if (relation.type === 'alias') {
+        delete item[relation.field]
+      } else {
+        item[relation.field] = null
+      }
     }
   }
 }
@@ -68,17 +130,18 @@ function emptyExcludedRelations(items: Record<string, unknown>[], relations: Rel
 function getBrokenRelationWarnings(
   collection: string,
   items: Record<string, unknown>[],
-  relations: RelationInfo[],
+  relations: ExcludedRelationField[],
 ): TemplateWarning[] {
   return relations
-    .filter((relation): relation is RelationInfo & {related_collection: string} => Boolean(relation.related_collection))
-    .map((relation): TemplateWarning => ({
-      collection,
-      count: items.filter((item) => hasValue(item[relation.field])).length,
-      field: relation.field,
-      relatedCollection: relation.related_collection,
-      type: 'excluded_relation',
-    }))
+    .map(
+      (relation): TemplateWarning => ({
+        collection,
+        count: items.filter((item) => hasValue(item[relation.field])).length,
+        field: relation.field,
+        relatedCollection: relation.relatedCollection,
+        type: 'excluded_relation',
+      }),
+    )
     .filter((warning) => warning.count > 0)
 }
 
@@ -97,9 +160,8 @@ async function getDataFromCollection(
       emptyExcludedRelations(response, excludedRelations)
     }
 
-    const warnings = plan?.relationStrategy === 'ids'
-      ? getBrokenRelationWarnings(collection, response, excludedRelations)
-      : []
+    const warnings =
+      plan?.relationStrategy === 'preserve' ? getBrokenRelationWarnings(collection, response, excludedRelations) : []
 
     await writeToFile(`${collection}`, response, `${dir}/content/`)
     return warnings
@@ -117,8 +179,8 @@ export async function extractContent(dir: string, plan?: TemplatePlan): Promise<
   const warnings: TemplateWarning[] = []
 
   try {
-    const collections = await getCollections(plan)
-    const relations = await api.client.request(readRelations()) as RelationInfo[]
+    const relations = (await api.client.request(readRelations())) as RelationInfo[]
+    const collections = await getCollections(relations, plan)
 
     for (const collection of collections) {
       // eslint-disable-next-line no-await-in-loop

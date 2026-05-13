@@ -5,6 +5,8 @@ import type {ApplyFlags} from './apply-flags.js'
 import {applyMetadataToPlan, buildTemplatePlan, readTemplateMetadata} from '../template-plan/index.js'
 import checkTemplate from '../utils/check-template.js'
 import loadAccess from './load-access.js'
+import finalizeCollections from './finalize-collections.js'
+import finalizeFields from './finalize-fields.js'
 import loadCollections from './load-collections.js'
 import loadDashboards from './load-dashboards.js'
 import loadData from './load-data.js'
@@ -20,7 +22,6 @@ import loadRoles from './load-roles.js'
 import loadSettings from './load-settings.js'
 import loadTranslations from './load-translations.js'
 import loadUsers from './load-users.js'
-import updateRequiredFields from './update-required-fields.js'
 
 export default async function apply(dir: string, flags: ApplyFlags) {
   const source = `${dir}/src`
@@ -35,9 +36,11 @@ export default async function apply(dir: string, flags: ApplyFlags) {
     ux.warn('Template metadata indicates this is a partial template.')
   }
 
-  const brokenRelationWarnings = metadata?.warnings?.filter(warning => warning.type === 'excluded_relation') || []
+  const brokenRelationWarnings = metadata?.warnings?.filter((warning) => warning.type === 'excluded_relation') || []
   if (components.content && brokenRelationWarnings.length > 0 && !effectivePlan.allowBrokenRelations) {
-    ux.error('This partial template contains excluded relation references. Re-run with --allow-broken-relations to apply anyway.')
+    ux.error(
+      'This partial template contains excluded relation references. Re-run with --allow-broken-relations to apply anyway.',
+    )
   }
 
   if (!metadata || components.schema) {
@@ -52,6 +55,8 @@ export default async function apply(dir: string, flags: ApplyFlags) {
   if (components.schema) {
     await loadCollections(source, effectivePlan)
     await loadRelations(source, effectivePlan)
+    await finalizeCollections(source, effectivePlan)
+    await finalizeFields(source, effectivePlan)
   }
 
   if (components.permissions || components.users) {
@@ -73,10 +78,6 @@ export default async function apply(dir: string, flags: ApplyFlags) {
 
   if (components.content) {
     await loadData(source, effectivePlan)
-  }
-
-  if (components.schema) {
-    await updateRequiredFields(source, effectivePlan)
   }
 
   if (components.dashboards) {

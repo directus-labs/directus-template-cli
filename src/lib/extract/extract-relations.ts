@@ -19,26 +19,23 @@ export default async function extractRelations(dir: string, plan?: TemplatePlan)
     // Fetching fields to filter out system fields while retaining custom fields on system collections
     const fields = await api.client.request(readFields())
 
-    const customFields = fields.filter(
-      (i: any) => !i.meta?.system,
-    )
+    const customFields = fields.filter((i: any) => !i.meta?.system)
 
     const relations = response
 
-    // Filter out relations where the collection starts with 'directus_' && the field is not within the customFields array
-    .filter(
-      (i: any) =>
-        !i.collection.startsWith('directus_', 0)
-        || customFields.some(
-          (f: { collection: string; field: string }) =>
-            f.collection === i.collection && f.field === i.field,
-        ),
-    )
-    .filter((i: any) => includesRelation(i.collection, i.related_collection, plan))
-    .map(i => {
-      delete i.meta.id
-      return i
-    })
+      // Filter out relations where the collection starts with 'directus_' && the field is not within the customFields array
+      .filter(
+        (i: any) =>
+          !i.collection.startsWith('directus_', 0) ||
+          customFields.some(
+            (f: {collection: string; field: string}) => f.collection === i.collection && f.field === i.field,
+          ),
+      )
+      .filter((i: any) => includesRelation(i.collection, i.related_collection, plan))
+      .map((i) => {
+        delete i.meta.id
+        return i
+      })
 
     await writeToFile('relations', relations, dir)
   } catch (error) {

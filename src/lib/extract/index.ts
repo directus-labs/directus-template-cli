@@ -1,9 +1,15 @@
 import {ux} from '@oclif/core'
 import fs from 'node:fs'
 
-import {buildTemplatePlan, type TemplatePlan, type TemplateWarning, writeTemplateMetadata} from '../template-plan/index.js'
+import {
+  buildTemplatePlan,
+  type TemplatePlan,
+  type TemplateWarning,
+  writeTemplateMetadata,
+} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 import {expandDeepPlan} from './expand-deep-plan.js'
+import {expandSchemaPlan} from './expand-schema-plan.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
 import extractCollections from './extract-collections.js'
@@ -26,7 +32,8 @@ import extractUsers from './extract-users.js'
 
 export default async function extract(dir: string, plan: TemplatePlan = buildTemplatePlan()) {
   const destination = `${dir}/src`
-  const effectivePlan = await expandDeepPlan(plan)
+  const schemaPlan = await expandSchemaPlan(plan)
+  const effectivePlan = await expandDeepPlan(schemaPlan)
 
   if (!fs.existsSync(destination)) {
     ux.stdout(`Attempting to create directory at: ${destination}`)
@@ -90,7 +97,9 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
   }
 
   for (const warning of warnings) {
-    ux.warn(`Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`)
+    ux.warn(
+      `Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`,
+    )
   }
 
   try {

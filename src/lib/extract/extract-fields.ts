@@ -2,8 +2,8 @@ import {readFields} from '@directus/sdk'
 import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
-import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import {api} from '../sdk.js'
+import {includesSchemaCollection, type TemplatePlan} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 import writeToFile from '../utils/write-to-file.js'
 
@@ -21,18 +21,15 @@ export default async function extractFields(dir: string, plan?: TemplatePlan) {
     }
 
     const fields = response
-    .filter(
-      // @ts-ignore
-      (i: { collection: string; meta?: { system?: boolean } }) => i.meta && !i.meta.system,
-    )
-    .filter((i: { collection: string }) => includesCollection(i.collection, plan))
-    .map(i => {
-      if (i.meta) {
-        delete i.meta.id
-      }
+      .filter((i: {collection: string; meta?: {system?: boolean}}) => i.meta && !i.meta.system)
+      .filter((i: {collection: string}) => includesSchemaCollection(i.collection, plan))
+      .map((i) => {
+        if (i.meta) {
+          delete i.meta.id
+        }
 
-      return i
-    })
+        return i
+      })
 
     await writeToFile('fields', fields, dir)
   } catch (error) {

@@ -4,7 +4,7 @@ import {componentNames} from './flags.js'
 
 function intersectCollections(requested?: string[], available?: string[]): string[] | undefined {
   if (requested && available) {
-    const collections = requested.filter(collection => available.includes(collection))
+    const collections = requested.filter((collection) => available.includes(collection))
     return collections.length > 0 ? collections : undefined
   }
 
@@ -24,11 +24,13 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
     components[component] = components[component] && metadata.components[component]
   }
 
-  const partial = metadata.partial || componentNames.some(component => components[component] !== plan.components[component])
+  const partial =
+    metadata.partial || componentNames.some((component) => components[component] !== plan.components[component])
 
   return {
     ...plan,
     collections: intersectCollections(plan.collections, metadata.collections),
+    schemaCollections: intersectCollections(plan.schemaCollections, metadata.schemaCollections),
     components,
     excludeCollections: mergeExcludedCollections(plan.excludeCollections, metadata.excludedCollections),
     partial,

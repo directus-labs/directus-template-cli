@@ -17,7 +17,7 @@ export interface ApplyFlags {
   partial: boolean
   permissions: boolean
   programmatic: boolean
-  relationStrategy?: 'deep' | 'empty' | 'ids'
+  relationStrategy?: 'deep' | 'empty' | 'preserve'
   schema: boolean
   settings: boolean
   templateLocation: string

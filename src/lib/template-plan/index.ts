@@ -1,7 +1,16 @@
-import type {RelationStrategy, TemplateComponents, TemplatePlan} from './types.js'
+import type {RelationStrategy, TemplateComponent, TemplateComponents, TemplatePlan} from './types.js'
 
 import catchError from '../utils/catch-error.js'
 import {componentNames} from './flags.js'
+
+type BuildFlags = Partial<Record<TemplateComponent, boolean>> & {
+  allowBrokenRelations?: boolean
+  collections?: string | string[]
+  excludeCollections?: string | string[]
+  noAssets?: boolean
+  partial?: boolean
+  relationStrategy?: string
+}
 
 function parseList(value?: string | string[]): string[] | undefined {
   if (!value) return undefined
@@ -13,8 +22,7 @@ function parseList(value?: string | string[]): string[] | undefined {
   return values.length > 0 ? values : undefined
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function hasPartialOnlyFlags(flags: any): boolean {
+function hasPartialOnlyFlags(flags: BuildFlags): boolean {
   return Boolean(
     flags.collections ||
     flags.excludeCollections ||
@@ -24,13 +32,15 @@ function hasPartialOnlyFlags(flags: any): boolean {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function hasComponentFlags(flags: any): boolean {
+function hasScopingFlags(flags: BuildFlags): boolean {
+  return Boolean(flags.collections || flags.excludeCollections || flags.noAssets === true || hasComponentFlags(flags))
+}
+
+function hasComponentFlags(flags: BuildFlags): boolean {
   return componentNames.some((component) => flags[component] !== undefined)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildComponents(flags: any, partial: boolean): TemplateComponents {
+function buildComponents(flags: BuildFlags, partial: boolean): TemplateComponents {
   const components = {} as TemplateComponents
   const enabled = componentNames.filter((component) => flags[component] === true)
   const disabled = componentNames.filter((component) => flags[component] === false)
@@ -53,8 +63,7 @@ function buildComponents(flags: any, partial: boolean): TemplateComponents {
   return components
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildTemplatePlan(flags: any = {}): TemplatePlan {
+export function buildTemplatePlan(flags: BuildFlags = {}): TemplatePlan {
   const collections = parseList(flags.collections)
   const excludeCollections = parseList(flags.excludeCollections) || (flags.noAssets ? [] : undefined)
   if (flags.noAssets && !excludeCollections?.includes('directus_files')) {
@@ -74,7 +83,8 @@ export function buildTemplatePlan(flags: any = {}): TemplatePlan {
     components,
     excludeCollections,
     partial,
-    relationStrategy: (flags.relationStrategy || (partial ? 'ids' : 'deep')) as RelationStrategy,
+    relationStrategy: (flags.relationStrategy ||
+      (partial ? (hasScopingFlags(flags) ? 'empty' : 'preserve') : 'deep')) as RelationStrategy,
   }
 }
 

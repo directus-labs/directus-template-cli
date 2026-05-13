@@ -46,9 +46,14 @@ export async function downloadAllFiles(dir: string) {
     while (true) {
       ux.action.status = `Downloading assets page ${page}`
       const fileList = await getAssetPage(page)
-      await Promise.all(fileList.map(file => downloadFile(file, dir).catch(error => {
-        catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
-      })))
+
+      await Promise.all(
+        fileList.map((file) =>
+          downloadFile(file, dir).catch((error) => {
+            catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
+          }),
+        ),
+      )
 
       if (fileList.length < PAGE_SIZE) break
       page++

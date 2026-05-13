@@ -1,4 +1,4 @@
-export type RelationStrategy = 'deep' | 'empty' | 'ids'
+export type RelationStrategy = 'deep' | 'empty' | 'preserve'
 
 export interface TemplateComponents {
   content: boolean
@@ -19,6 +19,7 @@ export interface TemplatePlan {
   excludeCollections?: string[]
   partial: boolean
   relationStrategy: RelationStrategy
+  schemaCollections?: string[]
 }
 
 export type TemplateWarning = {

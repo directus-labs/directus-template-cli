@@ -11,6 +11,7 @@ export function createTemplateMetadata(plan: TemplatePlan, warnings: TemplateWar
   return {
     allowBrokenRelations: plan.allowBrokenRelations,
     collections: plan.collections,
+    schemaCollections: plan.schemaCollections,
     components: plan.components,
     excludedCollections: plan.excludeCollections,
     partial: plan.partial,

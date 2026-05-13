@@ -1,6 +1,11 @@
 import {expect} from 'chai'
 
-import {applyMetadataToPlan, buildTemplatePlan, createTemplateMetadata, includesRelation} from '../src/lib/template-plan/index.js'
+import {
+  applyMetadataToPlan,
+  buildTemplatePlan,
+  createTemplateMetadata,
+  includesRelation,
+} from '../src/lib/template-plan/index.js'
 
 describe('template plan', () => {
   it('defaults to full template', () => {
@@ -15,7 +20,7 @@ describe('template plan', () => {
     const plan = buildTemplatePlan({partial: true})
 
     expect(plan.partial).to.equal(true)
-    expect(plan.relationStrategy).to.equal('ids')
+    expect(plan.relationStrategy).to.equal('preserve')
     expect(Object.values(plan.components).every(Boolean)).to.equal(true)
   })
 
@@ -23,7 +28,7 @@ describe('template plan', () => {
     const plan = buildTemplatePlan({content: true, schema: true})
 
     expect(plan.partial).to.equal(true)
-    expect(plan.relationStrategy).to.equal('ids')
+    expect(plan.relationStrategy).to.equal('empty')
     expect(plan.components.content).to.equal(true)
     expect(plan.components.schema).to.equal(true)
     expect(plan.components.files).to.equal(false)
@@ -95,8 +100,8 @@ describe('template plan', () => {
     expect(plan.excludeCollections).to.deep.equal(['analytics_events', 'assets', 'directus_files'])
   })
 
-  it('keeps relations to excluded collections for ids strategy', () => {
-    const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'ids'})
+  it('keeps schema relations to excluded collections for preserve strategy', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'assets', relationStrategy: 'preserve'})
 
     expect(includesRelation('posts', 'assets', plan)).to.equal(true)
   })
@@ -119,14 +124,34 @@ describe('template plan', () => {
     expect(includesRelation('posts', 'assets', plan)).to.equal(false)
   })
 
+  it('keeps relations to system collections not explicitly excluded', () => {
+    const plan = buildTemplatePlan({collections: 'posts', relationStrategy: 'empty'})
+
+    expect(includesRelation('posts', 'directus_users', plan)).to.equal(true)
+  })
+
+  it('drops relations to system collections when explicitly excluded', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'directus_files', relationStrategy: 'empty'})
+
+    expect(includesRelation('posts', 'directus_files', plan)).to.equal(false)
+  })
+
+  it('keeps relations to explicitly excluded system collections for preserve strategy', () => {
+    const plan = buildTemplatePlan({excludeCollections: 'directus_files', relationStrategy: 'preserve'})
+
+    expect(includesRelation('posts', 'directus_files', plan)).to.equal(true)
+  })
+
   it('preserves metadata warnings', () => {
-    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files'}), [{
-      collection: 'posts',
-      count: 1,
-      field: 'image',
-      relatedCollection: 'directus_files',
-      type: 'excluded_relation',
-    }])
+    const metadata = createTemplateMetadata(buildTemplatePlan({excludeCollections: 'directus_files'}), [
+      {
+        collection: 'posts',
+        count: 1,
+        field: 'image',
+        relatedCollection: 'directus_files',
+        type: 'excluded_relation',
+      },
+    ])
 
     expect(metadata.warnings).to.have.length(1)
   })
