@@ -54,7 +54,13 @@ async function addRelations(relations: TemplateRelation[]) {
       // eslint-disable-next-line no-await-in-loop
       await api.client.request(createRelation(relation))
     } catch (error) {
-      catchError(error)
+      catchError(error, {
+        context: {
+          collection: relation.collection,
+          field: relation.field,
+          related: relation.related_collection,
+        },
+      })
     }
   }
 }

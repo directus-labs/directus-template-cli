@@ -90,6 +90,7 @@ export function buildTemplatePlan(flags: BuildFlags = {}): TemplatePlan {
 
 export * from './collections.js'
 export * from './flags.js'
+export * from './junctions.js'
 export * from './metadata-plan.js'
 export * from './metadata.js'
 export * from './types.js'

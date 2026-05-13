@@ -27,18 +27,6 @@ export interface ApplyFlags {
   users?: boolean
 }
 
-export const loadFlags = [
-  'content',
-  'dashboards',
-  'extensions',
-  'files',
-  'flows',
-  'permissions',
-  'schema',
-  'settings',
-  'users',
-] as const
-
 export function validateProgrammaticFlags(flags: ApplyFlags): ApplyFlags {
   const {directusToken, directusUrl, templateLocation, userEmail, userPassword} = flags
 
@@ -47,9 +35,5 @@ export function validateProgrammaticFlags(flags: ApplyFlags): ApplyFlags {
     ux.error('Either Directus token or email and password are required for programmatic mode.')
   if (!templateLocation) ux.error('Template location is required for programmatic mode.')
 
-  return flags
-}
-
-export function validateInteractiveFlags(flags: ApplyFlags): ApplyFlags {
   return flags
 }

@@ -5,7 +5,7 @@ import path from 'pathe'
 
 import {DIRECTUS_PINK} from '../constants.js'
 import {api} from '../sdk.js'
-import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
+import {getBrokenJunctionCollections, includesCollection, type TemplatePlan} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 import {chunkArray} from '../utils/chunk-array.js'
 import readFile from '../utils/read-file.js'
@@ -35,35 +35,11 @@ function getContentCollections(dir: string): Set<string> {
   )
 }
 
-function getBrokenJunctionCollections(dir: string, plan?: TemplatePlan): Set<string> {
-  if (!plan?.partial) return new Set()
-
-  const relations: Array<{
-    collection: string
-    meta?: {junction_field?: null | string}
-    related_collection?: null | string
-  }> = readFile('relations', dir)
-
-  const junctionCollections = new Set(relations.filter((r) => r.meta?.junction_field).map((r) => r.collection))
-
-  const broken = new Set<string>()
-  for (const junction of junctionCollections) {
-    const targets = relations
-      .filter((r) => r.collection === junction && r.related_collection)
-      .map((r) => r.related_collection as string)
-
-    if (targets.some((target) => !target.startsWith('directus_') && !includesCollection(target, plan))) {
-      broken.add(junction)
-    }
-  }
-
-  return broken
-}
-
 function getUserCollections(dir: string, plan?: TemplatePlan) {
   const contentCollections = getContentCollections(dir)
   const collections = readFile('collections', dir)
-  const brokenJunctions = getBrokenJunctionCollections(dir, plan)
+  const relations = plan?.partial ? readFile('relations', dir) : []
+  const brokenJunctions = getBrokenJunctionCollections(relations, plan)
 
   if (brokenJunctions.size > 0) {
     ux.warn(`Skipping junction collections with excluded FK targets: ${[...brokenJunctions].join(', ')}`)
@@ -95,17 +71,13 @@ async function loadSkeletonRecords(dir: string, plan?: TemplatePlan) {
       // Filter out existing records
       const newData = data.filter((entry) => !existingPrimaryKeys.has(entry[primaryKeyField]))
 
-      if (newData.length === 0) {
-        // ux.stdout(`${ux.colorize('dim', '--')} Skipping ${name}: No new records to add`)
-        return
-      }
+      if (newData.length === 0) return
 
       const batches = chunkArray(newData, BATCH_SIZE).map((batch) =>
         batch.map((entry) => ({[primaryKeyField]: entry[primaryKeyField]})),
       )
 
       await Promise.all(batches.map((batch) => uploadBatch(name, batch, createItems)))
-      // ux.stdout(`${ux.colorize('dim', '--')} Added ${newData.length} new skeleton records to ${name}`)
     }),
   )
 
@@ -135,7 +107,7 @@ async function getExistingPrimaryKeys(collection: string, primaryKeyField: strin
       if (response.length < limit) break
       page++
     } catch (error) {
-      catchError(error)
+      catchError(error, {context: {collection, page}})
       break
     }
   }
@@ -147,7 +119,7 @@ async function uploadBatch(collection: string, batch: any[], method: Function) {
   try {
     await api.client.request(method(collection, batch))
   } catch (error) {
-    catchError(error)
+    catchError(error, {context: {batchSize: batch.length, collection}})
   }
 }
 
@@ -186,7 +158,7 @@ async function loadSingletons(dir: string, plan?: TemplatePlan) {
 
         await api.client.request(updateSingleton(name, cleanedData))
       } catch (error) {
-        catchError(error)
+        catchError(error, {context: {collection: name}})
       }
     }),
   )

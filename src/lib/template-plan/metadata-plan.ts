@@ -1,11 +1,20 @@
 import type {TemplateMetadata, TemplatePlan} from './types.js'
 
+import catchError from '../utils/catch-error.js'
 import {componentNames} from './flags.js'
 
-function intersectCollections(requested?: string[], available?: string[]): string[] | undefined {
+function intersectCollections(
+  scope: string,
+  requested?: string[],
+  available?: string[],
+): string[] | undefined {
   if (requested && available) {
     const collections = requested.filter((collection) => available.includes(collection))
-    return collections.length > 0 ? collections : undefined
+    if (collections.length === 0) {
+      catchError(new Error(`No requested ${scope} match this template`), {fatal: true})
+    }
+
+    return collections
   }
 
   return requested || available
@@ -29,10 +38,10 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
 
   return {
     ...plan,
-    collections: intersectCollections(plan.collections, metadata.collections),
+    collections: intersectCollections('collections', plan.collections, metadata.collections),
     components,
     excludeCollections: mergeExcludedCollections(plan.excludeCollections, metadata.excludedCollections),
     partial,
-    schemaCollections: intersectCollections(plan.schemaCollections, metadata.schemaCollections),
+    schemaCollections: intersectCollections('schema collections', plan.schemaCollections, metadata.schemaCollections),
   }
 }

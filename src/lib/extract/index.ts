@@ -1,5 +1,5 @@
 import {ux} from '@oclif/core'
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 
 import {
   buildTemplatePlan,
@@ -35,13 +35,10 @@ export default async function extract(dir: string, plan: TemplatePlan = buildTem
   const schemaPlan = await expandSchemaPlan(plan)
   const effectivePlan = await expandDeepPlan(schemaPlan)
 
-  if (!fs.existsSync(destination)) {
-    ux.stdout(`Attempting to create directory at: ${destination}`)
-    try {
-      fs.mkdirSync(destination, {recursive: true})
-    } catch (error) {
-      catchError(error, {context: {destination}, fatal: true})
-    }
+  try {
+    await fs.mkdir(destination, {recursive: true})
+  } catch (error) {
+    catchError(error, {context: {destination}, fatal: true})
   }
 
   if (effectivePlan.components.schema) {

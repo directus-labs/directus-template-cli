@@ -3,7 +3,12 @@ import {ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
 import {api} from '../sdk.js'
-import {includesCollection, type TemplatePlan, type TemplateWarning} from '../template-plan/index.js'
+import {
+  getBrokenJunctionCollections,
+  includesCollection,
+  type TemplatePlan,
+  type TemplateWarning,
+} from '../template-plan/index.js'
 import catchError from '../utils/catch-error.js'
 import writeToFile from '../utils/write-to-file.js'
 
@@ -26,31 +31,9 @@ interface ExcludedRelationField {
   type: 'alias' | 'm2o'
 }
 
-function getJunctionCollectionsWithBrokenFKs(relations: RelationInfo[], plan?: TemplatePlan): Set<string> {
-  if (!plan?.partial) return new Set()
-
-  // Directus sets meta.junction_field on both FK legs of an M2M to point to the other FK.
-  // Any collection appearing as `collection` on such a relation is a junction table.
-  const junctionCollections = new Set(relations.filter((r) => r.meta?.junction_field).map((r) => r.collection))
-
-  const broken = new Set<string>()
-  for (const junction of junctionCollections) {
-    const targets = relations
-      .filter((r) => r.collection === junction && r.related_collection)
-      .map((r) => r.related_collection as string)
-
-    // System collections always exist on every instance — never treat them as broken FK targets.
-    if (targets.some((target) => !target.startsWith('directus_') && !includesCollection(target, plan))) {
-      broken.add(junction)
-    }
-  }
-
-  return broken
-}
-
 async function getCollections(relations: RelationInfo[], plan?: TemplatePlan) {
   const response = await api.client.request(readCollections())
-  const brokenJunctions = getJunctionCollectionsWithBrokenFKs(relations, plan)
+  const brokenJunctions = getBrokenJunctionCollections(relations, plan)
   return response
     .filter((item) => !item.collection.startsWith('directus_', 0))
     .filter((item) => item.schema !== null)
@@ -170,7 +153,7 @@ async function getDataFromCollection(
       context: {collection, function: 'getDataFromCollection'},
       fatal: true,
     })
-    return []
+    throw error
   }
 }
 

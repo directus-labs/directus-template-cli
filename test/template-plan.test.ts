@@ -4,6 +4,7 @@ import {
   applyMetadataToPlan,
   buildTemplatePlan,
   createTemplateMetadata,
+  getBrokenJunctionCollections,
   includesRelation,
 } from '../src/lib/template-plan/index.js'
 
@@ -178,10 +179,85 @@ describe('template plan', () => {
     expect(plan.collections).to.deep.equal(['posts'])
   })
 
-  it('returns undefined collections when requested has no overlap with metadata', () => {
+  it('errors when requested collections have no overlap with metadata', () => {
     const metadata = createTemplateMetadata(buildTemplatePlan({collections: 'posts'}))
-    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'authors'}), metadata)
 
-    expect(plan.collections).to.equal(undefined)
+    expect(() => applyMetadataToPlan(buildTemplatePlan({collections: 'authors'}), metadata)).to.throw(
+      /No requested collections match this template/,
+    )
+  })
+
+  it('errors when at least one component must be enabled', () => {
+    expect(() => buildTemplatePlan({content: false, dashboards: false, extensions: false, files: false, flows: false, permissions: false, schema: false, settings: false, users: false})).to.throw(
+      /At least one template component must be enabled/,
+    )
+  })
+
+  it('parses array collection input', () => {
+    const plan = buildTemplatePlan({collections: ['posts', 'pages']})
+    expect(plan.collections).to.deep.equal(['posts', 'pages'])
+  })
+
+  it('round-trips metadata with mixed flags', () => {
+    const original = buildTemplatePlan({
+      collections: 'posts,pages',
+      excludeCollections: 'directus_files',
+      noAssets: true,
+    })
+    const metadata = createTemplateMetadata(original)
+    const restored = applyMetadataToPlan(buildTemplatePlan({collections: 'posts,pages'}), metadata)
+
+    expect(restored.components.files).to.equal(false)
+    expect(restored.excludeCollections).to.include('directus_files')
+    expect(restored.collections).to.deep.equal(['posts', 'pages'])
+    expect(restored.partial).to.equal(true)
+  })
+
+  describe('getBrokenJunctionCollections', () => {
+    it('returns empty set for non-partial plans', () => {
+      const plan = buildTemplatePlan({})
+      const relations = [
+        {collection: 'posts_tags', meta: {junction_field: 'tag_id'}, related_collection: 'posts'},
+        {collection: 'posts_tags', meta: {junction_field: 'post_id'}, related_collection: 'tags'},
+      ]
+      expect(getBrokenJunctionCollections(relations, plan).size).to.equal(0)
+    })
+
+    it('marks junction broken when one FK target is excluded', () => {
+      const plan = buildTemplatePlan({collections: 'posts,posts_tags'})
+      const relations = [
+        {collection: 'posts_tags', meta: {junction_field: 'tag_id'}, related_collection: 'posts'},
+        {collection: 'posts_tags', meta: {junction_field: 'post_id'}, related_collection: 'tags'},
+      ]
+      const broken = getBrokenJunctionCollections(relations, plan)
+      expect(broken.has('posts_tags')).to.equal(true)
+    })
+
+    it('does not mark junction broken when target is a system collection', () => {
+      const plan = buildTemplatePlan({collections: 'posts,posts_files'})
+      const relations = [
+        {collection: 'posts_files', meta: {junction_field: 'directus_files_id'}, related_collection: 'posts'},
+        {collection: 'posts_files', meta: {junction_field: 'posts_id'}, related_collection: 'directus_files'},
+      ]
+      const broken = getBrokenJunctionCollections(relations, plan)
+      expect(broken.has('posts_files')).to.equal(false)
+    })
+
+    it('does not mark junction broken when both targets included', () => {
+      const plan = buildTemplatePlan({collections: 'posts,tags,posts_tags'})
+      const relations = [
+        {collection: 'posts_tags', meta: {junction_field: 'tag_id'}, related_collection: 'posts'},
+        {collection: 'posts_tags', meta: {junction_field: 'post_id'}, related_collection: 'tags'},
+      ]
+      expect(getBrokenJunctionCollections(relations, plan).size).to.equal(0)
+    })
+
+    it('ignores non-junction relations', () => {
+      const plan = buildTemplatePlan({collections: 'posts'})
+      const relations = [
+        {collection: 'posts', meta: {}, related_collection: 'missing'},
+      ]
+      expect(getBrokenJunctionCollections(relations, plan).size).to.equal(0)
+    })
   })
 })

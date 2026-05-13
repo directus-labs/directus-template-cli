@@ -12,7 +12,7 @@ import {
   DIRECTUS_PURPLE,
   SEPARATOR,
 } from '../lib/constants.js'
-import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
+import {type ApplyFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
 import apply from '../lib/load/index.js'
 import * as templatePlanFlags from '../lib/template-plan/flags.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
@@ -102,7 +102,7 @@ export default class ApplyCommand extends BaseCommand {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ApplyFlags): Promise<void> {
-    const validatedFlags = validateInteractiveFlags(flags)
+    const validatedFlags = flags
 
     // Show animated intro
     await animatedBunny("Let's apply a template!")

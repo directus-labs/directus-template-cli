@@ -15,9 +15,9 @@ interface TemplateField {
 }
 
 export default async function finalizeFields(dir: string, plan?: TemplatePlan) {
-  const fields = (readFile('fields', dir) as TemplateField[]).filter((field) =>
-    includesSchemaCollection(field.collection, plan),
-  )
+  const fields = (readFile('fields', dir) as TemplateField[])
+    .filter((field) => includesSchemaCollection(field.collection, plan))
+    .filter((field) => field.schema)
 
   ux.action.start(ux.colorize(DIRECTUS_PINK, `Finalizing metadata for ${fields.length} fields`))
 
@@ -30,7 +30,7 @@ export default async function finalizeFields(dir: string, plan?: TemplatePlan) {
         }),
       )
     } catch (error) {
-      catchError(error)
+      catchError(error, {context: {collection: field.collection, field: field.field}})
     }
   }
 

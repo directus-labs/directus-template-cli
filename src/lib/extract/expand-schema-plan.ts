@@ -3,7 +3,6 @@ import {ux} from '@oclif/core'
 
 import {api} from '../sdk.js'
 import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
-import catchError from '../utils/catch-error.js'
 
 interface CollectionInfo {
   collection: string
@@ -25,62 +24,60 @@ interface RelationInfo {
 export async function expandSchemaPlan(plan: TemplatePlan): Promise<TemplatePlan> {
   if (!plan.partial || !plan.collections) return plan
 
-  try {
-    const collections = (await api.client.request(readCollections())) as CollectionInfo[]
-    const availableCollections = collections
-      .filter((collection) => !collection.collection.startsWith('directus_', 0))
-      .map((collection) => collection.collection)
-      .filter((collection) => includesCollection(collection, {...plan, collections: undefined}))
-    const collectionMap = new Map(collections.map((collection) => [collection.collection, collection]))
+  const collections = (await api.client.request(readCollections())) as CollectionInfo[]
+  const availableCollections = collections
+    .filter((collection) => !collection.collection.startsWith('directus_', 0))
+    .map((collection) => collection.collection)
+    .filter((collection) => includesCollection(collection, {...plan, collections: undefined}))
+  const collectionMap = new Map(collections.map((collection) => [collection.collection, collection]))
 
-    const available = new Set(availableCollections)
-    const selected = new Set(plan.collections.filter((collection) => available.has(collection)))
-    const relations = (await api.client.request(readRelations())) as RelationInfo[]
+  const available = new Set(availableCollections)
+  const selected = new Set(plan.collections.filter((collection) => available.has(collection)))
+  const relations = (await api.client.request(readRelations())) as RelationInfo[]
 
-    let changed = true
-    while (changed) {
-      changed = false
+  let changed = true
+  while (changed) {
+    changed = false
 
-      const candidates: string[] = []
+    const candidates: string[] = []
 
-      for (const collection of selected) {
-        const group = collectionMap.get(collection)?.meta?.group
-        if (group) candidates.push(group)
+    for (const collection of selected) {
+      const group = collectionMap.get(collection)?.meta?.group
+      if (group) candidates.push(group)
+    }
+
+    for (const relation of relations) {
+      if (selected.has(relation.collection) && relation.related_collection) {
+        candidates.push(relation.related_collection)
       }
 
-      for (const relation of relations) {
-        candidates.push(
-          ...([
-            selected.has(relation.collection) && relation.related_collection,
-            relation.related_collection && selected.has(relation.related_collection) && relation.collection,
-            selected.has(relation.collection) && relation.meta?.one_allowed_collections,
-          ]
-            .flat()
-            .filter(Boolean) as string[]),
-        )
+      if (relation.related_collection && selected.has(relation.related_collection)) {
+        candidates.push(relation.collection)
       }
 
-      for (const collection of candidates) {
-        if (!available.has(collection)) continue
-        if (selected.has(collection)) continue
-
-        selected.add(collection)
-        changed = true
+      if (selected.has(relation.collection) && relation.meta?.one_allowed_collections) {
+        candidates.push(...relation.meta.one_allowed_collections)
       }
     }
 
-    const schemaCollections = [...selected]
-    const addedCollections = schemaCollections.filter((collection) => !plan.collections?.includes(collection))
+    for (const collection of candidates) {
+      if (!available.has(collection)) continue
+      if (selected.has(collection)) continue
 
-    if (addedCollections.length > 0) {
-      ux.warn(`Schema scope expanded collections: ${addedCollections.join(', ')}`)
+      selected.add(collection)
+      changed = true
     }
+  }
 
-    return {
-      ...plan,
-      schemaCollections,
-    }
-  } catch (error) {
-    catchError(error, {fatal: true})
+  const schemaCollections = [...selected]
+  const addedCollections = schemaCollections.filter((collection) => !plan.collections?.includes(collection))
+
+  if (addedCollections.length > 0) {
+    ux.warn(`Schema scope expanded collections: ${addedCollections.join(', ')}`)
+  }
+
+  return {
+    ...plan,
+    schemaCollections,
   }
 }

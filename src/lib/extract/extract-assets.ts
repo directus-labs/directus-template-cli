@@ -46,11 +46,10 @@ export async function downloadAllFiles(dir: string) {
     let page = 1
     while (true) {
       ux.action.status = `Downloading assets page ${page}`
-      // Intentional: page asset metadata sequentially to avoid queuing all downloads at once.
+      // Page asset metadata sequentially and finish each page before fetching the next, to avoid queuing all downloads at once.
       // eslint-disable-next-line no-await-in-loop
       const fileList = await getAssetPage(page)
 
-      // Intentional: finish one asset page before fetching the next page.
       // eslint-disable-next-line no-await-in-loop
       await Promise.all(
         fileList.map((file) =>

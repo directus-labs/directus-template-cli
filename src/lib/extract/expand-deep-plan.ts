@@ -3,7 +3,6 @@ import {ux} from '@oclif/core'
 
 import {api} from '../sdk.js'
 import {includesCollection, type TemplatePlan} from '../template-plan/index.js'
-import catchError from '../utils/catch-error.js'
 
 interface RelationInfo {
   collection: string
@@ -17,61 +16,59 @@ interface RelationInfo {
 export async function expandDeepPlan(plan: TemplatePlan): Promise<TemplatePlan> {
   if (!plan.partial || plan.relationStrategy !== 'deep' || !plan.collections) return plan
 
-  try {
-    const collections = await api.client.request(readCollections())
-    const availableCollections = collections
-      .filter((collection) => !collection.collection.startsWith('directus_', 0))
-      .filter((collection) => collection.schema !== null)
-      .map((collection) => collection.collection)
-      .filter((collection) => includesCollection(collection, {...plan, collections: undefined}))
+  const collections = await api.client.request(readCollections())
+  const availableCollections = collections
+    .filter((collection) => !collection.collection.startsWith('directus_', 0))
+    .filter((collection) => collection.schema !== null)
+    .map((collection) => collection.collection)
+    .filter((collection) => includesCollection(collection, {...plan, collections: undefined}))
 
-    const available = new Set(availableCollections)
-    const missingCollections = plan.collections.filter((collection) => !available.has(collection))
-    if (missingCollections.length > 0) {
-      ux.warn(`Requested collections not found or excluded: ${missingCollections.join(', ')}`)
-    }
+  const available = new Set(availableCollections)
+  const missingCollections = plan.collections.filter((collection) => !available.has(collection))
+  if (missingCollections.length > 0) {
+    ux.warn(`Requested collections not found or excluded: ${missingCollections.join(', ')}`)
+  }
 
-    const selected = new Set(plan.collections.filter((collection) => available.has(collection)))
-    const relations = (await api.client.request(readRelations())) as RelationInfo[]
+  const selected = new Set(plan.collections.filter((collection) => available.has(collection)))
+  const relations = (await api.client.request(readRelations())) as RelationInfo[]
 
-    let changed = true
-    while (changed) {
-      changed = false
-      const candidates: string[] = []
+  let changed = true
+  while (changed) {
+    changed = false
+    const candidates: string[] = []
 
-      for (const relation of relations) {
-        candidates.push(
-          ...([
-            selected.has(relation.collection) && relation.related_collection,
-            relation.related_collection && selected.has(relation.related_collection) && relation.collection,
-            selected.has(relation.collection) && relation.meta?.one_allowed_collections,
-          ]
-            .flat()
-            .filter(Boolean) as string[]),
-        )
+    for (const relation of relations) {
+      if (selected.has(relation.collection) && relation.related_collection) {
+        candidates.push(relation.related_collection)
       }
 
-      for (const collection of candidates) {
-        if (!available.has(collection)) continue
-        if (selected.has(collection)) continue
+      if (relation.related_collection && selected.has(relation.related_collection)) {
+        candidates.push(relation.collection)
+      }
 
-        selected.add(collection)
-        changed = true
+      if (selected.has(relation.collection) && relation.meta?.one_allowed_collections) {
+        candidates.push(...relation.meta.one_allowed_collections)
       }
     }
 
-    const expandedCollections = [...selected]
-    const addedCollections = expandedCollections.filter((collection) => !plan.collections?.includes(collection))
+    for (const collection of candidates) {
+      if (!available.has(collection)) continue
+      if (selected.has(collection)) continue
 
-    if (addedCollections.length > 0) {
-      ux.warn(`Deep relation strategy expanded collections: ${addedCollections.join(', ')}`)
+      selected.add(collection)
+      changed = true
     }
+  }
 
-    return {
-      ...plan,
-      collections: expandedCollections,
-    }
-  } catch (error) {
-    catchError(error, {fatal: true})
+  const expandedCollections = [...selected]
+  const addedCollections = expandedCollections.filter((collection) => !plan.collections?.includes(collection))
+
+  if (addedCollections.length > 0) {
+    ux.warn(`Deep relation strategy expanded collections: ${addedCollections.join(', ')}`)
+  }
+
+  return {
+    ...plan,
+    collections: expandedCollections,
   }
 }
