@@ -26,6 +26,7 @@ import catchError from '../lib/utils/catch-error.js'
 import {
   getCommunityTemplates,
   getGithubTemplate,
+  getInteractiveGithubTemplate,
   getInteractiveLocalTemplate,
   getLocalTemplate,
 } from '../lib/utils/get-template.js'
@@ -142,7 +143,7 @@ export default class ApplyCommand extends BaseCommand {
         const ghTemplateUrl = await text({
           message: 'What is the public GitHub repository URL?',
         })
-        template = await getGithubTemplate(ghTemplateUrl as string)
+        template = await this.selectGithubTemplate(ghTemplateUrl as string)
         break
       }
 
@@ -326,10 +327,35 @@ export default class ApplyCommand extends BaseCommand {
 
   /**
    * INTERACTIVE
-   * Select a local template from the given directory
-   * @param localTemplateDir - The local template directory path
+   * Select a template from the given GitHub repository
+   * @param ghTemplateUrl - The GitHub repository URL
    * @returns {Promise<Template>} - Returns the selected template
    */
+  private async selectGithubTemplate(ghTemplateUrl: string): Promise<Template> {
+    try {
+      const templates = await getInteractiveGithubTemplate(ghTemplateUrl)
+
+      if (templates.length === 1) {
+        return templates[0]
+      }
+
+      log.info('Multiple Directus templates found in this repository.')
+      const selectedTemplate = await select({
+        message: 'Select a template.',
+        options: templates.map(t => ({label: t.templateName, value: t})),
+      })
+      return selectedTemplate as Template
+    } catch (error) {
+      if (error instanceof Error) {
+        ux.error(error.message)
+      } else {
+        ux.error('An unknown error occurred while getting the GitHub template.')
+      }
+
+      throw error
+    }
+  }
+
   private async selectLocalTemplate(localTemplateDir: string): Promise<Template> {
     try {
       const templates = await getInteractiveLocalTemplate(localTemplateDir)
@@ -352,6 +378,8 @@ export default class ApplyCommand extends BaseCommand {
       } else {
         ux.error('An unknown error occurred while getting the local template.')
       }
+
+      throw error
     }
   }
 }
