@@ -40,7 +40,7 @@
     "posthog-node": "^5.29.2"
   },
   "devDependencies": {
-    "@directus/types": "^15.0.2",
+    "@directus/types": "^15.0.3",
     "@eslint/compat": "^2.0.5",
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4.1.18",
