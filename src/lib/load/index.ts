@@ -1,8 +1,11 @@
 import {ux} from '@oclif/core'
 
-import type { ApplyFlags } from './apply-flags.js'
+import type {ApplyFlags} from './apply-flags.js'
 
+import {applyMetadataToPlan, buildTemplatePlan, readTemplateMetadata} from '../template-plan/index.js'
 import checkTemplate from '../utils/check-template.js'
+import finalizeCollections from './finalize-collections.js'
+import finalizeFields from './finalize-fields.js'
 import loadAccess from './load-access.js'
 import loadCollections from './load-collections.js'
 import loadDashboards from './load-dashboards.js'
@@ -19,61 +22,83 @@ import loadRoles from './load-roles.js'
 import loadSettings from './load-settings.js'
 import loadTranslations from './load-translations.js'
 import loadUsers from './load-users.js'
-import updateRequiredFields from './update-required-fields.js'
-
 
 export default async function apply(dir: string, flags: ApplyFlags) {
   const source = `${dir}/src`
-  const isTemplateOk = await checkTemplate(source)
-  if (!isTemplateOk) {
-    ux.error('The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...')
+  const metadata = readTemplateMetadata(source)
+  const requestedPlan = buildTemplatePlan(flags)
+  const effectivePlan = applyMetadataToPlan(requestedPlan, metadata)
+  const {components} = effectivePlan
+
+  if (!metadata) {
+    ux.warn('No template-meta.json found. Treating as a full template — relation integrity check skipped.')
+  } else if (metadata.partial) {
+    ux.warn('Template metadata indicates this is a partial template.')
   }
 
-  if (flags.schema) {
-    await loadCollections(source)
-    await loadRelations(source)
+  const brokenRelationWarnings = metadata?.warnings?.filter((warning) => warning.type === 'excluded_relation') || []
+  if (components.content && brokenRelationWarnings.length > 0 && !effectivePlan.allowBrokenRelations) {
+    ux.error(
+      'This partial template contains excluded relation references. Re-run with --allow-broken-relations to apply anyway.',
+    )
   }
 
-  if (flags.permissions || flags.users) {
+  if (!metadata || components.schema) {
+    const isTemplateOk = await checkTemplate(source)
+    if (!isTemplateOk) {
+      ux.error(
+        'The template is missing the collections, fields, or relations files. Older templates are not supported in v0.4 of directus-template-cli. Try using v0.3 to load older templates npx directus-template-cli@0.3 apply or extract the template using latest version before applying. Exiting...',
+      )
+    }
+  }
+
+  if (components.schema) {
+    await loadCollections(source, effectivePlan)
+    await loadRelations(source, effectivePlan)
+    await finalizeCollections(source, effectivePlan)
+  }
+
+  if (components.permissions || components.users) {
     await loadRoles(source)
     await loadPolicies(source)
     await loadPermissions(source)
 
-    if (flags.users) {
+    if (components.users) {
       await loadUsers(source)
     }
 
     await loadAccess(source)
   }
 
-  if (flags.files) {
+  if (components.files) {
     await loadFolders(source)
     await loadFiles(source)
   }
 
-  if (flags.content) {
-    await loadData(source)
+  if (components.content) {
+    await loadData(source, effectivePlan)
   }
 
-  if (flags.schema) {
-    await updateRequiredFields(source)
+  if (components.schema) {
+    // Finalize fields after data loading because skeleton records rely on relaxed constraints.
+    await finalizeFields(source, effectivePlan)
   }
 
-  if (flags.dashboards) {
+  if (components.dashboards) {
     await loadDashboards(source)
   }
 
-  if (flags.flows) {
+  if (components.flows) {
     await loadFlows(source)
   }
 
-  if (flags.settings) {
+  if (components.settings) {
     await loadSettings(source)
     await loadTranslations(source)
     await loadPresets(source)
   }
 
-  if (flags.extensions) {
+  if (components.extensions) {
     await loadExtensions(source)
   }
 

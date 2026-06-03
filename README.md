@@ -3,6 +3,7 @@
 A streamlined CLI tool for creating new Directus projects and managing Directus templates - making it easy to apply and extract template configurations across instances.
 
 This tool is best suited for:
+
 - Proof of Concept (POC) projects
 - Demo environments
 - New project setups
@@ -10,8 +11,9 @@ This tool is best suited for:
 ⚠️ We strongly recommend against using this tool in existing production environments or as a critical part of your CI/CD pipeline without thorough testing. Always create backups before applying templates.
 
 **Important Notes:**
+
 - **Primary Purpose**: Built to deploy templates created by the Directus Core Team. While community templates are supported, the unlimited possible configurations make comprehensive support challenging.
-- **Database Compatibility**: PostgreSQL is recommended. Applying templates that are extracted and applied between different databases (Extract from SQLite ->  Apply to Postgres) can caused issues and is not recommended. MySQL users may encounter known issues.
+- **Database Compatibility**: PostgreSQL is recommended. Applying templates that are extracted and applied between different databases (Extract from SQLite -> Apply to Postgres) can caused issues and is not recommended. MySQL users may encounter known issues.
 - **Performance**: Remote operations (extract/apply) are rate-limited to 10 requests/second using bottleneck. Processing time varies based on your instance size (collections, items, assets).
 - **Version Compatibility**:
   - v0.5.0+: Compatible with Directus 11 and up
@@ -30,6 +32,7 @@ npx directus-template-cli@latest init
 ```
 
 You'll be guided through:
+
 - Selecting a directory for your new project
 - Choosing a Directus backend template
 - Selecting a frontend framework (if available for the template)
@@ -50,7 +53,6 @@ npx directus-template-cli@latest init --frontend=nextjs --template=cms
 npx directus-template-cli@latest init my-project --frontend=nextjs --template=cms
 npx directus-template-cli@latest init --template=https://github.com/directus-labs/starters/tree/main/cms
 ```
-
 
 Available flags:
 
@@ -112,6 +114,7 @@ The `directus:template` property contains:
   - Each frontend has a `name` (display name) and `path` (directory containing the frontend code)
 
 When you use this template with the `init` command, it will:
+
 1. Copy the Directus template files from the specified template directory
 2. Copy the selected frontend code based on your choice or the `--frontend` flag
 3. Set up the project structure with both backend and frontend integrated
@@ -133,11 +136,9 @@ npx directus-template-cli@latest apply
 
 You can choose from our community maintained templates or you can also choose a template from a local directory or a public GitHub repository.
 
-
 ### Programmatic Mode
 
 By default, the CLI will run in interactive mode. For CI/CD pipelines or automated scripts, you can use the programmatic mode:
-
 
 Using a token:
 
@@ -151,11 +152,10 @@ Using email/password:
 npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="admin" --templateLocation="./my-template" --templateType="local"
 ```
 
-Partial apply (apply only some of the parts of a template to the instance):
+Partial apply (apply only some parts of a template):
 
 ```
-npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --partial --schema --permissions --no-content
-
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --userEmail="admin@example.com" --userPassword="your-password" --templateLocation="./my-template" --templateType="local" --schema --permissions --no-content
 ```
 
 Available flags:
@@ -166,7 +166,7 @@ Available flags:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Location of the template to apply (required)
 - `--templateType`: Type of template to apply. Options: community, local, github. Defaults to `local`.
-- `--partial`: Enable partial template application
+- `--partial`: Enable partial template mode explicitly. Component and collection flags also imply partial mode.
 - `--content`: Load Content (data)
 - `--dashboards`: Load Dashboards
 - `--extensions`: Load Extensions
@@ -176,6 +176,11 @@ Available flags:
 - `--schema`: Load Schema
 - `--settings`: Load Settings
 - `--users`: Load Users
+- `--collections`: Only apply these comma-separated collections
+- `--exclude-collections`: Exclude these comma-separated collections
+- `--relation-strategy`: How to handle omitted relation targets. Options: `empty`, `preserve`, `deep`.
+- `--allow-broken-relations`: Apply templates that intentionally preserve references to omitted records
+- `--no-assets`: Shorthand for `--no-files` and excluding `directus_files`
 - `--disableTelemetry`: Disable telemetry collection
 
 When using `--partial`, you can also use `--no` flags to exclude specific components from being applied. For example:
@@ -191,34 +196,12 @@ This command will apply the template but exclude content and users. Available `-
 - `--no-extensions`: Skip loading Extensions
 - `--no-files`: Skip loading Files
 - `--no-flows`: Skip loading Flows
-- `--no-permissions`: Skip loading PermissionsI
+- `--no-permissions`: Skip loading Permissions
 - `--no-schema`: Skip loading Schema
 - `--no-settings`: Skip loading Settings
 - `--no-users`: Skip loading Users
 
-
-#### Template Component Dependencies
-
-When applying templates, certain components have dependencies on others. Here are the key relationships to be aware of:
-
-- `--users`: Depends on `--permissions`. If you include users, permissions will automatically be included.
-- `--permissions`: Depends on `--schema`. If you include permissions, the schema will automatically be included.
-- `--content`: Depends on `--schema`. If you include content, the schema will automatically be included.
-- `--files`: No direct dependencies, but often related to content. Consider including `--content` if you're including files.
-- `--flows`: No direct dependencies, but may interact with other components. Consider your specific use case.
-- `--dashboards`: No direct dependencies, but often rely on data from other components.
-- `--extensions`: No direct dependencies, but may interact with other components.
-- `--settings`: No direct dependencies, but affects the overall system configuration.
-
-When using the `--partial` flag, keep these dependencies in mind. For example:
-
-```
-npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --partial --users
-```
-
-This command will automatically include `--permissions` and `--schema` along with `--users`, even if not explicitly specified.
-
-If you use `--no-` flags, be cautious about excluding dependencies. For instance, using `--no-schema` while including `--content` may lead to errors or incomplete application of the template.
+For how partial templates handle schema, content, and relations, see [Partial Templates and Relation Strategies](#partial-templates-and-relation-strategies).
 
 #### Using Environment Variables
 
@@ -230,7 +213,6 @@ You can also pass flags as environment variables. This can be useful for CI/CD p
 - `DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 - `TEMPLATE_TYPE`: Equivalent to `--templateType`
-
 
 ### Existing Data
 
@@ -254,7 +236,9 @@ For data in your own user-created collections, if an item has the same primary k
 
 The CLI can also extract a template from a Directus instance so that it can be applied to other instances.
 
-Note: We do not currently support partial extraction. The entire template will be extracted. We thought it better to have the data and not need it, than need it and not have it.
+Full extraction remains the default. Partial extraction is available with component flags, collection filters, and relation strategies.
+
+For how partial templates handle schema, content, and relations, see [Partial Templates and Relation Strategies](#partial-templates-and-relation-strategies).
 
 1. Make sure you remove any sensitive data from the Directus instance you don't want to include in the template.
 2. Login and create a Static Access Token for the admin user.
@@ -289,7 +273,44 @@ Available flags:
 - `--userPassword`: Password for Directus authentication (required if not using token)
 - `--templateLocation`: Directory to extract the template to (required)
 - `--templateName`: Name of the template (required)
+- `--partial`: Enable partial template mode explicitly. Component and collection flags also imply partial mode.
+- `--schema` / `--no-schema`: Include or skip schema
+- `--content` / `--no-content`: Include or skip content
+- `--files` / `--no-files`: Include or skip files and assets
+- `--flows` / `--no-flows`: Include or skip flows
+- `--dashboards` / `--no-dashboards`: Include or skip dashboards
+- `--permissions` / `--no-permissions`: Include or skip permissions
+- `--settings` / `--no-settings`: Include or skip settings
+- `--extensions` / `--no-extensions`: Include or skip extensions
+- `--users` / `--no-users`: Include or skip users
+- `--collections`: Only extract these comma-separated collections
+- `--exclude-collections`: Exclude these comma-separated collections
+- `--relation-strategy`: How to handle omitted relation targets. Options: `empty`, `preserve`, `deep`.
+- `--allow-broken-relations`: Mark intentionally incomplete relation references as allowed in metadata
+- `--no-assets`: Shorthand for `--no-files` and excluding `directus_files`
 - `--disableTelemetry`: Disable telemetry collection
+
+Examples:
+
+`--collections` limits content scope. Schema may still include additional collections needed by the data model.
+
+Skip assets safely:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --no-assets --relation-strategy empty
+```
+
+Preserve asset IDs but do not export assets:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --no-assets --relation-strategy preserve --allow-broken-relations
+```
+
+Portable partial snapshot:
+
+```
+npx directus-template-cli@latest extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055" --schema --content --collections posts,pages --relation-strategy deep
+```
 
 #### Using Environment Variables
 
@@ -301,14 +322,90 @@ Similar to the Apply command, you can use environment variables for the Extract 
 - `DIRECTUS_PASSWORD`: Equivalent to `--userPassword`
 - `TEMPLATE_LOCATION`: Equivalent to `--templateLocation`
 
+## Partial Templates and Relation Strategies
+
+Partial templates can intentionally omit components or collections. The CLI writes and reads `src/template-meta.json` so apply can understand what was extracted.
+
+Partial templates have two scopes:
+
+- **Schema scope**: the data model needed to keep selected collections valid. This can include related, junction, translation, page-builder, and grouping collections even when no records are exported for them.
+- **Content scope**: the records exported from collections requested with `--collections`, or records added by `deep`.
+
+Example: extracting `pages,posts` may still include schema for `page_blocks`, block collections, translations, and groups. Only `pages.json` and `posts.json` are exported unless you use `deep`.
+
+Relation strategies:
+
+| Strategy   | What it exports            | What happens to omitted relations                                           | Best for                                    |
+| ---------- | -------------------------- | --------------------------------------------------------------------------- | ------------------------------------------- |
+| `empty`    | Selected content only      | M2O fields become `null`; alias/O2M/M2M/M2A fields are omitted from records | Clean subsets, skipping assets safely       |
+| `preserve` | Selected content only      | Keeps IDs/arrays as-is and writes warnings                                  | Targets where related records already exist |
+| `deep`     | Selected + related content | Keeps relation values and recursively exports related records               | Portable partial snapshots                  |
+
+Tradeoffs:
+
+- `empty` produces directly applyable templates, but applying to an existing instance can clear omitted M2O references.
+- `preserve` can intentionally leave references to records that are not in the template. Apply requires `--allow-broken-relations` when metadata reports these references.
+- `deep` is the most portable, but can expand into many collections and export much more data.
+
+For example, a source record might contain both a file relation and a page-builder alias field:
+
+```json
+{
+  "id": "post-1",
+  "image": "file-uuid",
+  "blocks": ["block-1", "block-2"]
+}
+```
+
+With `--relation-strategy empty`, omitted relations are cleared or skipped:
+
+```json
+{
+  "id": "post-1",
+  "image": null
+}
+```
+
+With `--relation-strategy preserve`, relation values stay in the record and metadata records warnings:
+
+```json
+{
+  "id": "post-1",
+  "image": "file-uuid",
+  "blocks": ["block-1", "block-2"]
+}
+```
+
+With `--relation-strategy deep`, the record stays the same and related content collections are exported too:
+
+```jsonc
+// content/posts.json
+{
+  "id": "post-1",
+  "image": "file-uuid",
+  "blocks": ["block-1", "block-2"],
+}
+
+// also exported:
+// content/page_blocks.json
+// content/block_hero.json
+```
+
+Skip assets safely:
+
+```
+npx directus-template-cli@latest apply -p --directusUrl="http://localhost:8055" --directusToken="admin-token-here" --templateLocation="./my-template" --templateType="local" --content --collections posts,pages --no-assets --relation-strategy empty
+```
+
 ## Logs
 
 The Directus Template CLI logs information to a file in the `.directus-template-cli/logs` directory.
 
 Logs are automatically generated for each run of the CLI. Here's how the logging system works:
-   - A new log file is created for each CLI run.
-   - Log files are stored in the `.directus-template-cli/logs` directory within your current working directory.
-   - Each log file is named `run-[timestamp].log`, where `[timestamp]` is the ISO timestamp of when the CLI was initiated.
+
+- A new log file is created for each CLI run.
+- Log files are stored in the `.directus-template-cli/logs` directory within your current working directory.
+- Each log file is named `run-[timestamp].log`, where `[timestamp]` is the ISO timestamp of when the CLI was initiated.
 
 The logger automatically sanitizes sensitive information such as passwords, tokens, and keys before writing to the log file. But it may not catch everything. Just be aware of this and make sure to remove the log files when they are no longer needed.
 

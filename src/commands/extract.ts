@@ -6,44 +6,78 @@ import fs from 'node:fs'
 import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
-import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
-import extract from '../lib/extract/index.js'
-import {animatedBunny} from '../lib/utils/animated-bunny.js'
-import {getDirectusEmailAndPassword, getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
-import catchError from '../lib/utils/catch-error.js'
 import {
-  generatePackageJsonContent,
-  generateReadmeContent,
-} from '../lib/utils/template-defaults.js'
-import { shutdown, track } from '../services/posthog.js'
-import { BaseCommand } from './base.js'
+  BSL_LICENSE_CTA,
+  BSL_LICENSE_HEADLINE,
+  BSL_LICENSE_TEXT,
+  DIRECTUS_PINK,
+  DIRECTUS_PURPLE,
+  SEPARATOR,
+} from '../lib/constants.js'
+import extract from '../lib/extract/index.js'
+import * as templatePlanFlags from '../lib/template-plan/flags.js'
+import {buildTemplatePlan} from '../lib/template-plan/index.js'
+import {animatedBunny} from '../lib/utils/animated-bunny.js'
+import {
+  getDirectusEmailAndPassword,
+  getDirectusToken,
+  getDirectusUrl,
+  initializeDirectusApi,
+  validateAuthFlags,
+} from '../lib/utils/auth.js'
+import catchError from '../lib/utils/catch-error.js'
+import {generatePackageJsonContent, generateReadmeContent} from '../lib/utils/template-defaults.js'
+import {shutdown, track} from '../services/posthog.js'
+import {BaseCommand} from './base.js'
 
 export interface ExtractFlags {
-  directusToken: string;
-  directusUrl: string;
-  disableTelemetry?: boolean;
-  programmatic: boolean;
-  templateLocation: string;
-  templateName: string;
-  userEmail: string;
-  userPassword: string;
+  allowBrokenRelations?: boolean
+  collections?: string
+  content?: boolean
+  dashboards?: boolean
+  directusToken: string
+  directusUrl: string
+  disableTelemetry?: boolean
+  excludeCollections?: string
+  extensions?: boolean
+  files?: boolean
+  flows?: boolean
+  noAssets?: boolean
+  partial?: boolean
+  permissions?: boolean
+  programmatic: boolean
+  relationStrategy?: 'deep' | 'empty' | 'preserve'
+  schema?: boolean
+  settings?: boolean
+  templateLocation: string
+  templateName: string
+  userEmail: string
+  userPassword: string
+  users?: boolean
 }
 
 export default class ExtractCommand extends BaseCommand {
   static description = 'Extract a template from a Directus instance.'
-static examples = [
+  static examples = [
     '$ directus-template-cli extract',
     '$ directus-template-cli extract -p --templateName="My Template" --templateLocation="./my-template" --directusToken="admin-token-here" --directusUrl="http://localhost:8055"',
   ]
-static flags = {
+  static flags = {
     directusToken: customFlags.directusToken,
     directusUrl: customFlags.directusUrl,
     disableTelemetry: customFlags.disableTelemetry,
+    partial: templatePlanFlags.partial,
     programmatic: customFlags.programmatic,
     templateLocation: customFlags.templateLocation,
     templateName: customFlags.templateName,
     userEmail: customFlags.userEmail,
     userPassword: customFlags.userPassword,
+    ...templatePlanFlags.componentFlags,
+    allowBrokenRelations: templatePlanFlags.allowBrokenRelations,
+    collections: templatePlanFlags.collections,
+    excludeCollections: templatePlanFlags.excludeCollections,
+    noAssets: templatePlanFlags.noAssets,
+    relationStrategy: templatePlanFlags.relationStrategy,
   }
 
   /**
@@ -79,7 +113,7 @@ static flags = {
         },
         lifecycle: 'start',
         runId: this.runId,
-      });
+      })
     }
 
     try {
@@ -105,9 +139,11 @@ static flags = {
 
     ux.stdout(SEPARATOR)
 
-    ux.action.start(`Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`)
+    ux.action.start(
+      `Extracting template - ${ux.colorize(DIRECTUS_PINK, templateName)} from ${ux.colorize(DIRECTUS_PINK, flags.directusUrl)} to ${ux.colorize(DIRECTUS_PINK, directory)}`,
+    )
 
-    await extract(directory)
+    await extract(directory, buildTemplatePlan(flags))
 
     ux.action.stop()
 
@@ -125,8 +161,8 @@ static flags = {
         },
         lifecycle: 'complete',
         runId: this.runId,
-      });
-      await shutdown();
+      })
+      await shutdown()
     }
 
     log.warn(BSL_LICENSE_HEADLINE)
@@ -144,7 +180,7 @@ static flags = {
    * @returns {Promise<void>} - Returns nothing
    */
   private async runInteractive(flags: ExtractFlags): Promise<void> {
-    await animatedBunny('Let\'s extract a template!')
+    await animatedBunny("Let's extract a template!")
 
     intro(`${chalk.bgHex(DIRECTUS_PURPLE).white.bold('Directus Template CLI')} - Extract Template`)
 

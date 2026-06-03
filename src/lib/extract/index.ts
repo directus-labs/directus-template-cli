@@ -1,6 +1,15 @@
 import {ux} from '@oclif/core'
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 
+import {
+  buildTemplatePlan,
+  type TemplatePlan,
+  type TemplateWarning,
+  writeTemplateMetadata,
+} from '../template-plan/index.js'
+import catchError from '../utils/catch-error.js'
+import {expandDeepPlan} from './expand-deep-plan.js'
+import {expandSchemaPlan} from './expand-schema-plan.js'
 import extractAccess from './extract-access.js'
 import {downloadAllFiles} from './extract-assets.js'
 import extractCollections from './extract-collections.js'
@@ -21,47 +30,83 @@ import extractSettings from './extract-settings.js'
 import extractTranslations from './extract-translations.js'
 import extractUsers from './extract-users.js'
 
-export default async function extract(dir: string) {
-  // Get the destination directory for the actual files
+export default async function extract(dir: string, plan: TemplatePlan = buildTemplatePlan()) {
   const destination = `${dir}/src`
+  const schemaPlan = await expandSchemaPlan(plan)
+  const effectivePlan = await expandDeepPlan(schemaPlan)
 
-  // Check if directory exists, if not, then create it.
-  if (!fs.existsSync(destination)) {
-    ux.stdout(`Attempting to create directory at: ${destination}`)
-    fs.mkdirSync(destination, {recursive: true})
+  try {
+    await fs.mkdir(destination, {recursive: true})
+  } catch (error) {
+    catchError(error, {context: {destination}, fatal: true})
   }
 
-  await extractSchema(destination)
+  if (effectivePlan.components.schema) {
+    await extractSchema(destination)
+    await extractCollections(destination, effectivePlan)
+    await extractFields(destination, effectivePlan)
+    await extractRelations(destination, effectivePlan)
+  }
 
-  await extractCollections(destination)
-  await extractFields(destination)
-  await extractRelations(destination)
+  if (effectivePlan.components.files) {
+    await extractFolders(destination)
+    await extractFiles(destination)
+    await downloadAllFiles(destination)
+  }
 
-  await extractFolders(destination)
-  await extractFiles(destination)
+  if (effectivePlan.components.users || effectivePlan.components.permissions) {
+    await extractRoles(destination)
+    await extractPermissions(destination)
+    await extractPolicies(destination)
 
-  await extractUsers(destination)
-  await extractRoles(destination)
-  await extractPermissions(destination)
-  await extractPolicies(destination)
-  await extractAccess(destination)
+    if (effectivePlan.components.users) {
+      await extractUsers(destination)
+    }
 
-  await extractPresets(destination)
+    await extractAccess(destination)
+  }
 
-  await extractTranslations(destination)
+  if (effectivePlan.components.settings) {
+    await extractPresets(destination)
+    await extractTranslations(destination)
+    await extractSettings(destination)
+  }
 
-  await extractFlows(destination)
-  await extractOperations(destination)
+  if (effectivePlan.components.flows) {
+    await extractFlows(destination)
+    await extractOperations(destination)
+  }
 
-  await extractDashboards(destination)
-  await extractPanels(destination)
+  if (effectivePlan.components.dashboards) {
+    await extractDashboards(destination)
+    await extractPanels(destination)
+  }
 
-  await extractSettings(destination)
-  await extractExtensions(destination)
+  if (effectivePlan.components.extensions) {
+    await extractExtensions(destination)
+  }
 
-  await extractContent(destination)
+  const warnings: TemplateWarning[] = []
 
-  await downloadAllFiles(destination)
+  if (effectivePlan.components.content) {
+    const contentWarnings = await extractContent(destination, effectivePlan)
+    warnings.push(...contentWarnings)
+  }
+
+  for (const warning of warnings) {
+    ux.warn(
+      `Excluded relation: ${warning.collection}.${warning.field} -> ${warning.relatedCollection} (${warning.count} records)`,
+    )
+  }
+
+  try {
+    await writeTemplateMetadata(destination, effectivePlan, warnings)
+  } catch (error) {
+    catchError(error, {
+      context: {function: 'writeTemplateMetadata'},
+      fatal: true,
+    })
+  }
 
   return {}
 }

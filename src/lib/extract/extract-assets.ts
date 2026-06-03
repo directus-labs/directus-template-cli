@@ -7,11 +7,20 @@ import {DIRECTUS_PINK} from '../constants.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 
-async function getAssetList() {
-  return api.client.request(readFiles({limit: -1}))
+// Keep asset pages conservative because each item may trigger a binary download.
+const PAGE_SIZE = 100
+
+interface DirectusFile {
+  filename_disk: string
+  id: string
 }
 
-async function downloadFile(file: any, dir: string) {
+async function getAssetPage(page: number): Promise<DirectusFile[]> {
+  return api.client.request(readFiles({limit: PAGE_SIZE, page})) as unknown as DirectusFile[]
+}
+
+async function downloadFile(file: DirectusFile, dir: string) {
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins
   const response: Response | string = await api.client.request(() => ({
     method: 'GET',
     path: `/assets/${file.id}`,
@@ -34,10 +43,25 @@ export async function downloadAllFiles(dir: string) {
       fs.mkdirSync(fullPath, {recursive: true})
     }
 
-    const fileList = await getAssetList()
-    await Promise.all(fileList.map(file => downloadFile(file, dir).catch(error => {
-      catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
-    })))
+    let page = 1
+    while (true) {
+      ux.action.status = `Downloading assets page ${page}`
+      // Page asset metadata sequentially and finish each page before fetching the next, to avoid queuing all downloads at once.
+      // eslint-disable-next-line no-await-in-loop
+      const fileList = await getAssetPage(page)
+
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(
+        fileList.map((file) =>
+          downloadFile(file, dir).catch((error) => {
+            catchError(`Error downloading ${file.filename_disk}: ${error.message}`)
+          }),
+        ),
+      )
+
+      if (fileList.length < PAGE_SIZE) break
+      page++
+    }
   } catch (error) {
     catchError(error)
   }
