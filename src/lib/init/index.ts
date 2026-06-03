@@ -1,6 +1,5 @@
 import {log as clackLog, note, outro, spinner} from '@clack/prompts'
 import {ux} from '@oclif/core'
-import chalk from 'chalk'
 import dotenv from 'dotenv'
 import {execa} from 'execa'
 import {downloadTemplate, type DownloadTemplateResult} from 'giget'
@@ -17,7 +16,7 @@ import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, pinkText} from 
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
-import {DIRECTUS_CONFIG, DOCKER_CONFIG} from './config.js'
+import {DOCKER_CONFIG} from './config.js'
 
 
 export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
@@ -162,21 +161,20 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     // Install dependencies if requested
     if (flags.installDeps) {
       const s = spinner()
+      let dependenciesInstalled = true
       s.start('Installing dependencies')
-      try {
-        if (fs.existsSync(frontendDir)) {
-          await installDependencies({
-            cwd: frontendDir,
-            packageManager,
-            silent: true,
-          })
-        }
-      } catch (error) {
-        ux.warn('Failed to install dependencies')
-        throw error
+
+      if (fs.existsSync(frontendDir)) {
+        dependenciesInstalled = await installFrontendDependencies({
+          frontendDir,
+          onSkip: () => s.stop('Dependency installation skipped'),
+          packageManager,
+        })
       }
 
-      s.stop('Dependencies installed!')
+      if (dependenciesInstalled) {
+        s.stop('Dependencies installed!')
+      }
     }
 
     // Initialize Git repo
@@ -198,7 +196,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
       : `- Complete the onboarding form at ${pinkText(directusInfo.url || 'http://localhost:8055')} to create your admin account. \n`;
     const frontendText = flags.frontend ? `- To start the frontend, run ${pinkText(`cd ${flags.frontend}`)} and then ${pinkText(`${packageManager?.name} run dev`)}. \n` : ''
     const projectText = `- Navigate to your project directory using ${pinkText(`cd ${relativeDir}`)}. \n`
-    const readmeText = '- Review the \`./README.md\` file for more information and next steps.'
+    const readmeText = '- Review the `./README.md` file for more information and next steps.'
 
     const nextSteps = `${directusText}${directusLoginText}${projectText}${frontendText}${readmeText}`
 
@@ -238,5 +236,46 @@ async function initGit(targetDir: string): Promise<void> {
       fatal: false,
       logToFile: true,
     })
+  }
+}
+
+type DependencyInstaller = (options: {
+  cwd: string
+  packageManager?: PackageManager
+  silent: boolean
+}) => Promise<unknown>
+
+type InstallFrontendDependenciesOptions = {
+  frontendDir: string
+  install?: DependencyInstaller
+  onSkip?: () => void
+  packageManager: null | PackageManager
+  warn?: (message: string) => void
+}
+
+export async function installFrontendDependencies({
+  frontendDir,
+  install = installDependencies,
+  onSkip,
+  packageManager,
+  warn = ux.warn,
+}: InstallFrontendDependenciesOptions): Promise<boolean> {
+  try {
+    await install({
+      cwd: frontendDir,
+      packageManager: packageManager ?? undefined,
+      silent: true,
+    })
+
+    return true
+  } catch {
+    onSkip?.()
+    warn('Failed to install dependencies')
+    if (packageManager?.name === 'pnpm') {
+      warn('This starter uses pnpm. From the frontend directory, try running: corepack enable && pnpm install')
+    }
+
+    warn('You can install dependencies manually and continue using the generated project.')
+    return false
   }
 }
