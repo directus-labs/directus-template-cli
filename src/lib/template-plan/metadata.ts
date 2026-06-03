@@ -29,16 +29,21 @@ export function readTemplateMetadata(dir: string): TemplateMetadata | undefined 
   const filePath = getTemplateMetadataPath(dir)
   if (!fs.existsSync(filePath)) return undefined
 
-  try {
-    const metadata = JSON.parse(fs.readFileSync(filePath, 'utf8')) as TemplateMetadata
-    if (metadata.version !== 2) {
-      catchError(new Error(`Unsupported template metadata version: ${metadata.version}`), {fatal: true})
-    }
+  let metadata: TemplateMetadata
 
-    return metadata
+  try {
+    metadata = JSON.parse(fs.readFileSync(filePath, 'utf8')) as TemplateMetadata
   } catch (error) {
     catchError(error, {fatal: true})
+    return undefined
   }
+
+  if (metadata.version !== 2) {
+    catchError(new Error(`Unsupported template metadata version: ${metadata.version}`), {fatal: true})
+    return undefined
+  }
+
+  return metadata
 }
 
 export async function writeTemplateMetadata(

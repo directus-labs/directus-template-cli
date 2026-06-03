@@ -1,5 +1,5 @@
 import {readCollections, readItems, readRelations} from '@directus/sdk'
-import {ux} from '@oclif/core'
+import {Errors, ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
 import {api} from '../sdk.js'
@@ -153,7 +153,6 @@ async function getDataFromCollection(
       context: {collection, function: 'getDataFromCollection'},
       fatal: true,
     })
-    throw error
   }
 }
 
@@ -166,11 +165,14 @@ export async function extractContent(dir: string, plan?: TemplatePlan): Promise<
     const collections = await getCollections(relations, plan)
 
     for (const collection of collections) {
+      // Keep extraction sequential so the shared ux.action.status reflects the active collection.
       // eslint-disable-next-line no-await-in-loop
       const collectionWarnings = await getDataFromCollection(collection, dir, relations, plan)
       warnings.push(...collectionWarnings)
     }
   } catch (error) {
+    if (error instanceof Errors.CLIError) throw error
+
     catchError(error, {
       context: {function: 'extractContent'},
       fatal: true,

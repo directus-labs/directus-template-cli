@@ -35,10 +35,11 @@ function getContentCollections(dir: string): Set<string> {
   )
 }
 
-function getUserCollections(dir: string, plan?: TemplatePlan) {
+export function getUserCollections(dir: string, plan?: TemplatePlan) {
   const contentCollections = getContentCollections(dir)
   const collections = readFile('collections', dir)
-  const relations = plan?.partial ? readFile('relations', dir) : []
+  const relationsPath = path.join(dir, 'relations.json')
+  const relations = plan?.partial && fs.existsSync(relationsPath) ? readFile('relations', dir) : []
   const brokenJunctions = getBrokenJunctionCollections(relations, plan)
 
   if (brokenJunctions.size > 0) {

@@ -172,6 +172,24 @@ describe('template plan', () => {
     expect(plan.components.files).to.equal(false)
   })
 
+  it('preserves requested partial mode when applying full template metadata', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({}))
+    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'posts'}), metadata)
+
+    expect(plan.partial).to.equal(true)
+  })
+
+  it('uses metadata relation strategy when applying partial template metadata', () => {
+    const metadata = createTemplateMetadata(buildTemplatePlan({
+      excludeCollections: 'assets',
+      relationStrategy: 'preserve',
+    }))
+    const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'posts'}), metadata)
+
+    expect(plan.relationStrategy).to.equal('preserve')
+    expect(includesRelation('posts', 'assets', plan)).to.equal(true)
+  })
+
   it('does not apply requested collections outside metadata bounds', () => {
     const metadata = createTemplateMetadata(buildTemplatePlan({collections: 'posts,pages'}))
     const plan = applyMetadataToPlan(buildTemplatePlan({collections: 'posts,authors'}), metadata)

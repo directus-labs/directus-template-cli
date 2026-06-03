@@ -56,7 +56,6 @@ export default async function apply(dir: string, flags: ApplyFlags) {
     await loadCollections(source, effectivePlan)
     await loadRelations(source, effectivePlan)
     await finalizeCollections(source, effectivePlan)
-    await finalizeFields(source, effectivePlan)
   }
 
   if (components.permissions || components.users) {
@@ -78,6 +77,11 @@ export default async function apply(dir: string, flags: ApplyFlags) {
 
   if (components.content) {
     await loadData(source, effectivePlan)
+  }
+
+  if (components.schema) {
+    // Finalize fields after data loading because skeleton records rely on relaxed constraints.
+    await finalizeFields(source, effectivePlan)
   }
 
   if (components.dashboards) {

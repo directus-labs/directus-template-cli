@@ -34,7 +34,9 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
   }
 
   const partial =
-    metadata.partial || componentNames.some((component) => components[component] !== plan.components[component])
+    plan.partial ||
+    metadata.partial ||
+    componentNames.some((component) => components[component] !== plan.components[component])
 
   return {
     ...plan,
@@ -42,6 +44,7 @@ export function applyMetadataToPlan(plan: TemplatePlan, metadata?: TemplateMetad
     components,
     excludeCollections: mergeExcludedCollections(plan.excludeCollections, metadata.excludedCollections),
     partial,
+    relationStrategy: metadata.relationStrategy ?? plan.relationStrategy,
     schemaCollections: intersectCollections('schema collections', plan.schemaCollections, metadata.schemaCollections),
   }
 }
