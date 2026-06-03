@@ -12,7 +12,7 @@ import type {InitFlags} from '../../commands/init.js'
 
 import ApplyCommand from '../../commands/apply.js'
 import {createDocker} from '../../services/docker.js'
-import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, pinkText} from '../constants.js'
+import {MSCL_LICENSE_CTA, MSCL_LICENSE_HEADLINE, MSCL_LICENSE_TEXT, pinkText} from '../constants.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
 import {readTemplateConfig} from '../utils/template-config.js'
@@ -202,9 +202,9 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     note(nextSteps, 'Next Steps')
 
-    clackLog.warn(BSL_LICENSE_HEADLINE)
-    clackLog.info(BSL_LICENSE_TEXT)
-    clackLog.info(BSL_LICENSE_CTA)
+    clackLog.warn(MSCL_LICENSE_HEADLINE)
+    clackLog.info(MSCL_LICENSE_TEXT)
+    clackLog.info(MSCL_LICENSE_CTA)
 
     outro(`Problems or questions? Hop into the community at ${pinkText('https://directus.chat')}`)
   } catch (error) {

@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import * as path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
-import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR } from '../lib/constants.js'
+import {MSCL_LICENSE_CTA, MSCL_LICENSE_HEADLINE, MSCL_LICENSE_TEXT, DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR } from '../lib/constants.js'
 import {type ApplyFlags, validateInteractiveFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
 import apply from '../lib/load/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
@@ -244,9 +244,9 @@ static flags = {
 
       ux.stdout(SEPARATOR)
 
-      log.warn(BSL_LICENSE_HEADLINE)
-      log.info(BSL_LICENSE_TEXT)
-      log.info(BSL_LICENSE_CTA)
+      log.warn(MSCL_LICENSE_HEADLINE)
+      log.info(MSCL_LICENSE_TEXT)
+      log.info(MSCL_LICENSE_CTA)
 
       ux.stdout('Template applied successfully.')
       if (!validatedFlags.noExit) process.exit(0)
@@ -337,10 +337,10 @@ static flags = {
     ux.stdout('Template applied successfully.')
     if (!validatedFlags.noExit) process.exit(0)
 
-    // Hide BSL license info if running programatically for now
-    // log.warn(BSL_LICENSE_HEADLINE)
-    // log.info(BSL_LICENSE_TEXT)
-    // log.info(BSL_LICENSE_CTA)
+    // Hide MSCL license info if running programatically for now
+    // log.warn(MSCL_LICENSE_HEADLINE)
+    // log.info(MSCL_LICENSE_TEXT)
+    // log.info(MSCL_LICENSE_CTA)
   }
 
   /**

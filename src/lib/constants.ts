@@ -25,12 +25,11 @@ export const POSTHOG_HOST = 'https://us.i.posthog.com'
 export const DEFAULT_BRANCH = 'main'
 
 
-export const BSL_LICENSE_URL = 'https://directus.io/bsl'
-export const BSL_EMAIL = 'licensing@directus.io'
+export const MSCL_LICENSE_URL = 'https://directus.com/license'
 
-export const BSL_LICENSE_HEADLINE = 'You REQUIRE a license to use Directus if your organization has more than $5MM USD a year in revenue and/or funding.'
-export const BSL_LICENSE_TEXT = 'For all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. Directus is licensed under BSL 1.1.'
+export const MSCL_LICENSE_HEADLINE = 'Directus is licensed under MSCL-1.0-GPL. A Competing Use—making the Software available in a way that competes with Directus\'s paid commercial offerings—is not permitted.'
+export const MSCL_LICENSE_TEXT = 'Permitted uses include internal use, non-commercial education and research, and professional services to deploy or host Directus for licensees. You must not disable or circumvent license key functionality. Four years after release, the Software is also available under GPL-3.0.'
 
-export const BSL_LICENSE_CTA = `Visit ${pinkText(BSL_LICENSE_URL)} for more information or reach out to us at ${pinkText(BSL_EMAIL)}.`
+export const MSCL_LICENSE_CTA = `Visit ${pinkText(MSCL_LICENSE_URL)} for the full license terms.`
 
 export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055'
