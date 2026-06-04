@@ -34,4 +34,14 @@ export const MSCL_LICENSE_TEXT =
 
 export const MSCL_LICENSE_CTA = `Visit ${pinkText(MSCL_LICENSE_URL)} or reach out to us at ${pinkText(MSCL_EMAIL)} for the full license terms.`
 
+export const BSL_LICENSE_URL = 'https://directus.io/bsl'
+export const BSL_EMAIL = 'licensing@directus.io'
+
+export const BSL_LICENSE_HEADLINE =
+  'You REQUIRE a license to use Directus if your organization has more than $5MM USD a year in revenue and/or funding.'
+export const BSL_LICENSE_TEXT =
+  'For all organizations with less than $5MM USD a year in revenue and funding, Directus is free for personal projects, hobby projects and in production. This second group does not require a license. Directus is licensed under BSL 1.1.'
+
+export const BSL_LICENSE_CTA = `Visit ${pinkText(BSL_LICENSE_URL)} for more information or reach out to us at ${pinkText(BSL_EMAIL)}.`
+
 export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055'

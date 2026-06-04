@@ -6,8 +6,9 @@ import fs from 'node:fs'
 import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
-import {MSCL_LICENSE_CTA, MSCL_LICENSE_HEADLINE, MSCL_LICENSE_TEXT, DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
+import {DIRECTUS_PINK, DIRECTUS_PURPLE, SEPARATOR} from '../lib/constants.js'
 import extract from '../lib/extract/index.js'
+import {displayLicenseBanner} from '../lib/license/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {getDirectusEmailAndPassword, getDirectusToken, getDirectusUrl, initializeDirectusApi, validateAuthFlags} from '../lib/utils/auth.js'
 import catchError from '../lib/utils/catch-error.js'
@@ -129,9 +130,7 @@ static flags = {
       await shutdown();
     }
 
-    log.warn(MSCL_LICENSE_HEADLINE)
-    log.info(MSCL_LICENSE_TEXT)
-    log.info(MSCL_LICENSE_CTA)
+    await displayLicenseBanner()
 
     ux.stdout(SEPARATOR)
     ux.stdout('Template extracted successfully.')
