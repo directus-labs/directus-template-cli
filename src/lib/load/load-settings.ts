@@ -1,4 +1,3 @@
-
 import type {DirectusSettings} from '@directus/sdk'
 
 import {readSettings, updateSettings} from '@directus/sdk'
@@ -27,21 +26,17 @@ const customDefu = createDefu((obj, key, value) => {
 
 function mergeArrays(key: string, current: any[], incoming: any[]): any[] {
   const mergeKeys = {
-     
     basemaps: ['key'],
     custom_aspect_ratios: ['key'],
     module_bar: ['id', 'type'],
     storage_asset_presets: ['key'],
-     
   }
 
   const keys = mergeKeys[key as keyof typeof mergeKeys]
   if (!keys) return [...new Set([...current, ...incoming])]
 
   return current.concat(
-    incoming.filter(item => !current.some(
-      currentItem => keys.every(k => currentItem[k] === item[k]),
-    )),
+    incoming.filter((item) => !current.some((currentItem) => keys.every((k) => currentItem[k] === item[k]))),
   )
 }
 
@@ -59,6 +54,12 @@ export default async function loadSettings(dir: string) {
   try {
     const currentSettings = await api.client.request(readSettings())
     const mergedSettings = customDefu(currentSettings as any, settings) as DirectusSettings
+
+    // @ts-ignore - ignore
+    delete mergedSettings.license_key
+    // @ts-ignore - ignore
+    delete mergedSettings.license_token
+
     await api.client.request(updateSettings(mergedSettings))
   } catch (error) {
     catchError(error)
