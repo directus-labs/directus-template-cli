@@ -48,18 +48,35 @@ function mergeJsonStrings(current: string, incoming: string): string {
   }
 }
 
+/**
+ * Protected settings keys
+ */
+const PROTECTED_SETTINGS_KEYS = [
+  'license_key',
+  'license_token',
+  'ai_openai_compatible_api_key',
+  'ai_google_api_key',
+  'ai_anthropic_api_key',
+  'ai_openai_api_key',
+] as const
+
+/**
+ * Strip protected settings from the settings object
+ * @param settings - The settings object
+ * @returns The settings object with protected settings removed
+ */
+function stripProtectedSettings<T extends object>(settings: T): T {
+  const result = {...settings} as Record<string, unknown>
+  for (const key of PROTECTED_SETTINGS_KEYS) delete result[key]
+  return result as T
+}
+
 export default async function loadSettings(dir: string) {
   ux.action.start(ux.colorize(DIRECTUS_PINK, 'Loading settings'))
   const settings = readFile('settings', dir)
   try {
     const currentSettings = await api.client.request(readSettings())
-    const mergedSettings = customDefu(currentSettings as any, settings) as DirectusSettings
-
-    // @ts-ignore - ignore
-    delete mergedSettings.license_key
-    // @ts-ignore - ignore
-    delete mergedSettings.license_token
-
+    const mergedSettings = stripProtectedSettings(customDefu(currentSettings as any, settings) as DirectusSettings)
     await api.client.request(updateSettings(mergedSettings))
   } catch (error) {
     catchError(error)
