@@ -42,16 +42,20 @@ async function getCollections(relations: RelationInfo[], plan?: TemplatePlan) {
     .filter((collection) => !brokenJunctions.has(collection))
 }
 
-async function getCollectionItems(collection: string): Promise<Record<string, unknown>[]> {
+async function getCollectionItems(
+  collection: string,
+): Promise<Record<string, unknown> | Record<string, unknown>[]> {
   const items: Record<string, unknown>[] = []
   let page = 1
 
   while (true) {
     // eslint-disable-next-line no-await-in-loop
-    const response = (await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page}))) as Record<
-      string,
-      unknown
-    >[]
+    const response = (await api.client.request(readItems(collection as never, {limit: PAGE_SIZE, page}))) as
+      | Record<string, unknown>
+      | Record<string, unknown>[]
+    // Singletons return a single object — return it as-is so the file stays an object,
+    // matching loadSingletons/updateSingleton on the load side.
+    if (!Array.isArray(response)) return response
     items.push(...response)
 
     if (response.length < PAGE_SIZE) break
@@ -137,14 +141,17 @@ async function getDataFromCollection(
   try {
     ux.action.status = `Extracting content: ${collection}`
     const response = await getCollectionItems(collection)
+    // Relation-stripping works on rows and mutates in place; a singleton is one object,
+    // so normalise to an array for those passes but write the original shape.
+    const items = Array.isArray(response) ? response : [response]
     const excludedRelations = getExcludedRelationFields(collection, relations, plan)
 
     if (plan?.relationStrategy === 'empty') {
-      emptyExcludedRelations(response, excludedRelations)
+      emptyExcludedRelations(items, excludedRelations)
     }
 
     const warnings =
-      plan?.relationStrategy === 'preserve' ? getBrokenRelationWarnings(collection, response, excludedRelations) : []
+      plan?.relationStrategy === 'preserve' ? getBrokenRelationWarnings(collection, items, excludedRelations) : []
 
     await writeToFile(`${collection}`, response, `${dir}/content/`)
     return warnings
