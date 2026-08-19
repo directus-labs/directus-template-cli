@@ -1,4 +1,4 @@
-import {readCollections, readItems, readRelations} from '@directus/sdk'
+import {readCollection, readCollections, readItems, readRelations, readSingleton} from '@directus/sdk'
 import {Errors, ux} from '@oclif/core'
 
 import {DIRECTUS_PINK} from '../constants.js'
@@ -42,9 +42,17 @@ async function getCollections(relations: RelationInfo[], plan?: TemplatePlan) {
     .filter((collection) => !brokenJunctions.has(collection))
 }
 
-async function getCollectionItems(collection: string): Promise<Record<string, unknown>[]> {
+async function getCollectionItems(collection: string): Promise<Record<string, any> | Record<string, unknown>[]> {
   const items: Record<string, unknown>[] = []
   let page = 1
+
+  // Check if collection is a singleton
+  const collectionMeta = await api.client.request(readCollection(collection))
+
+  if (collectionMeta.meta.singleton) {
+    const response = await api.client.request(readSingleton(collection))
+    return response
+  }
 
   while (true) {
     // eslint-disable-next-line no-await-in-loop
@@ -139,12 +147,14 @@ async function getDataFromCollection(
     const response = await getCollectionItems(collection)
     const excludedRelations = getExcludedRelationFields(collection, relations, plan)
 
+    const items = Array.isArray(response) ? response : [response]
+
     if (plan?.relationStrategy === 'empty') {
-      emptyExcludedRelations(response, excludedRelations)
+      emptyExcludedRelations(items, excludedRelations)
     }
 
     const warnings =
-      plan?.relationStrategy === 'preserve' ? getBrokenRelationWarnings(collection, response, excludedRelations) : []
+      plan?.relationStrategy === 'preserve' ? getBrokenRelationWarnings(collection, items, excludedRelations) : []
 
     await writeToFile(`${collection}`, response, `${dir}/content/`)
     return warnings
