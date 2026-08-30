@@ -7,8 +7,8 @@ export const pinkText = chalk.hex(DIRECTUS_PINK)
 export const purpleText = chalk.hex(DIRECTUS_PURPLE)
 
 export const COMMUNITY_TEMPLATE_REPO = {
-  string: 'github:directus-labs/directus-templates',
-  url: 'https://github.com/directus-labs/directus-templates',
+  string: 'github:directus-labs/starters',
+  url: 'https://github.com/directus-labs/starters',
 }
 
 export const DEFAULT_REPO = {
