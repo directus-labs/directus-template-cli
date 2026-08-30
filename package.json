@@ -52,7 +52,7 @@
     "eslint-config-oclif": "^6.0.157",
     "eslint-config-prettier": "^10",
     "mocha": "^11.7.5",
-    "oclif": "^4.23.0",
+    "oclif": "^4.23.5",
     "prettier": "^3.8.3",
     "shx": "^0.4.0",
     "ts-node": "^10",
