@@ -15,6 +15,16 @@ describe('setEnvValue', () => {
     expect(setEnvValue('A=1\n\n', 'LICENSE_KEY', 'abc')).to.equal('A=1\nLICENSE_KEY=abc\n')
   })
 
+  it('prefers an active assignment over a commented one and drops duplicates', () => {
+    expect(setEnvValue('# LICENSE_KEY=\nLICENSE_KEY=old\nA=1\nLICENSE_KEY=older\n', 'LICENSE_KEY', 'new')).to.equal(
+      '# LICENSE_KEY=\nLICENSE_KEY=new\nA=1\n',
+    )
+  })
+
+  it('writes a new file when there are no contents', () => {
+    expect(setEnvValue('', 'LICENSE_KEY', 'abc')).to.equal('LICENSE_KEY=abc\n')
+  })
+
   it('keeps dollar signs in the value', () => {
     expect(setEnvValue('# LICENSE_KEY=\n', 'LICENSE_KEY', 'a$&b')).to.equal('LICENSE_KEY=a$&b\n')
   })

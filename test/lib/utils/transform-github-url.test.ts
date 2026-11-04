@@ -53,4 +53,20 @@ describe('transform-github-url', () => {
       subpath: 'simple-crm',
     })
   })
+
+  it('keeps the subpath when the tree ref is percent-encoded', () => {
+    expect(transformGitHubUrl('https://github.com/acme/custom/tree/feature%2Ffoo/templates/x?ref=feature%2Ffoo')).to.equal(
+      'github:acme/custom/templates/x#feature/foo',
+    )
+  })
+
+  it('treats an explicit ref that does not match the tree segment as an override', () => {
+    expect(transformGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=feature/foo')).to.equal(
+      'github:acme/custom/templates/x#feature/foo',
+    )
+  })
+
+  it('prefers ?ref= over #ref, like the init parser', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other').ref).to.equal('next')
+  })
 })

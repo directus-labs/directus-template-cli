@@ -32,9 +32,26 @@ describe('parse-github-url', () => {
     })
   })
 
-  it('reads #ref on a template name', () => {
-    expect(createGigetString(parseGitHubUrl('simple-crm#bry/v12-templates'))).to.equal(
-      'gh:directus-labs/starters/simple-crm#bry/v12-templates',
-    )
+  it('ignores refs on bare template names instead of splitting them into owner/repo', () => {
+    expect(createGigetString(parseGitHubUrl('simple-crm#feature/foo'))).to.equal('gh:directus-labs/starters/simple-crm#main')
+    expect(createGigetString(parseGitHubUrl('simple-crm?ref=feature/foo'))).to.equal('gh:directus-labs/starters/simple-crm#main')
+  })
+
+  it('keeps the path when the tree ref is percent-encoded', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/feature%2Ffoo/templates/x?ref=feature%2Ffoo')).to.include({
+      path: 'templates/x',
+      ref: 'feature/foo',
+    })
+  })
+
+  it('treats an explicit ref that does not match the tree segment as an override', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=feature/foo')).to.include({
+      path: 'templates/x',
+      ref: 'feature/foo',
+    })
+  })
+
+  it('prefers ?ref= over #ref', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other')).to.include({ref: 'next'})
   })
 })

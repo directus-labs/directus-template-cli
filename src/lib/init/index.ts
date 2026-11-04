@@ -15,6 +15,7 @@ import {createDocker} from '../../services/docker.js'
 import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, pinkText} from '../constants.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
+import {sanitizeFlags} from '../utils/sanitize-flags.js'
 import {getTemplatePath, readTemplateConfig} from '../utils/template-config.js'
 import {DOCKER_CONFIG} from './config.js'
 
@@ -107,8 +108,9 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     // Then read Directus-specific info only from the Directus env file
     const directusEnvFile = path.join(directusDir, '.env')
 
-    if (flags.licenseKey && fs.existsSync(directusEnvFile)) {
-      fs.writeFileSync(directusEnvFile, setEnvValue(fs.readFileSync(directusEnvFile, 'utf8'), 'LICENSE_KEY', flags.licenseKey))
+    if (flags.licenseKey && fs.existsSync(directusDir)) {
+      const current = fs.existsSync(directusEnvFile) ? fs.readFileSync(directusEnvFile, 'utf8') : ''
+      fs.writeFileSync(directusEnvFile, setEnvValue(current, 'LICENSE_KEY', flags.licenseKey))
     }
 
     if (fs.existsSync(directusEnvFile)) {
@@ -215,7 +217,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     outro(`Problems or questions? Hop into the community at ${pinkText('https://directus.chat')}`)
   } catch (error) {
     catchError(error, {
-      context: {dir, flags, function: 'init'},
+      context: {dir, flags: sanitizeFlags(flags as Record<string, unknown>), function: 'init'},
       fatal: true,
       logToFile: true,
     })
@@ -287,7 +289,8 @@ export async function installFrontendDependencies({
 }
 
 /**
- * Set a key in .env file contents, replacing an existing or commented-out line, or appending it
+ * Set a key in .env file contents. Replaces the first active assignment (dropping any duplicates),
+ * otherwise the first commented-out one, otherwise appends it.
  * @param contents - The .env file contents
  * @param key - The variable name
  * @param value - The value to set
@@ -295,9 +298,22 @@ export async function installFrontendDependencies({
  */
 export function setEnvValue(contents: string, key: string, value: string): string {
   const line = `${key}=${value}`
-  const pattern = new RegExp(`^#?\\s*${key}=.*$`, 'm')
+  const lines = contents.split('\n')
+  const active = new RegExp(`^\\s*${key}=`)
+  const commented = new RegExp(`^\\s*#\\s*${key}=`)
 
-  if (pattern.test(contents)) return contents.replace(pattern, () => line)
+  const activeIndexes = lines.flatMap((l, i) => (active.test(l) ? [i] : []))
+  if (activeIndexes.length > 0) {
+    lines[activeIndexes[0]] = line
+    return lines.filter((_, i) => !activeIndexes.slice(1).includes(i)).join('\n')
+  }
 
-  return `${contents.replace(/\n*$/, '')}\n${line}\n`
+  const commentedIndex = lines.findIndex(l => commented.test(l))
+  if (commentedIndex !== -1) {
+    lines[commentedIndex] = line
+    return lines.join('\n')
+  }
+
+  const trimmed = contents.replace(/\n*$/, '')
+  return trimmed ? `${trimmed}\n${line}\n` : `${line}\n`
 }

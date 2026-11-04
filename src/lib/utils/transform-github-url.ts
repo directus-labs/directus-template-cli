@@ -1,3 +1,5 @@
+import {countRefSegments, getExplicitRef} from './github-ref.js'
+
 export interface ParsedGitHubUrl {
   owner: string
   ref?: string
@@ -32,10 +34,9 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
 
-  // `?ref=` or `#ref` passes a branch with slashes, which a /tree/ URL alone can't express
-  const explicitRef = parsed.searchParams.get('ref') || (parsed.hash.length > 1 ? decodeURIComponent(parsed.hash.slice(1)) : undefined)
+  const explicitRef = getExplicitRef(cleaned)
   const ref = explicitRef || treeRef
-  const subpathParts = tree === 'tree' ? pathParts.slice(3 + (explicitRef ? explicitRef.split('/').length : 1)) : []
+  const subpathParts = tree === 'tree' ? pathParts.slice(3 + countRefSegments(pathParts.slice(3), explicitRef)) : []
 
   const subpath = subpathParts.length > 0 ? subpathParts.join('/') : undefined
 

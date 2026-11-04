@@ -1,4 +1,5 @@
 import {DEFAULT_BRANCH, DEFAULT_REPO} from '../constants.js'
+import {countRefSegments, getExplicitRef} from './github-ref.js'
 
 interface GitHubUrlParts {
   owner: string
@@ -43,19 +44,6 @@ function cleanGitHubUrl(url: string): string {
 }
 
 /**
- * Read an explicit ref from `?ref=` or a `#ref` suffix. These are the only way to pass a branch name with slashes.
- * @param url The URL or path to read
- * @returns The ref, if one was given
- */
-function getExplicitRef(url: string): string | undefined {
-  const hashIndex = url.indexOf('#')
-  if (hashIndex !== -1 && hashIndex < url.length - 1) return decodeURIComponent(url.slice(hashIndex + 1))
-
-  const match = url.match(/[?&]ref=([^&#]+)/)
-  return match ? decodeURIComponent(match[1]) : undefined
-}
-
-/**
  * Split the ref and path out of a /tree/ or /blob/ URL. A branch with slashes can't be told apart from the path,
  * so an explicit ref decides how many segments belong to the ref.
  * @param pathParts URL path segments
@@ -64,7 +52,7 @@ function getExplicitRef(url: string): string | undefined {
  * @returns The ref and path
  */
 function splitTreePath(pathParts: string[], refIndex: number, explicitRef?: string): {path?: string; ref: string} {
-  const refSegments = explicitRef ? explicitRef.split('/').length : 1
+  const refSegments = countRefSegments(pathParts.slice(refIndex), explicitRef)
   return {
     path: pathParts.slice(refIndex + refSegments).join('/') || undefined,
     ref: explicitRef || pathParts[refIndex],
@@ -81,10 +69,12 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
     throw new Error('URL is required')
   }
 
-  const explicitRef = getExplicitRef(url)
-  const cleanedUrl = cleanGitHubUrl(url.split('#')[0])
+  const isUrl = url.includes('github.com')
+  // Refs are only read from full GitHub URLs. Template names and owner/repo paths always use the default branch.
+  const explicitRef = isUrl ? getExplicitRef(url) : undefined
+  const cleanedUrl = cleanGitHubUrl(isUrl ? url.split('#')[0] : url.split(/[#?]/)[0])
 
-  if (cleanedUrl.includes('github.com')) {
+  if (isUrl) {
     try {
       const parsed = new URL(cleanedUrl)
       const pathParts = parsed.pathname.split('/').filter(Boolean)
@@ -132,14 +122,13 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
   if (parts.length >= 2) {
     const [owner, repo, ...rest] = parts
     const path = rest.length > 0 ? rest.join('/') : undefined
-    return {owner, path, ref: explicitRef || DEFAULT_BRANCH, repo}
+    return {owner, path, ref: DEFAULT_BRANCH, repo}
   }
 
   // Handle simple template names using DEFAULT_REPO
   return {
     ...DEFAULT_REPO,
     path: cleanedUrl, // The template name becomes the subpath
-    ref: explicitRef || DEFAULT_REPO.ref,
   }
 }
 

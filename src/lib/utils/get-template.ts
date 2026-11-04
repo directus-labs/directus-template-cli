@@ -6,7 +6,7 @@ import path, {dirname} from 'pathe'
 import {COMMUNITY_TEMPLATE_REPO} from '../constants.js'
 import {logger} from './logger.js'
 import resolvePathAndCheckExistence from './path.js'
-import {readAllTemplates, readTemplate} from './read-templates.js'
+import {readAllTemplates, readStarterTemplates, readTemplate} from './read-templates.js'
 import {parseGitHubUrl, transformGitHubUrl} from './transform-github-url.js'
 
 // Create __dirname equivalent for ESM
@@ -57,6 +57,11 @@ export async function getInteractiveLocalTemplate(localTemplateDir: string): Pro
   const directTemplate = await readTemplate(resolvedDir)
   if (directTemplate) {
     return [directTemplate]
+  }
+
+  const starterTemplates = await readStarterTemplates(resolvedDir)
+  if (starterTemplates.length > 0) {
+    return starterTemplates
   }
 
   const templates = await readAllTemplates(resolvedDir)
@@ -120,10 +125,12 @@ async function downloadGithubTemplate(ghTemplateUrl: string): Promise<string> {
   return resolvedDir
 }
 
-function buildSubpathUrl(ghTemplateUrl: string, templatePath: string): string {
-  const {owner, ref, repo} = parseGitHubUrl(ghTemplateUrl)
-  const normalizedPath = templatePath.split(path.sep).join('/')
-  return `https://github.com/${owner}/${repo}/tree/${ref || 'HEAD'}/${normalizedPath}`
+export function buildSubpathUrl(ghTemplateUrl: string, templatePath: string): string {
+  const {owner, ref, repo, subpath} = parseGitHubUrl(ghTemplateUrl)
+  const normalizedPath = [subpath, templatePath.split(path.sep).join('/')].filter(Boolean).join('/')
+  // A branch with slashes needs ?ref= to parse back correctly
+  const refQuery = ref?.includes('/') ? `?ref=${encodeURIComponent(ref)}` : ''
+  return `https://github.com/${owner}/${repo}/tree/${ref || 'HEAD'}/${normalizedPath}${refQuery}`
 }
 
 function getErrorMessage(error: unknown): string {
@@ -139,7 +146,8 @@ export async function getGithubTemplate(ghTemplateUrl: string): Promise<Template
       return template
     }
 
-    const nested = await findNestedTemplates(resolvedDir, 3)
+    const starterTemplates = await readStarterTemplates(resolvedDir)
+    const nested = starterTemplates.length > 0 ? starterTemplates : await findNestedTemplates(resolvedDir, 3)
 
     if (nested.length === 1) {
       const subpath = path.relative(resolvedDir, nested[0].directoryPath)
@@ -180,7 +188,8 @@ export async function getInteractiveGithubTemplate(ghTemplateUrl: string): Promi
       return [template]
     }
 
-    const nested = await findNestedTemplates(resolvedDir, 3)
+    const starterTemplates = await readStarterTemplates(resolvedDir)
+    const nested = starterTemplates.length > 0 ? starterTemplates : await findNestedTemplates(resolvedDir, 3)
 
     if (nested.length === 0) {
       throw new Error(
