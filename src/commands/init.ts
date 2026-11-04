@@ -288,7 +288,7 @@ private targetDir = '.'
           options: [
             {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
             ...variantOptions.map(variant => ({
-              hint: [variant.description, variant.requiresLicense && 'Requires a Directus license key'].filter(Boolean).join(' · '),
+              hint: [variant.requiresLicense && 'Requires a Directus license key', variant.description].filter(Boolean).join(' · '),
               label: variant.name,
               value: variant.id,
             })),
