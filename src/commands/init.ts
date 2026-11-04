@@ -293,6 +293,7 @@ private targetDir = '.'
         hasLicenseKey: Boolean(flags.licenseKey?.trim()),
         interactive,
         license: flags.license,
+        templateRequiresLicense: Boolean(templateInfo?.config.requiresLicense),
         variant: chosenVariant,
         variantOptions,
       })
@@ -360,8 +361,10 @@ private targetDir = '.'
 
     let licenseKey = flags.licenseKey?.trim() || undefined
 
+    // init starts Directus and applies the template right away, so the key can't be added afterwards
     if (needsLicenseKey && !licenseKey && !interactive) {
-      clackLog.warn('This template needs a Directus license. Add LICENSE_KEY to directus/.env before starting Directus.')
+      cancel('This version needs a Directus license key. Pass it with --licenseKey.')
+      process.exit(1)
     } else if (needsLicenseKey && !licenseKey) {
       const licenseResponse = await password({
         message: 'Enter your license key. It is added to directus/.env:',

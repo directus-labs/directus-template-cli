@@ -23,6 +23,7 @@ describe('decideVariant', () => {
   it('rejects flags that contradict --no-license', () => {
     expect(decide({hasLicenseKey: true, license: false}).kind).to.equal('error')
     expect(decide({license: false, variant: 'licensed'}).kind).to.equal('error')
+    expect(decide({license: false, templateRequiresLicense: true, variantOptions: []}).kind).to.equal('error')
   })
 
   it('uses the core template without asking when there is no terminal', () => {
@@ -30,6 +31,7 @@ describe('decideVariant', () => {
     expect(decide({interactive: false})).to.deep.equal({kind: 'use'})
     expect(decide({interactive: false, variantOptions: several})).to.deep.equal({kind: 'use'})
     expect(decide({hasLicenseKey: true, interactive: false})).to.deep.equal({kind: 'use', variant: 'licensed'})
+    expect(decide({interactive: false, license: true, variantOptions: several}).kind).to.equal('error')
   })
 
   it('skips the question for templates without variants', () => {

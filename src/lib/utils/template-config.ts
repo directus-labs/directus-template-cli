@@ -46,6 +46,12 @@ export type VariantDecision =
   | {kind: 'error'; message: string}
   | {kind: 'use'; variant?: string}
 
+function noLicenseConflict(license?: boolean, hasLicenseKey?: boolean, templateRequiresLicense?: boolean): string | undefined {
+  if (license !== false) return undefined
+  if (hasLicenseKey) return '--no-license and --licenseKey can\'t be used together.'
+  if (templateRequiresLicense) return 'This template needs a Directus license, so it can\'t be used with --no-license.'
+}
+
 /**
  * Decide which template variant to apply, or what to ask. A template whose only variant needs a license
  * becomes a yes/no license question; anything else falls back to picking from the list. Without a terminal
@@ -54,6 +60,7 @@ export type VariantDecision =
  * @param options.hasLicenseKey Whether --license-key was given
  * @param options.interactive Whether the user can be asked (stdin is a terminal)
  * @param options.license --license (true), --no-license (false), or not set
+ * @param options.templateRequiresLicense Whether the template itself needs a license (cms-i18n)
  * @param options.variant --variant, if given
  * @param options.variantOptions Variants declared by the template
  * @returns The variant to use (undefined = core template), the question to ask, or an error
@@ -62,14 +69,14 @@ export function decideVariant(options: {
   hasLicenseKey: boolean
   interactive: boolean
   license?: boolean
+  templateRequiresLicense?: boolean
   variant?: string
   variantOptions: TemplateVariantOption[]
 }): VariantDecision {
-  const {hasLicenseKey, interactive, license, variant, variantOptions} = options
+  const {hasLicenseKey, interactive, license, templateRequiresLicense, variant, variantOptions} = options
 
-  if (license === false && hasLicenseKey) {
-    return {kind: 'error', message: '--no-license and --licenseKey can\'t be used together.'}
-  }
+  const conflict = noLicenseConflict(license, hasLicenseKey, templateRequiresLicense)
+  if (conflict) return {kind: 'error', message: conflict}
 
   if (variant) {
     const selected = variantOptions.find(v => v.id === variant)
@@ -89,6 +96,10 @@ export function decideVariant(options: {
 
   const onlyLicensed = variantOptions.length === 1 && variantOptions[0].requiresLicense
   if (onlyLicensed && (license === true || hasLicenseKey)) return {kind: 'use', variant: variantOptions[0].id}
+  if (!interactive && license === true && !onlyLicensed) {
+    return {kind: 'error', message: 'This template has several versions. Pick one with --variant.'}
+  }
+
   if (!interactive) return {kind: 'use'}
 
   return onlyLicensed ? {kind: 'ask-license', licensedVariant: variantOptions[0].id} : {kind: 'ask-variant'}
