@@ -33,4 +33,9 @@ describe('setEnvValue', () => {
   it('keeps dollar signs in the value', () => {
     expect(setEnvValue('# LICENSE_KEY=\n', 'LICENSE_KEY', 'a$&b')).to.equal('LICENSE_KEY=a$&b\n')
   })
+
+  it('quotes values that dotenv would cut at a space or #', () => {
+    expect(setEnvValue('', 'LICENSE_KEY', 'abc #1')).to.equal('LICENSE_KEY="abc #1"\n')
+    expect(setEnvValue('', 'LICENSE_KEY', 'abc-123')).to.equal('LICENSE_KEY=abc-123\n')
+  })
 })

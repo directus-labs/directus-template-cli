@@ -48,9 +48,11 @@ export type VariantDecision =
 
 /**
  * Decide which template variant to apply, or what to ask. A template whose only variant needs a license
- * becomes a yes/no license question; anything else falls back to picking from the list.
+ * becomes a yes/no license question; anything else falls back to picking from the list. Without a terminal
+ * to ask in, the core template is used.
  * @param options Template variants and the related init flags
  * @param options.hasLicenseKey Whether --license-key was given
+ * @param options.interactive Whether the user can be asked (stdin is a terminal)
  * @param options.license --license (true), --no-license (false), or not set
  * @param options.variant --variant, if given
  * @param options.variantOptions Variants declared by the template
@@ -58,27 +60,38 @@ export type VariantDecision =
  */
 export function decideVariant(options: {
   hasLicenseKey: boolean
+  interactive: boolean
   license?: boolean
   variant?: string
   variantOptions: TemplateVariantOption[]
 }): VariantDecision {
-  const {hasLicenseKey, license, variant, variantOptions} = options
+  const {hasLicenseKey, interactive, license, variant, variantOptions} = options
+
+  if (license === false && hasLicenseKey) {
+    return {kind: 'error', message: '--no-license and --licenseKey can\'t be used together.'}
+  }
 
   if (variant) {
-    if (variantOptions.some(v => v.id === variant)) return {kind: 'use', variant}
-    const available = variantOptions.map(v => v.id).join(', ') || 'none'
-    return {kind: 'error', message: `Variant "${variant}" isn't available for this template. Available variants: ${available}`}
+    const selected = variantOptions.find(v => v.id === variant)
+    if (!selected) {
+      const available = variantOptions.map(v => v.id).join(', ') || 'none'
+      return {kind: 'error', message: `Variant "${variant}" isn't available for this template. Available variants: ${available}`}
+    }
+
+    if (selected.requiresLicense && license === false) {
+      return {kind: 'error', message: `Variant "${variant}" needs a license, so it can't be used with --no-license.`}
+    }
+
+    return {kind: 'use', variant}
   }
 
   if (variantOptions.length === 0 || license === false) return {kind: 'use'}
 
   const onlyLicensed = variantOptions.length === 1 && variantOptions[0].requiresLicense
-  if (!onlyLicensed) return {kind: 'ask-variant'}
+  if (onlyLicensed && (license === true || hasLicenseKey)) return {kind: 'use', variant: variantOptions[0].id}
+  if (!interactive) return {kind: 'use'}
 
-  const licensedVariant = variantOptions[0].id
-  if (license === true || hasLicenseKey) return {kind: 'use', variant: licensedVariant}
-
-  return {kind: 'ask-license', licensedVariant}
+  return onlyLicensed ? {kind: 'ask-license', licensedVariant: variantOptions[0].id} : {kind: 'ask-variant'}
 }
 
 /**

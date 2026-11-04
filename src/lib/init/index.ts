@@ -297,7 +297,8 @@ export async function installFrontendDependencies({
  * @returns The updated .env file contents
  */
 export function setEnvValue(contents: string, key: string, value: string): string {
-  const line = `${key}=${value}`
+  // Quote values dotenv would otherwise cut at a space or #
+  const line = `${key}=${/[\s#"'`]/.test(value) ? JSON.stringify(value) : value}`
   const lines = contents.split('\n')
   // Same forms dotenv reads: optional `export` and spaces around `=`
   const active = new RegExp(`^\\s*(export\\s+)?${key}\\s*=`)

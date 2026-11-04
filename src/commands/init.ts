@@ -71,7 +71,7 @@ static flags = {
     }),
     license: Flags.boolean({
       allowNo: true,
-      description: 'Apply the licensed version of the template (--license) or the free core version (--no-license). Asked when omitted.',
+      description: 'Apply the licensed version of the template (--license) or the free core version (--no-license). Asked when omitted, or core when there is no terminal to ask in.',
     }),
     licenseKey: Flags.string({
       aliases: ['license-key'],
@@ -242,13 +242,24 @@ private targetDir = '.'
     const tempDir = path.join(os.tmpdir(), `directus-template-${Date.now()}`)
     let chosenFrontend = flags.frontend
     let chosenVariant = flags.variant
-    let variantRequiresLicense = false
+    let needsLicenseKey = false
+    // Scripts and CI have no terminal to answer prompts in
+    const interactive = Boolean(process.stdin.isTTY)
 
     try {
-      await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
-        dir: tempDir,
-        force: true,
-      })
+      try {
+        await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
+          dir: tempDir,
+          force: true,
+        })
+      } catch (error) {
+        // A branch with a slash (bry/my-branch) reads as branch "bry" from a /tree/ URL
+        if (template.includes('/tree/') && !template.includes('ref=')) {
+          throw new Error(`${(error as Error).message}\nIf the branch name has a slash in it, add ?ref=<branch> to the URL.`)
+        }
+
+        throw error
+      }
 
       // Read template configuration
       const templateInfo = readTemplateConfig(tempDir)
@@ -279,7 +290,8 @@ private targetDir = '.'
 
       const variantOptions = templateInfo?.variantOptions ?? []
       const decision = decideVariant({
-        hasLicenseKey: Boolean(flags.licenseKey),
+        hasLicenseKey: Boolean(flags.licenseKey?.trim()),
+        interactive,
         license: flags.license,
         variant: chosenVariant,
         variantOptions,
@@ -293,8 +305,9 @@ private targetDir = '.'
 
       switch (decision.kind) {
         case 'ask-license': {
+          const licensedName = variantOptions.find(v => v.id === decision.licensedVariant)?.name
           const hasLicense = await confirm({
-            active: 'Yes, apply the full RBAC version',
+            active: `Yes, use ${licensedName}`,
             inactive: 'No, use the free core tier',
             initialValue: false,
             message: 'Do you have a Directus license key?',
@@ -334,7 +347,10 @@ private targetDir = '.'
         }
       }
 
-      variantRequiresLicense = Boolean(variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
+      // A variant decides for itself; otherwise the template as a whole may need one (cms-i18n)
+      needsLicenseKey = chosenVariant
+        ? Boolean(variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
+        : Boolean(templateInfo?.config.requiresLicense)
     } finally {
       // Clean up temporary directory
       if (fs.existsSync(tempDir)) {
@@ -342,9 +358,11 @@ private targetDir = '.'
       }
     }
 
-    let {licenseKey} = flags
+    let licenseKey = flags.licenseKey?.trim() || undefined
 
-    if (variantRequiresLicense && !licenseKey) {
+    if (needsLicenseKey && !licenseKey && !interactive) {
+      clackLog.warn('This template needs a Directus license. Add LICENSE_KEY to directus/.env before starting Directus.')
+    } else if (needsLicenseKey && !licenseKey) {
       const licenseResponse = await password({
         message: 'Enter your license key. It is added to directus/.env:',
         validate: value => (value?.trim() ? undefined : 'A license key is required for this version.'),

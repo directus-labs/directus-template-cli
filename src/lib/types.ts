@@ -16,6 +16,7 @@ export interface DirectusTemplateConfig {
     [key: string]: DirectusTemplateFrontend
   }
   name: string
+  requiresLicense?: boolean
   template: null | string
   variants?: {
     [key: string]: DirectusTemplateVariant
