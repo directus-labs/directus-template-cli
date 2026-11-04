@@ -5,6 +5,7 @@ import path, {dirname} from 'pathe'
 
 import {COMMUNITY_TEMPLATE_REPO} from '../constants.js'
 import {logger} from './logger.js'
+import {encodeRef} from './github-ref.js'
 import resolvePathAndCheckExistence from './path.js'
 import {readAllTemplates, readStarterTemplates, readTemplate} from './read-templates.js'
 import {parseGitHubUrl, transformGitHubUrl} from './transform-github-url.js'
@@ -128,9 +129,8 @@ async function downloadGithubTemplate(ghTemplateUrl: string): Promise<string> {
 export function buildSubpathUrl(ghTemplateUrl: string, templatePath: string): string {
   const {owner, ref, repo, subpath} = parseGitHubUrl(ghTemplateUrl)
   const normalizedPath = [subpath, templatePath.split(path.sep).join('/')].filter(Boolean).join('/')
-  // A branch with slashes needs ?ref= to parse back correctly
-  const refQuery = ref?.includes('/') ? `?ref=${encodeURIComponent(ref)}` : ''
-  return `https://github.com/${owner}/${repo}/tree/${ref || 'HEAD'}/${normalizedPath}${refQuery}`
+  const {path: refPath, query} = ref ? encodeRef(ref) : {path: 'HEAD', query: ''}
+  return `https://github.com/${owner}/${repo}/tree/${refPath}/${normalizedPath}${query}`
 }
 
 function getErrorMessage(error: unknown): string {

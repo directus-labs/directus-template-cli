@@ -51,6 +51,25 @@ describe('parse-github-url', () => {
     })
   })
 
+  it('handles partly encoded refs', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/feature%2Ffoo/bar/templates/x?ref=feature/foo/bar')).to.include({
+      path: 'templates/x',
+      ref: 'feature/foo/bar',
+    })
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/feature/foo%2Fbar/templates/x?ref=feature/foo/bar')).to.include({
+      path: 'templates/x',
+      ref: 'feature/foo/bar',
+    })
+  })
+
+  it('only reads ref from the query string, not the path', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/folder&ref=next')).to.include({path: 'folder&ref=next', ref: 'main'})
+  })
+
+  it('decodes an encoded tree ref', () => {
+    expect(parseGitHubUrl('https://github.com/acme/custom/tree/release%23one/template')).to.include({path: 'template', ref: 'release#one'})
+  })
+
   it('prefers ?ref= over #ref', () => {
     expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other')).to.include({ref: 'next'})
   })

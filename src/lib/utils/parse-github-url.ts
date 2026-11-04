@@ -1,5 +1,5 @@
 import {DEFAULT_BRANCH, DEFAULT_REPO} from '../constants.js'
-import {countRefSegments, getExplicitRef} from './github-ref.js'
+import {countRefSegments, getExplicitRef, safeDecode} from './github-ref.js'
 
 interface GitHubUrlParts {
   owner: string
@@ -55,7 +55,7 @@ function splitTreePath(pathParts: string[], refIndex: number, explicitRef?: stri
   const refSegments = countRefSegments(pathParts.slice(refIndex), explicitRef)
   return {
     path: pathParts.slice(refIndex + refSegments).join('/') || undefined,
-    ref: explicitRef || pathParts[refIndex],
+    ref: explicitRef || safeDecode(pathParts[refIndex]),
   }
 }
 

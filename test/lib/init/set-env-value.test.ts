@@ -21,6 +21,11 @@ describe('setEnvValue', () => {
     )
   })
 
+  it('matches the dotenv forms with spaces and export', () => {
+    expect(setEnvValue('# LICENSE_KEY=\nLICENSE_KEY = old\n', 'LICENSE_KEY', 'new')).to.equal('# LICENSE_KEY=\nLICENSE_KEY=new\n')
+    expect(setEnvValue('# LICENSE_KEY=\nexport LICENSE_KEY=old\n', 'LICENSE_KEY', 'new')).to.equal('# LICENSE_KEY=\nLICENSE_KEY=new\n')
+  })
+
   it('writes a new file when there are no contents', () => {
     expect(setEnvValue('', 'LICENSE_KEY', 'abc')).to.equal('LICENSE_KEY=abc\n')
   })

@@ -1,4 +1,4 @@
-import {countRefSegments, getExplicitRef} from './github-ref.js'
+import {countRefSegments, getExplicitRef, safeDecode} from './github-ref.js'
 
 export interface ParsedGitHubUrl {
   owner: string
@@ -35,7 +35,7 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
   }
 
   const explicitRef = getExplicitRef(cleaned)
-  const ref = explicitRef || treeRef
+  const ref = explicitRef || (treeRef ? safeDecode(treeRef) : undefined)
   const subpathParts = tree === 'tree' ? pathParts.slice(3 + countRefSegments(pathParts.slice(3), explicitRef)) : []
 
   const subpath = subpathParts.length > 0 ? subpathParts.join('/') : undefined

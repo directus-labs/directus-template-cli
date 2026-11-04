@@ -299,8 +299,9 @@ export async function installFrontendDependencies({
 export function setEnvValue(contents: string, key: string, value: string): string {
   const line = `${key}=${value}`
   const lines = contents.split('\n')
-  const active = new RegExp(`^\\s*${key}=`)
-  const commented = new RegExp(`^\\s*#\\s*${key}=`)
+  // Same forms dotenv reads: optional `export` and spaces around `=`
+  const active = new RegExp(`^\\s*(export\\s+)?${key}\\s*=`)
+  const commented = new RegExp(`^\\s*#\\s*(export\\s+)?${key}\\s*=`)
 
   const activeIndexes = lines.flatMap((l, i) => (active.test(l) ? [i] : []))
   if (activeIndexes.length > 0) {

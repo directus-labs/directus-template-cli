@@ -66,6 +66,16 @@ describe('transform-github-url', () => {
     )
   })
 
+  it('handles partly encoded refs', () => {
+    expect(transformGitHubUrl('https://github.com/acme/custom/tree/feature%2Ffoo/bar/templates/x?ref=feature/foo/bar')).to.equal(
+      'github:acme/custom/templates/x#feature/foo/bar',
+    )
+  })
+
+  it('only reads ref from the query string, not the path', () => {
+    expect(transformGitHubUrl('https://github.com/acme/custom/tree/main/folder&ref=next')).to.equal('github:acme/custom/folder&ref=next#main')
+  })
+
   it('prefers ?ref= over #ref, like the init parser', () => {
     expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other').ref).to.equal('next')
   })

@@ -4,6 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 import {buildSubpathUrl, getInteractiveLocalTemplate} from '../../../src/lib/utils/get-template.js'
+import {parseGitHubUrl} from '../../../src/lib/utils/transform-github-url.js'
 
 describe('get-template', () => {
   it('builds re-run URLs that keep the original subpath and a slash branch', () => {
@@ -13,6 +14,12 @@ describe('get-template', () => {
     expect(buildSubpathUrl('https://github.com/acme/custom/tree/main/starters', 'crm/directus/template')).to.equal(
       'https://github.com/acme/custom/tree/main/starters/crm/directus/template',
     )
+  })
+
+  it('builds re-run URLs that round-trip a ref with special characters', () => {
+    const url = buildSubpathUrl('https://github.com/acme/custom?ref=release%23one', 'template')
+    expect(url).to.equal('https://github.com/acme/custom/tree/release%23one/template?ref=release%23one')
+    expect(parseGitHubUrl(url)).to.deep.equal({owner: 'acme', ref: 'release#one', repo: 'custom', subpath: 'template'})
   })
 
   it('finds the templates of a single starter folder through its directus:template config', async () => {
