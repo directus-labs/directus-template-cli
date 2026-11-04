@@ -11,7 +11,7 @@ import {DIRECTUS_PURPLE} from '../lib/constants.js'
 import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {createGigetString, parseGitHubUrl} from '../lib/utils/parse-github-url.js'
-import {readTemplateConfig} from '../lib/utils/template-config.js'
+import {decideVariant, readTemplateConfig} from '../lib/utils/template-config.js'
 import {createGitHub, type TemplateInfo} from '../services/github.js'
 import { shutdown, track } from '../services/posthog.js'
 import { BaseCommand } from './base.js'
@@ -21,6 +21,7 @@ export interface InitFlags {
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
+  license?: boolean
   licenseKey?: string
   overwriteDir?: boolean
   template?: string
@@ -68,9 +69,13 @@ static flags = {
       default: true,
       description: 'Install dependencies automatically',
     }),
+    license: Flags.boolean({
+      allowNo: true,
+      description: 'Apply the licensed version of the template (--license) or the free core version (--no-license). Asked when omitted.',
+    }),
     licenseKey: Flags.string({
       aliases: ['license-key'],
-      description: 'Directus license key, written to directus/.env. Required for variants that need a license.',
+      description: 'Directus license key, written to directus/.env. Implies --license.',
     }),
     overwriteDir: Flags.boolean({
       aliases: ['overwrite-dir'],
@@ -273,35 +278,60 @@ private targetDir = '.'
       flags.frontend = chosenFrontend
 
       const variantOptions = templateInfo?.variantOptions ?? []
+      const decision = decideVariant({
+        hasLicenseKey: Boolean(flags.licenseKey),
+        license: flags.license,
+        variant: chosenVariant,
+        variantOptions,
+      })
 
-      if (chosenVariant && !variantOptions.some(v => v.id === chosenVariant)) {
-        const available = variantOptions.map(v => v.id).join(', ') || 'none'
+      const exitWith = (message: string, code: number) => {
         fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
-        cancel(`Variant "${chosenVariant}" isn't available for this template. Available variants: ${available}`)
-        process.exit(1)
+        cancel(message)
+        process.exit(code)
       }
 
-      // Ask which variant to use when the template offers more than the core template
-      if (variantOptions.length > 0 && !chosenVariant) {
-        const variantResponse = await select({
-          message: 'Which variant of the template do you want?',
-          options: [
-            {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
-            ...variantOptions.map(variant => ({
-              hint: [variant.requiresLicense && 'Requires a Directus license key', variant.description].filter(Boolean).join(' · '),
-              label: variant.name,
-              value: variant.id,
-            })),
-          ],
-        })
+      switch (decision.kind) {
+        case 'ask-license': {
+          const hasLicense = await confirm({
+            active: 'Yes, apply the full RBAC version',
+            inactive: 'No, use the free core tier',
+            initialValue: false,
+            message: 'Do you have a Directus license key?',
+          })
 
-        if (isCancel(variantResponse)) {
-          fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
-          cancel('Project creation cancelled.')
-          process.exit(0)
+          if (isCancel(hasLicense)) exitWith('Project creation cancelled.', 0)
+          chosenVariant = hasLicense ? decision.licensedVariant : undefined
+          break
         }
 
-        chosenVariant = (variantResponse as string) || undefined
+        case 'ask-variant': {
+          const variantResponse = await select({
+            message: 'Which version of the template do you want?',
+            options: [
+              {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
+              ...variantOptions.map(variant => ({
+                hint: [variant.requiresLicense && 'Requires a Directus license key', variant.description].filter(Boolean).join(' · '),
+                label: variant.name,
+                value: variant.id,
+              })),
+            ],
+          })
+
+          if (isCancel(variantResponse)) exitWith('Project creation cancelled.', 0)
+          chosenVariant = (variantResponse as string) || undefined
+          break
+        }
+
+        case 'error': {
+          exitWith(decision.message, 1)
+          break
+        }
+
+        case 'use': {
+          chosenVariant = decision.variant
+          break
+        }
       }
 
       variantRequiresLicense = Boolean(variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
@@ -316,8 +346,8 @@ private targetDir = '.'
 
     if (variantRequiresLicense && !licenseKey) {
       const licenseResponse = await password({
-        message: 'This variant needs a Directus license key. Enter it to add it to directus/.env:',
-        validate: value => (value?.trim() ? undefined : 'A license key is required for this variant.'),
+        message: 'Enter your license key. It is added to directus/.env:',
+        validate: value => (value?.trim() ? undefined : 'A license key is required for this version.'),
       })
 
       if (isCancel(licenseResponse)) {

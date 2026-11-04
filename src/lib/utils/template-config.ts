@@ -40,6 +40,47 @@ export function getTemplatePath(config: DirectusTemplateConfig, variant?: string
   return selected.template
 }
 
+export type VariantDecision =
+  | {kind: 'ask-license'; licensedVariant: string}
+  | {kind: 'ask-variant'}
+  | {kind: 'error'; message: string}
+  | {kind: 'use'; variant?: string}
+
+/**
+ * Decide which template variant to apply, or what to ask. A template whose only variant needs a license
+ * becomes a yes/no license question; anything else falls back to picking from the list.
+ * @param options Template variants and the related init flags
+ * @param options.hasLicenseKey Whether --license-key was given
+ * @param options.license --license (true), --no-license (false), or not set
+ * @param options.variant --variant, if given
+ * @param options.variantOptions Variants declared by the template
+ * @returns The variant to use (undefined = core template), the question to ask, or an error
+ */
+export function decideVariant(options: {
+  hasLicenseKey: boolean
+  license?: boolean
+  variant?: string
+  variantOptions: TemplateVariantOption[]
+}): VariantDecision {
+  const {hasLicenseKey, license, variant, variantOptions} = options
+
+  if (variant) {
+    if (variantOptions.some(v => v.id === variant)) return {kind: 'use', variant}
+    const available = variantOptions.map(v => v.id).join(', ') || 'none'
+    return {kind: 'error', message: `Variant "${variant}" isn't available for this template. Available variants: ${available}`}
+  }
+
+  if (variantOptions.length === 0 || license === false) return {kind: 'use'}
+
+  const onlyLicensed = variantOptions.length === 1 && variantOptions[0].requiresLicense
+  if (!onlyLicensed) return {kind: 'ask-variant'}
+
+  const licensedVariant = variantOptions[0].id
+  if (license === true || hasLicenseKey) return {kind: 'use', variant: licensedVariant}
+
+  return {kind: 'ask-license', licensedVariant}
+}
+
 /**
  * Read and validate the template configuration from a directory
  * @param dir Directory containing the template
