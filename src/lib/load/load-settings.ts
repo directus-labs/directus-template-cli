@@ -49,26 +49,47 @@ function mergeJsonStrings(current: string, incoming: string): string {
 }
 
 /**
- * Protected settings keys
+ * Settings Directus 12 refuses in a settings update whenever they're present, even as null
  */
-const PROTECTED_SETTINGS_KEYS = [
-  'license_key',
-  'license_token',
-  'ai_openai_compatible_api_key',
-  'ai_google_api_key',
-  'ai_anthropic_api_key',
-  'ai_openai_api_key',
-] as const
+const READ_ONLY_SETTINGS_KEYS = ['license_key', 'license_token'] as const
 
 /**
- * Strip protected settings from the settings object
- * @param settings - The settings object
- * @returns The settings object with protected settings removed
+ * Secret settings the API returns masked. They're writable, so a template may set them,
+ * but a masked value must never be sent back (it would be stored as the new secret).
  */
-function stripProtectedSettings<T extends object>(settings: T): T {
-  const result = {...settings} as Record<string, unknown>
-  for (const key of PROTECTED_SETTINGS_KEYS) delete result[key]
-  return result as T
+const SECRET_SETTINGS_KEYS = [
+  'ai_openai_api_key',
+  'ai_anthropic_api_key',
+  'ai_google_api_key',
+  'ai_openai_compatible_api_key',
+] as const
+
+const MASKED_VALUE = '**********'
+
+function omitKeys(settings: Record<string, unknown>, keys: readonly string[]): Record<string, unknown> {
+  const result = {...settings}
+  for (const key of keys) delete result[key]
+  return result
+}
+
+/**
+ * Build the settings PATCH: merge the template into the current settings without replaying
+ * masked secrets or read-only license fields.
+ * @param currentSettings - Settings read from the target instance
+ * @param templateSettings - Settings from the template
+ * @returns The payload to send to updateSettings
+ */
+export function buildSettingsPayload(
+  currentSettings: Record<string, unknown>,
+  templateSettings: Record<string, unknown>,
+): Record<string, unknown> {
+  // Secrets from the instance come back masked, so leave them out and the stored values stay untouched
+  const current = omitKeys(currentSettings, SECRET_SETTINGS_KEYS)
+  // Templates extracted from an instance carry the same masks; real values set on purpose are kept
+  const maskedInTemplate = SECRET_SETTINGS_KEYS.filter(key => templateSettings[key] === MASKED_VALUE)
+  const template = omitKeys(templateSettings, maskedInTemplate)
+
+  return omitKeys(customDefu(current, template) as Record<string, unknown>, READ_ONLY_SETTINGS_KEYS)
 }
 
 export default async function loadSettings(dir: string) {
@@ -76,8 +97,8 @@ export default async function loadSettings(dir: string) {
   const settings = readFile('settings', dir)
   try {
     const currentSettings = await api.client.request(readSettings())
-    const mergedSettings = stripProtectedSettings(customDefu(currentSettings as any, settings) as DirectusSettings)
-    await api.client.request(updateSettings(mergedSettings))
+    const payload = buildSettingsPayload(currentSettings as Record<string, unknown>, settings as unknown as Record<string, unknown>)
+    await api.client.request(updateSettings(payload as DirectusSettings))
   } catch (error) {
     catchError(error)
   }
