@@ -262,6 +262,7 @@ private targetDir = '.'
         })
 
         if (isCancel(frontendResponse)) {
+          fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
           cancel('Project creation cancelled.')
           process.exit(0)
         }
@@ -293,6 +294,7 @@ private targetDir = '.'
         })
 
         if (isCancel(variantResponse)) {
+          fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
           cancel('Project creation cancelled.')
           process.exit(0)
         }
