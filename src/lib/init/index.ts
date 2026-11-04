@@ -15,7 +15,7 @@ import {createDocker} from '../../services/docker.js'
 import {BSL_LICENSE_CTA, BSL_LICENSE_HEADLINE, BSL_LICENSE_TEXT, pinkText} from '../constants.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
-import {readTemplateConfig} from '../utils/template-config.js'
+import {getTemplatePath, readTemplateConfig} from '../utils/template-config.js'
 import {DOCKER_CONFIG} from './config.js'
 
 
@@ -59,6 +59,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     // Read template configuration
     const templateInfo = readTemplateConfig(dir)
+    const configuredTemplate = templateInfo?.config ? getTemplatePath(templateInfo.config, flags.variant) : null
     let frontendDir: string | undefined
 
     // Handle frontends based on template configuration
@@ -105,6 +106,11 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     // Then read Directus-specific info only from the Directus env file
     const directusEnvFile = path.join(directusDir, '.env')
+
+    if (flags.licenseKey && fs.existsSync(directusEnvFile)) {
+      fs.writeFileSync(directusEnvFile, setEnvValue(fs.readFileSync(directusEnvFile, 'utf8'), 'LICENSE_KEY', flags.licenseKey))
+    }
+
     if (fs.existsSync(directusEnvFile)) {
       const parsedEnv = dotenv.parse(fs.readFileSync(directusEnvFile, 'utf8'))
       directusInfo.email = parsedEnv.ADMIN_EMAIL
@@ -136,8 +142,8 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
         // Check if a template path is specified in the config and exists
         let templatePath: string | undefined;
-        if (templateInfo?.config?.template && typeof templateInfo.config.template === 'string') {
-          templatePath = path.join(dir, templateInfo.config.template); // Path relative to root dir
+        if (configuredTemplate) {
+          templatePath = path.join(dir, configuredTemplate); // Path relative to root dir
         }
 
         if (templatePath && fs.existsSync(templatePath)) {
@@ -278,4 +284,20 @@ export async function installFrontendDependencies({
     warn('You can install dependencies manually and continue using the generated project.')
     return false
   }
+}
+
+/**
+ * Set a key in .env file contents, replacing an existing or commented-out line, or appending it
+ * @param contents - The .env file contents
+ * @param key - The variable name
+ * @param value - The value to set
+ * @returns The updated .env file contents
+ */
+export function setEnvValue(contents: string, key: string, value: string): string {
+  const line = `${key}=${value}`
+  const pattern = new RegExp(`^#?\\s*${key}=.*$`, 'm')
+
+  if (pattern.test(contents)) return contents.replace(pattern, () => line)
+
+  return `${contents.replace(/\n*$/, '')}\n${line}\n`
 }

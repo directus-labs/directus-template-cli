@@ -43,6 +43,35 @@ function cleanGitHubUrl(url: string): string {
 }
 
 /**
+ * Read an explicit ref from `?ref=` or a `#ref` suffix. These are the only way to pass a branch name with slashes.
+ * @param url The URL or path to read
+ * @returns The ref, if one was given
+ */
+function getExplicitRef(url: string): string | undefined {
+  const hashIndex = url.indexOf('#')
+  if (hashIndex !== -1 && hashIndex < url.length - 1) return decodeURIComponent(url.slice(hashIndex + 1))
+
+  const match = url.match(/[?&]ref=([^&#]+)/)
+  return match ? decodeURIComponent(match[1]) : undefined
+}
+
+/**
+ * Split the ref and path out of a /tree/ or /blob/ URL. A branch with slashes can't be told apart from the path,
+ * so an explicit ref decides how many segments belong to the ref.
+ * @param pathParts URL path segments
+ * @param refIndex Index of the first ref segment
+ * @param explicitRef Ref from `?ref=` or `#ref`
+ * @returns The ref and path
+ */
+function splitTreePath(pathParts: string[], refIndex: number, explicitRef?: string): {path?: string; ref: string} {
+  const refSegments = explicitRef ? explicitRef.split('/').length : 1
+  return {
+    path: pathParts.slice(refIndex + refSegments).join('/') || undefined,
+    ref: explicitRef || pathParts[refIndex],
+  }
+}
+
+/**
  * Parse a GitHub URL or path into its components
  * @param url The URL or path to parse
  * @returns The parsed components
@@ -52,7 +81,8 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
     throw new Error('URL is required')
   }
 
-  const cleanedUrl = cleanGitHubUrl(url)
+  const explicitRef = getExplicitRef(url)
+  const cleanedUrl = cleanGitHubUrl(url.split('#')[0])
 
   if (cleanedUrl.includes('github.com')) {
     try {
@@ -79,19 +109,12 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
         refIndex = blobIndex + 1
       }
 
-      if (refIndex !== -1) {
-        ref = pathParts[refIndex]
-        // Path is everything after the ref
-        path = pathParts.slice(refIndex + 1).join('/') || undefined
-      } else if (pathParts.length > 2) {
-        // If no tree/blob, but more parts exist, assume it's part of the path
-        // This handles cases like github.com/owner/repo/some/path without a specific ref marker
-        path = pathParts.slice(2).join('/') || undefined
-        // If URL has an explicit ?ref= param, use that, otherwise keep default
-        ref = parsed.searchParams.get('ref') || ref
+      if (refIndex === -1) {
+        // Without tree/blob, anything after owner/repo is the path (github.com/owner/repo/some/path)
+        if (pathParts.length > 2) path = pathParts.slice(2).join('/') || undefined
+        ref = explicitRef || ref
       } else {
-        // No path, just owner/repo
-        ref = parsed.searchParams.get('ref') || ref
+        ({path, ref} = splitTreePath(pathParts, refIndex, explicitRef))
       }
 
 
@@ -109,14 +132,14 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
   if (parts.length >= 2) {
     const [owner, repo, ...rest] = parts
     const path = rest.length > 0 ? rest.join('/') : undefined
-    // Assume default branch for simple paths unless we add ref detection here too
-    return {owner, path, ref: DEFAULT_BRANCH, repo}
+    return {owner, path, ref: explicitRef || DEFAULT_BRANCH, repo}
   }
 
   // Handle simple template names using DEFAULT_REPO
   return {
     ...DEFAULT_REPO,
-    path: cleanedUrl // The template name becomes the subpath
+    path: cleanedUrl, // The template name becomes the subpath
+    ref: explicitRef || DEFAULT_REPO.ref,
   }
 }
 
@@ -128,7 +151,7 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
 export function createGigetString(parts: GitHubUrlParts): string {
   // For the default repo case with a template name
   if (parts.owner === DEFAULT_REPO.owner && parts.repo === DEFAULT_REPO.repo) {
-    return `gh:${parts.owner}/${parts.repo}/${parts.path}#${DEFAULT_REPO.ref}`
+    return `gh:${parts.owner}/${parts.repo}/${parts.path}#${parts.ref || DEFAULT_REPO.ref}`
   }
 
   // For other GitHub URLs

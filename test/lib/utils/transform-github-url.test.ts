@@ -38,4 +38,19 @@ describe('transform-github-url', () => {
       'github:directus-labs/starters/simple-cms#main',
     )
   })
+
+  it('uses ?ref= to split a tree URL whose branch has slashes', () => {
+    expect(
+      transformGitHubUrl('https://github.com/directus-labs/starters/tree/bry/v12-templates/simple-crm/directus/template?ref=bry/v12-templates'),
+    ).to.equal('github:directus-labs/starters/simple-crm/directus/template#bry/v12-templates')
+  })
+
+  it('reads a #ref suffix on a tree URL', () => {
+    expect(parseGitHubUrl('https://github.com/directus-labs/starters/tree/bry/v12-templates/simple-crm#bry/v12-templates')).to.deep.equal({
+      owner: 'directus-labs',
+      ref: 'bry/v12-templates',
+      repo: 'starters',
+      subpath: 'simple-crm',
+    })
+  })
 })

@@ -1,4 +1,4 @@
-import {cancel, log as clackLog, confirm, intro, isCancel, select, text} from '@clack/prompts'
+import {cancel, log as clackLog, confirm, intro, isCancel, password, select, text} from '@clack/prompts'
 import {Args, Flags} from '@oclif/core'
 import chalk from 'chalk'
 import {downloadTemplate} from 'giget'
@@ -21,8 +21,10 @@ export interface InitFlags {
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
+  licenseKey?: string
   overwriteDir?: boolean
   template?: string
+  variant?: string
 }
 
 export interface InitArgs {
@@ -66,6 +68,10 @@ static flags = {
       default: true,
       description: 'Install dependencies automatically',
     }),
+    licenseKey: Flags.string({
+      aliases: ['license-key'],
+      description: 'Directus license key, written to directus/.env. Required for variants that need a license.',
+    }),
     overwriteDir: Flags.boolean({
       aliases: ['overwrite-dir'],
       allowNo: true,
@@ -74,6 +80,9 @@ static flags = {
     }),
     template: Flags.string({
       description: 'Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/simple-cms)',
+    }),
+    variant: Flags.string({
+      description: 'Template variant from directus:template.variants (e.g., licensed). Defaults to the core template.',
     }),
   }
 private targetDir = '.'
@@ -227,6 +236,8 @@ private targetDir = '.'
     // Download the template to a temporary directory to read its configuration
     const tempDir = path.join(os.tmpdir(), `directus-template-${Date.now()}`)
     let chosenFrontend = flags.frontend
+    let chosenVariant = flags.variant
+    let variantRequiresLicense = false
 
     try {
       await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
@@ -259,11 +270,58 @@ private targetDir = '.'
       }
 
       flags.frontend = chosenFrontend
+
+      const variantOptions = templateInfo?.variantOptions ?? []
+
+      if (chosenVariant && !variantOptions.some(v => v.id === chosenVariant)) {
+        clackLog.warn(`Variant "${chosenVariant}" isn't available for this template.`)
+        chosenVariant = undefined
+      }
+
+      // Ask which variant to use when the template offers more than the core template
+      if (variantOptions.length > 0 && !chosenVariant) {
+        const variantResponse = await select({
+          message: 'Which version of the template do you want?',
+          options: [
+            {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
+            ...variantOptions.map(variant => ({
+              hint: variant.requiresLicense ? 'Requires a Directus license key' : variant.description,
+              label: variant.name,
+              value: variant.id,
+            })),
+          ],
+        })
+
+        if (isCancel(variantResponse)) {
+          cancel('Project creation cancelled.')
+          process.exit(0)
+        }
+
+        chosenVariant = (variantResponse as string) || undefined
+      }
+
+      variantRequiresLicense = Boolean(variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
     } finally {
       // Clean up temporary directory
       if (fs.existsSync(tempDir)) {
         fs.rmSync(tempDir, { force: true, recursive: true })
       }
+    }
+
+    let {licenseKey} = flags
+
+    if (variantRequiresLicense && !licenseKey) {
+      const licenseResponse = await password({
+        message: 'This version needs a Directus license key. Enter it to add it to directus/.env:',
+        validate: value => (value?.trim() ? undefined : 'A license key is required for this version.'),
+      })
+
+      if (isCancel(licenseResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      licenseKey = (licenseResponse as string).trim()
     }
 
     const installDeps = explicitFlags.installDeps
@@ -285,6 +343,7 @@ private targetDir = '.'
           gitInit: initGit,
           installDeps,
           template,
+          variant: chosenVariant,
         },
         lifecycle: 'start',
         runId: this.runId,
@@ -298,8 +357,10 @@ private targetDir = '.'
         frontend: chosenFrontend,
         gitInit: initGit,
         installDeps,
+        licenseKey,
         overwriteDir,
         template,
+        variant: chosenVariant,
       },
 
     })
@@ -316,6 +377,7 @@ private targetDir = '.'
           installDeps,
           overwriteDir,
           template,
+          variant: chosenVariant,
         },
         lifecycle: 'complete',
         runId: this.runId,

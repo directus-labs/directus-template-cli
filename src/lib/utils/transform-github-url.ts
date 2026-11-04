@@ -21,16 +21,21 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
   }
 
   const pathParts = parsed.pathname.split('/').filter(Boolean)
-  const [owner, rawRepo, tree, ref, ...subpathParts] = pathParts
+  const [owner, rawRepo, tree, treeRef] = pathParts
   const repo = rawRepo?.replace(/\.git$/, '')
 
   if (!owner || !repo || pathParts.length > 2 && tree !== 'tree') {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
 
-  if (tree === 'tree' && !ref) {
+  if (tree === 'tree' && !treeRef) {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
+
+  // `?ref=` or `#ref` passes a branch with slashes, which a /tree/ URL alone can't express
+  const explicitRef = parsed.searchParams.get('ref') || (parsed.hash.length > 1 ? decodeURIComponent(parsed.hash.slice(1)) : undefined)
+  const ref = explicitRef || treeRef
+  const subpathParts = tree === 'tree' ? pathParts.slice(3 + (explicitRef ? explicitRef.split('/').length : 1)) : []
 
   const subpath = subpathParts.length > 0 ? subpathParts.join('/') : undefined
 
