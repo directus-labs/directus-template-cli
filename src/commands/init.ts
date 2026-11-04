@@ -275,18 +275,20 @@ private targetDir = '.'
       const variantOptions = templateInfo?.variantOptions ?? []
 
       if (chosenVariant && !variantOptions.some(v => v.id === chosenVariant)) {
-        clackLog.warn(`Variant "${chosenVariant}" isn't available for this template.`)
-        chosenVariant = undefined
+        const available = variantOptions.map(v => v.id).join(', ') || 'none'
+        fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
+        cancel(`Variant "${chosenVariant}" isn't available for this template. Available variants: ${available}`)
+        process.exit(1)
       }
 
       // Ask which variant to use when the template offers more than the core template
       if (variantOptions.length > 0 && !chosenVariant) {
         const variantResponse = await select({
-          message: 'Which version of the template do you want?',
+          message: 'Which variant of the template do you want?',
           options: [
             {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
             ...variantOptions.map(variant => ({
-              hint: variant.requiresLicense ? 'Requires a Directus license key' : variant.description,
+              hint: [variant.description, variant.requiresLicense && 'Requires a Directus license key'].filter(Boolean).join(' · '),
               label: variant.name,
               value: variant.id,
             })),
@@ -314,8 +316,8 @@ private targetDir = '.'
 
     if (variantRequiresLicense && !licenseKey) {
       const licenseResponse = await password({
-        message: 'This version needs a Directus license key. Enter it to add it to directus/.env:',
-        validate: value => (value?.trim() ? undefined : 'A license key is required for this version.'),
+        message: 'This variant needs a Directus license key. Enter it to add it to directus/.env:',
+        validate: value => (value?.trim() ? undefined : 'A license key is required for this variant.'),
       })
 
       if (isCancel(licenseResponse)) {
