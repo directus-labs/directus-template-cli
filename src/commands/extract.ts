@@ -7,14 +7,12 @@ import path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
 import {
-  BSL_LICENSE_CTA,
-  BSL_LICENSE_HEADLINE,
-  BSL_LICENSE_TEXT,
   DIRECTUS_PINK,
   DIRECTUS_PURPLE,
   SEPARATOR,
 } from '../lib/constants.js'
 import extract from '../lib/extract/index.js'
+import {displayLicenseBanner} from '../lib/license/index.js'
 import * as templatePlanFlags from '../lib/template-plan/flags.js'
 import {buildTemplatePlan} from '../lib/template-plan/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
@@ -165,9 +163,7 @@ export default class ExtractCommand extends BaseCommand {
       await shutdown()
     }
 
-    log.warn(BSL_LICENSE_HEADLINE)
-    log.info(BSL_LICENSE_TEXT)
-    log.info(BSL_LICENSE_CTA)
+    await displayLicenseBanner()
 
     ux.stdout(SEPARATOR)
     ux.stdout('Template extracted successfully.')

@@ -59,6 +59,7 @@ export class DirectusError extends Error {
 
 class Api {
   public client: (AuthenticationClient<Schema> & RestClient<Schema>) | undefined
+  public url: string | undefined
   private authData: AuthenticationData | null = null
   private limiter: Bottleneck
 
@@ -131,6 +132,7 @@ class Api {
   }
 
   public initialize(url: string): void {
+    this.url = url
     this.client = createDirectus<Schema>(url, {
       globals: {
         fetch: this.limiter.wrap(this.enhancedFetch),

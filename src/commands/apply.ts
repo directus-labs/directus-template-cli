@@ -5,13 +5,11 @@ import * as path from 'pathe'
 
 import * as customFlags from '../flags/common.js'
 import {
-  BSL_LICENSE_CTA,
-  BSL_LICENSE_HEADLINE,
-  BSL_LICENSE_TEXT,
   DIRECTUS_PINK,
   DIRECTUS_PURPLE,
   SEPARATOR,
 } from '../lib/constants.js'
+import {displayLicenseBanner} from '../lib/license/index.js'
 import {type ApplyFlags, validateProgrammaticFlags} from '../lib/load/apply-flags.js'
 import apply from '../lib/load/index.js'
 import * as templatePlanFlags from '../lib/template-plan/flags.js'
@@ -227,9 +225,7 @@ export default class ApplyCommand extends BaseCommand {
 
       ux.stdout(SEPARATOR)
 
-      log.warn(BSL_LICENSE_HEADLINE)
-      log.info(BSL_LICENSE_TEXT)
-      log.info(BSL_LICENSE_CTA)
+      await displayLicenseBanner()
 
       ux.stdout('Template applied successfully.')
       if (!validatedFlags.noExit) process.exit(0)
@@ -319,10 +315,8 @@ export default class ApplyCommand extends BaseCommand {
     ux.stdout('Template applied successfully.')
     if (!validatedFlags.noExit) process.exit(0)
 
-    // Hide BSL license info if running programatically for now
-    // log.warn(BSL_LICENSE_HEADLINE)
-    // log.info(BSL_LICENSE_TEXT)
-    // log.info(BSL_LICENSE_CTA)
+    // Hide license info if running programatically for now
+    // await displayLicenseBanner()
   }
 
   /**
