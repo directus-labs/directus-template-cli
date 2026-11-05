@@ -174,4 +174,7 @@ jobs:
           prerelease=()
           if [[ "$version" == *-* ]]; then prerelease=(--prerelease); fi
 
-          gh release create "$tag" --target "$target" --title "$tag" --notes "${notes:-Release $tag}" "${prerelease[@]}"
+          # Versions released before Changesets have no CHANGELOG entry, so let GitHub list the merged PRs
+          if [ -n "$notes" ]; then notes_args=(--notes "$notes"); else notes_args=(--generate-notes); fi
+
+          gh release create "$tag" --target "$target" --title "$tag" "${notes_args[@]}" "${prerelease[@]}"
