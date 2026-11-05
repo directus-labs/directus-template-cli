@@ -2,8 +2,8 @@
 # 2. On main, pending changesets open or update a "Version Packages" PR.
 # 3. Merging that PR publishes to npm with trusted publishing (no npm token),
 #    then tags the release and creates the GitHub release.
-# 4. finalize-release fills in a missing tag or GitHub release for a version that's already on npm, so a
-#    failed run can be fixed with "Re-run all jobs" (Changesets skips versions npm already has).
+# 4. finalize-release fills in a missing tag or GitHub release for a version that's already on npm.
+#    Changesets skips versions npm already has, so re-running publish alone can't fix a half-failed release.
 name: Release
 
 on:
@@ -122,7 +122,9 @@ jobs:
 
   finalize-release:
     needs: [select-mode, publish]
-    if: always() && needs.select-mode.result == 'success' && needs.select-mode.outputs.mode != 'version' && needs.publish.result != 'failure'
+    # Runs in every mode: npm already having the version is the only thing that matters. That also covers a
+    # publish that reached npm and then failed on the tag or release in this same run.
+    if: always() && needs.select-mode.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -140,9 +142,14 @@ jobs:
           name=$(node -p "require('./package.json').name")
           tag="v$version"
 
-          if [ "$(npm view "$name@$version" version 2>/dev/null)" != "$version" ]; then
-            echo "$name@$version isn't on npm, nothing to finalize"
-            exit 0
+          # A 404 means it isn't published; any other npm error (registry down) should fail loudly
+          if ! published=$(npm view "$name@$version" version 2>&1); then
+            if grep -q E404 <<<"$published"; then
+              echo "$name@$version isn't on npm, nothing to finalize"
+              exit 0
+            fi
+            echo "$published"
+            exit 1
           fi
 
           if gh release view "$tag" >/dev/null 2>&1; then
@@ -150,7 +157,16 @@ jobs:
             exit 0
           fi
 
-          # Tag the commit that set this version (the Version Packages merge), not the latest main
-          target=$(git log -1 --format=%H -S"\"version\": \"$version\"" -- package.json)
-          notes=$(awk -v v="## $version" '$0 == v {found=1; next} found && /^## / {exit} found {print}' CHANGELOG.md 2>/dev/null)
+          # The main commit that set this version (the Version Packages merge), same as Changesets tags
+          target=$(git log --first-parent -1 --format=%H -S"\"version\": \"$version\"" -- package.json)
+          if [ "$(git show "$target:package.json" | node -p "JSON.parse(require('fs').readFileSync(0)).version")" != "$version" ]; then
+            echo "Couldn't find the commit on main that set version $version"
+            exit 1
+          fi
+
+          notes=""
+          if [ -f CHANGELOG.md ]; then
+            notes=$(awk -v v="## $version" '$0 == v {found=1; next} found && /^## / {exit} found {print}' CHANGELOG.md)
+          fi
+
           gh release create "$tag" --target "$target" --title "$tag" --notes "${notes:-Release $tag}"

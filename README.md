@@ -419,7 +419,7 @@ Releases go out from GitHub Actions, not from a laptop.
 2. Once PRs with changesets merge, a "Version Packages" PR opens with the version bump and `CHANGELOG.md`.
 3. Merging that PR publishes to npm with provenance (after approval on the `npm` environment), then tags the release and creates the GitHub release.
 
-If a release run fails after npm already has the version, use "Re-run all jobs". The `finalize-release` job creates the missing tag and GitHub release.
+If npm gets the version but the tag or GitHub release fails, the `finalize-release` job creates them in the same run. If that fails too, use "Re-run all jobs".
 
 ## License
 
