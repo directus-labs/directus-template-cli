@@ -1,5 +1,3 @@
-import {serverHealth} from '@directus/sdk'
-
 import {
   BSL_LICENSE_CTA,
   BSL_LICENSE_HEADLINE,
@@ -22,16 +20,32 @@ export function licenseForVersion(releaseId?: string): 'bsl' | 'mscl' {
 }
 
 /**
+ * Ask the connected instance for its version. /server/info returns it to any logged-in user.
+ * Uses a single fetch with a timeout, not the shared client, which retries 503 and 429 with no limit.
+ * @returns The Directus version, or undefined if it can't be read
+ */
+export async function fetchDirectusVersion(): Promise<string | undefined> {
+  if (!api.client || !api.url) return undefined
+
+  try {
+    const token = await api.client.getToken()
+    const response = await fetch(`${api.url.replace(/\/$/, '')}/server/info`, {
+      headers: token ? {Authorization: `Bearer ${token}`} : {},
+      signal: AbortSignal.timeout(3000),
+    })
+    if (!response.ok) return undefined
+    const {data} = await response.json()
+    return data?.version
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * Print the license banner for the connected Directus instance. Never throws, so it can't fail a successful run.
- * /server/health only includes releaseId for admins.
  */
 export async function displayLicenseBanner() {
-  let releaseId: string | undefined
-  try {
-    releaseId = (await api.client.request(serverHealth()))?.releaseId
-  } catch {
-    // Unreachable or not an admin: fall through to the default license
-  }
+  const releaseId = await fetchDirectusVersion()
 
   if (licenseForVersion(releaseId) === 'mscl') {
     console.warn(MSCL_LICENSE_HEADLINE)
