@@ -411,6 +411,14 @@ The logger automatically sanitizes sensitive information such as passwords, toke
 
 Note: If you encounter any issues with the CLI, providing these log files can greatly assist in diagnosing and resolving the problem.
 
+## Releasing
+
+Releases go out from GitHub Actions, not from a laptop.
+
+1. Add a changeset to your PR: `pnpm changeset`, pick patch/minor/major, and write one line for the changelog. CI checks that PRs have one (use `pnpm changeset --empty` for changes that don't need a release).
+2. Once PRs with changesets merge, a "Version Packages" PR opens with the version bump and `CHANGELOG.md`.
+3. Merging that PR publishes to npm with provenance (after approval on the `npm` environment), then tags the release and creates the GitHub release.
+
 ## License
 
 This tool is licensed under the [MIT License](https://opensource.org/licenses/MIT).
