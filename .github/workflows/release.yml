@@ -159,7 +159,8 @@ jobs:
 
           # The main commit that set this version (the Version Packages merge), same as Changesets tags
           target=$(git log --first-parent -1 --format=%H -S"\"version\": \"$version\"" -- package.json)
-          if [ "$(git show "$target:package.json" | node -p "JSON.parse(require('fs').readFileSync(0)).version")" != "$version" ]; then
+          # An empty target would make git show read the index and --target fall back to the default branch
+          if [ -z "$target" ] || [ "$(git show "$target:package.json" | node -p "JSON.parse(require('fs').readFileSync(0)).version")" != "$version" ]; then
             echo "Couldn't find the commit on main that set version $version"
             exit 1
           fi
@@ -169,4 +170,8 @@ jobs:
             notes=$(awk -v v="## $version" '$0 == v {found=1; next} found && /^## / {exit} found {print}' CHANGELOG.md)
           fi
 
-          gh release create "$tag" --target "$target" --title "$tag" --notes "${notes:-Release $tag}"
+          # Same as Changesets: a version with a dash (1.0.0-next.0) is a prerelease
+          prerelease=()
+          if [[ "$version" == *-* ]]; then prerelease=(--prerelease); fi
+
+          gh release create "$tag" --target "$target" --title "$tag" --notes "${notes:-Release $tag}" "${prerelease[@]}"
