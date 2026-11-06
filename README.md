@@ -52,6 +52,7 @@ The first argument (`my-project` in the example above) specifies the directory w
 npx directus-template-cli@latest init --frontend=nextjs --template=cms
 npx directus-template-cli@latest init my-project --frontend=nextjs --template=cms
 npx directus-template-cli@latest init --template=https://github.com/directus-labs/starters/tree/main/cms
+npx directus-template-cli@latest init my-project --template=cms --frontend=nextjs --no-license
 ```
 
 Available flags:
@@ -62,8 +63,21 @@ Available flags:
 - `--overwriteDir`: Override the default directory if it already exists (defaults to false)
 - `--template`: Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/cms)
 - `--disableTelemetry`: Disable telemetry collection
+- `--variant`: Template variant to apply, from the template's `variants` (e.g., `licensed`). Omit it for the core template
+- `--license` / `--no-license`: Use the licensed version of the template, or the free core version
+- `--licenseKey`: Directus license key, written to `directus/.env`. Implies `--license`
+
+When a template has a licensed variant and none of these flags are given, `init` asks whether you have a license key, then asks for the key if the version you picked needs one. Without a terminal to ask in (CI, piped input), it uses the free core version, with these exceptions:
+
+- A template that needs a license as a whole (like `cms-i18n`) exits unless you pass `--licenseKey`.
+- `--license` or `--licenseKey` on a template with several variants exits until you pick one with `--variant`.
+- A licensed version picked without `--licenseKey` exits, since there's no prompt for the key.
+
+Prefer the prompt for your license key, or pass it from an environment variable (`--licenseKey="$DIRECTUS_LICENSE_KEY"`), so the key doesn't end up in your shell history.
 
 You can use any public GitHub repository URL for the `--template` parameter, pointing to the specific directory containing the template. This is especially useful for using community-maintained templates or your own custom templates hosted on GitHub.
+
+To use a branch whose name has a slash in it, add `?ref=<branch>` to the URL, for example `https://github.com/acme/starters/tree/feature/v2/cms?ref=feature/v2`. Branch and tag names can only use letters, numbers, and `- _ . / @`.
 
 ### Creating Custom Templates
 
@@ -112,6 +126,21 @@ The `directus:template` property contains:
 - `frontends`: Object defining available frontend frameworks for this template
   - Each key is a frontend identifier used with the `--frontend` flag
   - Each frontend has a `name` (display name) and `path` (directory containing the frontend code)
+- `variants` (optional): Other versions of the Directus template, such as one with permission rules that need a Directus license
+  - Each key is a variant identifier used with the `--variant` flag
+  - Each variant has a `name`, a `template` path, an optional `description`, and `requiresLicense: true` if it needs a license key
+- `requiresLicense` (optional): Set to `true` when the template itself needs a Directus license, so `init` always asks for a key and `--no-license` is refused
+
+```json
+"variants": {
+  "licensed": {
+    "name": "CMS (Licensed)",
+    "description": "Adds permission rules that need a Directus license",
+    "template": "./directus/template-licensed",
+    "requiresLicense": true
+  }
+}
+```
 
 When you use this template with the `init` command, it will:
 

@@ -1,5 +1,5 @@
 import {DEFAULT_BRANCH, DEFAULT_REPO} from '../constants.js'
-import {countRefSegments, getExplicitRef, safeDecode} from './github-ref.js'
+import {countRefSegments, getExplicitRef, gigetRefSuffix, safeDecode} from './github-ref.js'
 
 interface GitHubUrlParts {
   owner: string
@@ -140,12 +140,11 @@ export function parseGitHubUrl(url: string): GitHubUrlParts {
 export function createGigetString(parts: GitHubUrlParts): string {
   // For the default repo case with a template name
   if (parts.owner === DEFAULT_REPO.owner && parts.repo === DEFAULT_REPO.repo) {
-    return `gh:${parts.owner}/${parts.repo}/${parts.path}#${parts.ref || DEFAULT_REPO.ref}`
+    return `gh:${parts.owner}/${parts.repo}/${parts.path}${gigetRefSuffix(parts.ref || DEFAULT_REPO.ref)}`
   }
 
   // For other GitHub URLs
   const base = `gh:${parts.owner}/${parts.repo}`
   const path = parts.path ? `/${parts.path}` : ''
-  const ref = parts.ref ? `#${parts.ref}` : ''
-  return `${base}${path}${ref}`
+  return `${base}${path}${gigetRefSuffix(parts.ref)}`
 }

@@ -73,4 +73,10 @@ describe('parse-github-url', () => {
   it('prefers ?ref= over #ref', () => {
     expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other')).to.include({ref: 'next'})
   })
+
+  it('refuses refs giget would cut short instead of downloading another branch', () => {
+    expect(() => createGigetString(parseGitHubUrl('https://github.com/acme/custom/tree/main/x?ref=release%2Bone'))).to.throw('release+one')
+    expect(() => createGigetString(parseGitHubUrl('https://github.com/acme/custom/tree/main/x?ref=release%23one'))).to.throw('release#one')
+    expect(createGigetString(parseGitHubUrl('https://github.com/acme/custom/tree/main/x?ref=feat/v1.2_rc@next'))).to.equal('gh:acme/custom/x#feat/v1.2_rc@next')
+  })
 })

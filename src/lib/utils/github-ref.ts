@@ -58,3 +58,19 @@ export function safeDecode(segment: string): string {
     return segment
   }
 }
+
+/**
+ * Format a ref as a giget `#ref` suffix. giget only reads letters, numbers and `-_./@` in a ref and cuts it off at
+ * anything else, which would quietly download a different branch, so those refs are refused.
+ * @param ref The ref, if any
+ * @returns `#ref`, or an empty string when there's no ref
+ * @throws Error if giget can't download the ref as written
+ */
+export function gigetRefSuffix(ref?: string): string {
+  if (!ref) return ''
+  if (!/^[-\w./@]+$/.test(ref)) {
+    throw new Error(`The branch or tag "${ref}" has characters the template download can't handle. Only letters, numbers, and - _ . / @ are supported.`)
+  }
+
+  return `#${ref}`
+}

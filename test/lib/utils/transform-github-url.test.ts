@@ -79,4 +79,8 @@ describe('transform-github-url', () => {
   it('prefers ?ref= over #ref, like the init parser', () => {
     expect(parseGitHubUrl('https://github.com/acme/custom/tree/main/templates/x?ref=next#other').ref).to.equal('next')
   })
+
+  it('refuses refs giget would cut short instead of downloading another branch', () => {
+    expect(() => transformGitHubUrl('https://github.com/acme/custom/tree/main/x?ref=release%2Bone')).to.throw('release+one')
+  })
 })

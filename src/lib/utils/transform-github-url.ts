@@ -1,4 +1,4 @@
-import {countRefSegments, getExplicitRef, safeDecode} from './github-ref.js'
+import {countRefSegments, getExplicitRef, gigetRefSuffix, safeDecode} from './github-ref.js'
 
 export interface ParsedGitHubUrl {
   owner: string
@@ -46,6 +46,5 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
 export function transformGitHubUrl(url: string): string {
   const {owner, ref, repo, subpath} = parseGitHubUrl(url)
   const pathPart = subpath ? `/${subpath}` : ''
-  const refPart = ref ? `#${ref}` : ''
-  return `github:${owner}/${repo}${pathPart}${refPart}`
+  return `github:${owner}/${repo}${pathPart}${gigetRefSuffix(ref)}`
 }
