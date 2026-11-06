@@ -63,7 +63,7 @@ Available flags:
 - `--overwriteDir`: Override the default directory if it already exists (defaults to false)
 - `--template`: Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/cms)
 - `--disableTelemetry`: Disable telemetry collection
-- `--variant`: Template variant to apply, from the template's `variants` (e.g., `licensed`). Omit it for the core template
+- `--variant`: Template variant to apply, from the template's `variants` (e.g., `licensed`). Use `--no-license` to force the core template; otherwise the license flags and prompts choose the version
 - `--license` / `--no-license`: Use the licensed version of the template, or the free core version
 - `--licenseKey`: Directus license key, written to `directus/.env`. Implies `--license`
 
