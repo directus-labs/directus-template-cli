@@ -1,6 +1,6 @@
 {
   "name": "directus-template-cli",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "CLI Utility for applying templates to a Directus instance.",
   "author": "bryantgillespie @bryantgillespie",
   "type": "module",
@@ -40,6 +40,7 @@
     "posthog-node": "^5.29.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@directus/types": "^15.0.2",
     "@eslint/compat": "^2.0.5",
     "@oclif/prettier-config": "^0.2.1",
@@ -78,8 +79,8 @@
     "posttest": "pnpm run lint",
     "prepack": "pnpm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md",
-    "run": "./bin/run.js"
+    "run": "./bin/run.js",
+    "changeset": "changeset"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -93,5 +94,5 @@
     "directus cli"
   ],
   "types": "dist/index.d.ts",
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+  "packageManager": "pnpm@10.34.9"
 }

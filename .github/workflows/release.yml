@@ -1,0 +1,180 @@
+# 1. PRs add a changeset (`pnpm changeset`).
+# 2. On main, pending changesets open or update a "Version Packages" PR.
+# 3. Merging that PR publishes to npm with trusted publishing (no npm token),
+#    then tags the release and creates the GitHub release.
+# 4. finalize-release fills in a missing tag or GitHub release for a version that's already on npm.
+#    Changesets skips versions npm already has, so re-running publish alone can't fix a half-failed release.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  select-mode:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: pnpm install --frozen-lockfile
+
+      - id: select-mode
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  version:
+    if: needs.select-mode.outputs.mode == 'version'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  pack:
+    if: needs.select-mode.outputs.mode == 'publish'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: pnpm install --frozen-lockfile
+
+      # posttest runs lint
+      - run: pnpm test
+
+      # prepack builds, writes oclif.manifest.json and refreshes the README
+      - id: pack
+        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  publish:
+    needs: pack
+    runs-on: ubuntu-latest
+    # Required reviewers approve each publish, and npm only trusts runs from this environment
+    environment: npm
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+
+  finalize-release:
+    needs: [select-mode, publish]
+    # Runs in every mode: npm already having the version is the only thing that matters. That also covers a
+    # publish that reached npm and then failed on the tag or release in this same run.
+    if: always() && needs.select-mode.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Create the tag and GitHub release if npm has the version but GitHub doesn't
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          name=$(node -p "require('./package.json').name")
+          tag="v$version"
+
+          # A 404 means it isn't published; any other npm error (registry down) should fail loudly
+          if ! published=$(npm view "$name@$version" version 2>&1); then
+            if grep -q E404 <<<"$published"; then
+              echo "$name@$version isn't on npm, nothing to finalize"
+              exit 0
+            fi
+            echo "$published"
+            exit 1
+          fi
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "$tag release already exists"
+            exit 0
+          fi
+
+          # The main commit that set this version (the Version Packages merge), same as Changesets tags
+          target=$(git log --first-parent -1 --format=%H -S"\"version\": \"$version\"" -- package.json)
+          # An empty target would make git show read the index and --target fall back to the default branch
+          if [ -z "$target" ] || [ "$(git show "$target:package.json" | node -p "JSON.parse(require('fs').readFileSync(0)).version")" != "$version" ]; then
+            echo "Couldn't find the commit on main that set version $version"
+            exit 1
+          fi
+
+          notes=""
+          if [ -f CHANGELOG.md ]; then
+            notes=$(awk -v v="## $version" '$0 == v {found=1; next} found && /^## / {exit} found {print}' CHANGELOG.md)
+          fi
+
+          # Same as Changesets: a version with a dash (1.0.0-next.0) is a prerelease
+          prerelease=()
+          if [[ "$version" == *-* ]]; then prerelease=(--prerelease); fi
+
+          # Versions released before Changesets have no CHANGELOG entry, so let GitHub list the merged PRs
+          if [ -n "$notes" ]; then notes_args=(--notes "$notes"); else notes_args=(--generate-notes); fi
+
+          gh release create "$tag" --target "$target" --title "$tag" "${notes_args[@]}" "${prerelease[@]}"
