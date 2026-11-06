@@ -32,6 +32,7 @@ describe('decideVariant', () => {
     expect(decide({interactive: false, variantOptions: several})).to.deep.equal({kind: 'use'})
     expect(decide({hasLicenseKey: true, interactive: false})).to.deep.equal({kind: 'use', variant: 'licensed'})
     expect(decide({interactive: false, license: true, variantOptions: several}).kind).to.equal('error')
+    expect(decide({hasLicenseKey: true, interactive: false, variantOptions: several}).kind).to.equal('error')
   })
 
   it('skips the question for templates without variants', () => {

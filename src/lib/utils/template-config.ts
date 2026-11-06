@@ -96,7 +96,7 @@ export function decideVariant(options: {
 
   const onlyLicensed = variantOptions.length === 1 && variantOptions[0].requiresLicense
   if (onlyLicensed && (license === true || hasLicenseKey)) return {kind: 'use', variant: variantOptions[0].id}
-  if (!interactive && license === true && !onlyLicensed) {
+  if (!interactive && (license === true || hasLicenseKey) && !onlyLicensed) {
     return {kind: 'error', message: 'This template has several versions. Pick one with --variant.'}
   }
 

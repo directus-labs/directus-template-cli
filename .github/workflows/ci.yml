@@ -61,4 +61,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Check for a changeset
-        run: pnpm changeset status --since origin/${{ github.base_ref }}
+        run: pnpm changeset status --since "origin/$BASE_REF"
+        env:
+          BASE_REF: ${{ github.base_ref }}
