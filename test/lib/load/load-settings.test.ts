@@ -30,4 +30,35 @@ describe('buildSettingsPayload', () => {
 
     expect(payload).to.not.have.property('ai_google_api_key')
   })
+
+  it("keeps the instance's existing project details", () => {
+    const payload = buildSettingsPayload(
+      {project_color: '#6644FF', project_name: 'My Project'},
+      {project_color: '#FF0000', project_name: 'Simple CMS'},
+    )
+
+    expect(payload).to.include({project_color: '#6644FF', project_name: 'My Project'})
+  })
+
+  it('adds template module bar entries without dropping existing ones', () => {
+    const payload = buildSettingsPayload(
+      {module_bar: [{id: 'content', type: 'module'}]},
+      {module_bar: [{id: 'content', type: 'module'}, {id: 'insights', type: 'module'}]},
+    )
+
+    expect(payload.module_bar).to.deep.equal([
+      {id: 'content', type: 'module'},
+      {id: 'insights', type: 'module'},
+    ])
+  })
+
+  it("never applies another instance's id or owner info", () => {
+    const payload = buildSettingsPayload(
+      {org_name: null, project_id: 'target-id', project_owner: null},
+      {org_name: 'Theirs', product_updates: true, project_id: 'source-id', project_owner: 'author@source.dev', project_usage: 'commercial'},
+    )
+
+    expect(payload).to.include({project_id: 'target-id'})
+    expect(payload).to.not.have.any.keys('org_name', 'product_updates', 'project_owner', 'project_usage')
+  })
 })

@@ -4,7 +4,7 @@ import {readSettings, updateSettings} from '@directus/sdk'
 import {ux} from '@oclif/core'
 import {createDefu} from 'defu'
 
-import {DIRECTUS_PINK} from '../constants.js'
+import {DIRECTUS_PINK, INSTANCE_SETTINGS_KEYS} from '../constants.js'
 import {api} from '../sdk.js'
 import catchError from '../utils/catch-error.js'
 import readFile from '../utils/read-file.js'
@@ -74,7 +74,7 @@ function omitKeys(settings: Record<string, unknown>, keys: readonly string[]): R
 
 /**
  * Build the settings PATCH: merge the template into the current settings without replaying
- * masked secrets or read-only license fields.
+ * masked secrets, read-only license fields, or another instance's identity.
  * @param currentSettings - Settings read from the target instance
  * @param templateSettings - Settings from the template
  * @returns The payload to send to updateSettings
@@ -87,7 +87,8 @@ export function buildSettingsPayload(
   const current = omitKeys(currentSettings, SECRET_SETTINGS_KEYS)
   // Templates extracted from an instance carry the same masks; real values set on purpose are kept
   const maskedInTemplate = SECRET_SETTINGS_KEYS.filter(key => templateSettings[key] === MASKED_VALUE)
-  const template = omitKeys(templateSettings, maskedInTemplate)
+  // Older templates were extracted with the source instance's id and owner info
+  const template = omitKeys(templateSettings, [...maskedInTemplate, ...INSTANCE_SETTINGS_KEYS])
 
   return omitKeys(customDefu(current, template) as Record<string, unknown>, READ_ONLY_SETTINGS_KEYS)
 }
