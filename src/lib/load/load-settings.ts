@@ -42,7 +42,7 @@ function mergeArrays(key: string, current: any[], incoming: any[]): any[] {
 
 function mergeJsonStrings(current: string, incoming: string): string {
   try {
-    return JSON.stringify(customDefu(JSON.parse(incoming), JSON.parse(current)))
+    return JSON.stringify(customDefu(JSON.parse(current), JSON.parse(incoming)))
   } catch {
     return incoming // If not valid JSON, return the incoming value
   }
@@ -73,7 +73,7 @@ function omitKeys(settings: Record<string, unknown>, keys: readonly string[]): R
 }
 
 /**
- * Build the settings PATCH: template values win over the instance, without replaying
+ * Build the settings PATCH: merge the template into the current settings without replaying
  * masked secrets, read-only license fields, or another instance's identity.
  * @param currentSettings - Settings read from the target instance
  * @param templateSettings - Settings from the template
@@ -90,7 +90,7 @@ export function buildSettingsPayload(
   // Older templates were extracted with the source instance's id and owner info
   const template = omitKeys(templateSettings, [...maskedInTemplate, ...INSTANCE_SETTINGS_KEYS])
 
-  return omitKeys(customDefu(template, current) as Record<string, unknown>, READ_ONLY_SETTINGS_KEYS)
+  return omitKeys(customDefu(current, template) as Record<string, unknown>, READ_ONLY_SETTINGS_KEYS)
 }
 
 export default async function loadSettings(dir: string) {

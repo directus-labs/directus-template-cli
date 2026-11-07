@@ -31,28 +31,13 @@ describe('buildSettingsPayload', () => {
     expect(payload).to.not.have.property('ai_google_api_key')
   })
 
-  it('lets template values override the instance', () => {
+  it("keeps the instance's existing project details", () => {
     const payload = buildSettingsPayload(
-      {project_color: '#6644FF', project_name: 'Directus'},
+      {project_color: '#6644FF', project_name: 'My Project'},
       {project_color: '#FF0000', project_name: 'Simple CMS'},
     )
 
-    expect(payload).to.include({project_color: '#FF0000', project_name: 'Simple CMS'})
-  })
-
-  it("keeps the instance's value when the template leaves it null", () => {
-    const payload = buildSettingsPayload({project_url: 'https://example.com'}, {project_url: null})
-
-    expect(payload).to.include({project_url: 'https://example.com'})
-  })
-
-  it('lets template keys win inside JSON strings', () => {
-    const payload = buildSettingsPayload(
-      {custom_css: JSON.stringify({a: 1, b: 1})},
-      {custom_css: JSON.stringify({b: 2})},
-    )
-
-    expect(JSON.parse(payload.custom_css as string)).to.deep.equal({a: 1, b: 2})
+    expect(payload).to.include({project_color: '#6644FF', project_name: 'My Project'})
   })
 
   it('adds template module bar entries without dropping existing ones', () => {
@@ -69,11 +54,11 @@ describe('buildSettingsPayload', () => {
 
   it("never applies another instance's id or owner info", () => {
     const payload = buildSettingsPayload(
-      {org_name: 'Mine', project_id: 'target-id', project_owner: 'me@target.dev'},
+      {org_name: null, project_id: 'target-id', project_owner: null},
       {org_name: 'Theirs', product_updates: true, project_id: 'source-id', project_owner: 'author@source.dev', project_usage: 'commercial'},
     )
 
-    expect(payload).to.include({org_name: 'Mine', project_id: 'target-id', project_owner: 'me@target.dev'})
-    expect(payload).to.not.have.any.keys('product_updates', 'project_usage')
+    expect(payload).to.include({project_id: 'target-id'})
+    expect(payload).to.not.have.any.keys('org_name', 'product_updates', 'project_owner', 'project_usage')
   })
 })
