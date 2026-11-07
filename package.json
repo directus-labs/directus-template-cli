@@ -37,7 +37,7 @@
     "log-update": "^8.0.0",
     "nypm": "^0.6.5",
     "pathe": "^2.0.3",
-    "posthog-node": "^5.29.2"
+    "posthog-node": "^5.61.2"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
