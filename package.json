@@ -44,7 +44,7 @@
     "@directus/types": "^15.0.3",
     "@eslint/compat": "^2.0.5",
     "@oclif/prettier-config": "^0.2.1",
-    "@oclif/test": "^4.1.18",
+    "@oclif/test": "^4.2.0",
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10",
     "@types/node": "^25.6.0",
