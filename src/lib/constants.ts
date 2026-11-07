@@ -46,3 +46,8 @@ export const BSL_LICENSE_TEXT =
 export const BSL_LICENSE_CTA = `Visit ${pinkText(BSL_LICENSE_URL)} for more information or reach out to us at ${pinkText(BSL_EMAIL)}.`
 
 export const DEFAULT_DIRECTUS_URL = 'http://localhost:8055'
+
+/**
+ * Settings that identify one instance and its owner. Never extracted, never applied.
+ */
+export const INSTANCE_SETTINGS_KEYS = ['project_id', 'project_owner', 'project_usage', 'org_name', 'product_updates'] as const
