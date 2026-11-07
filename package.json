@@ -12,7 +12,7 @@
   "main": "dist/index.js",
   "repository": "directus-labs/directus-template-cli",
   "files": [
-    "/bin",
+    "bin",
     "/dist",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
