@@ -3,13 +3,24 @@ export interface DirectusTemplateFrontend {
   path: string
 }
 
+export interface DirectusTemplateVariant {
+  description?: string
+  name: string
+  requiresLicense?: boolean
+  template: string
+}
+
 export interface DirectusTemplateConfig {
   description: string
   frontends: {
     [key: string]: DirectusTemplateFrontend
   }
   name: string
+  requiresLicense?: boolean
   template: null | string
+  variants?: {
+    [key: string]: DirectusTemplateVariant
+  }
 }
 
 export interface TemplatePackageJson {

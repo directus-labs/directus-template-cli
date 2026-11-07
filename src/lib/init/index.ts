@@ -16,7 +16,8 @@ import {pinkText} from '../constants.js'
 import {displayLicenseBanner} from '../license/index.js'
 import catchError from '../utils/catch-error.js'
 import {createGigetString, parseGitHubUrl} from '../utils/parse-github-url.js'
-import {readTemplateConfig} from '../utils/template-config.js'
+import {sanitizeFlags} from '../utils/sanitize-flags.js'
+import {getTemplatePath, readTemplateConfig} from '../utils/template-config.js'
 import {DOCKER_CONFIG} from './config.js'
 
 
@@ -60,6 +61,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     // Read template configuration
     const templateInfo = readTemplateConfig(dir)
+    const configuredTemplate = templateInfo?.config ? getTemplatePath(templateInfo.config, flags.variant) : null
     let frontendDir: string | undefined
 
     // Handle frontends based on template configuration
@@ -106,6 +108,12 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
     // Then read Directus-specific info only from the Directus env file
     const directusEnvFile = path.join(directusDir, '.env')
+
+    if (flags.licenseKey && fs.existsSync(directusDir)) {
+      const current = fs.existsSync(directusEnvFile) ? fs.readFileSync(directusEnvFile, 'utf8') : ''
+      fs.writeFileSync(directusEnvFile, setEnvValue(current, 'LICENSE_KEY', flags.licenseKey))
+    }
+
     if (fs.existsSync(directusEnvFile)) {
       const parsedEnv = dotenv.parse(fs.readFileSync(directusEnvFile, 'utf8'))
       directusInfo.email = parsedEnv.ADMIN_EMAIL
@@ -137,8 +145,8 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
 
         // Check if a template path is specified in the config and exists
         let templatePath: string | undefined;
-        if (templateInfo?.config?.template && typeof templateInfo.config.template === 'string') {
-          templatePath = path.join(dir, templateInfo.config.template); // Path relative to root dir
+        if (configuredTemplate) {
+          templatePath = path.join(dir, configuredTemplate); // Path relative to root dir
         }
 
         if (templatePath && fs.existsSync(templatePath)) {
@@ -208,7 +216,7 @@ export async function init({dir, flags}: {dir: string, flags: InitFlags}) {
     outro(`Problems or questions? Hop into the community at ${pinkText('https://directus.chat')}`)
   } catch (error) {
     catchError(error, {
-      context: {dir, flags, function: 'init'},
+      context: {dir, flags: sanitizeFlags(flags as Record<string, unknown>), function: 'init'},
       fatal: true,
       logToFile: true,
     })
@@ -277,4 +285,36 @@ export async function installFrontendDependencies({
     warn('You can install dependencies manually and continue using the generated project.')
     return false
   }
+}
+
+/**
+ * Set a key in .env file contents. Replaces the first active assignment (dropping any duplicates),
+ * otherwise the first commented-out one, otherwise appends it.
+ * @param contents - The .env file contents
+ * @param key - The variable name
+ * @param value - The value to set
+ * @returns The updated .env file contents
+ */
+export function setEnvValue(contents: string, key: string, value: string): string {
+  // Quote values dotenv would otherwise cut at a space or #
+  const line = `${key}=${/[\s#"'`]/.test(value) ? JSON.stringify(value) : value}`
+  const lines = contents.split('\n')
+  // Same forms dotenv reads: optional `export` and spaces around `=`
+  const active = new RegExp(`^\\s*(export\\s+)?${key}\\s*=`)
+  const commented = new RegExp(`^\\s*#\\s*(export\\s+)?${key}\\s*=`)
+
+  const activeIndexes = lines.flatMap((l, i) => (active.test(l) ? [i] : []))
+  if (activeIndexes.length > 0) {
+    lines[activeIndexes[0]] = line
+    return lines.filter((_, i) => !activeIndexes.slice(1).includes(i)).join('\n')
+  }
+
+  const commentedIndex = lines.findIndex(l => commented.test(l))
+  if (commentedIndex !== -1) {
+    lines[commentedIndex] = line
+    return lines.join('\n')
+  }
+
+  const trimmed = contents.replace(/\n*$/, '')
+  return trimmed ? `${trimmed}\n${line}\n` : `${line}\n`
 }

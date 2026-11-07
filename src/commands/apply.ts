@@ -246,7 +246,13 @@ export default class ApplyCommand extends BaseCommand {
     switch (validatedFlags.templateType) {
       case 'community': {
         const templates = await getCommunityTemplates()
-        template = templates.find((t) => t.templateName === validatedFlags.templateLocation) || templates[0]
+        const match = templates.find((t) => t.templateName === validatedFlags.templateLocation)
+        if (!match) {
+          const available = templates.map(t => `"${t.templateName}"`).join(', ') || 'none'
+          throw new Error(`Community template "${validatedFlags.templateLocation}" not found. Available templates: ${available}`)
+        }
+
+        template = match
         break
       }
 

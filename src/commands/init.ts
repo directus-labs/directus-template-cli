@@ -1,4 +1,4 @@
-import {cancel, log as clackLog, confirm, intro, isCancel, select, text} from '@clack/prompts'
+import {cancel, log as clackLog, confirm, intro, isCancel, password, select, text} from '@clack/prompts'
 import {Args, Flags} from '@oclif/core'
 import chalk from 'chalk'
 import {downloadTemplate} from 'giget'
@@ -11,7 +11,7 @@ import {DIRECTUS_PURPLE} from '../lib/constants.js'
 import {init} from '../lib/init/index.js'
 import {animatedBunny} from '../lib/utils/animated-bunny.js'
 import {createGigetString, parseGitHubUrl} from '../lib/utils/parse-github-url.js'
-import {readTemplateConfig} from '../lib/utils/template-config.js'
+import {decideVariant, readTemplateConfig} from '../lib/utils/template-config.js'
 import {createGitHub, type TemplateInfo} from '../services/github.js'
 import { shutdown, track } from '../services/posthog.js'
 import { BaseCommand } from './base.js'
@@ -21,8 +21,11 @@ export interface InitFlags {
   frontend?: string
   gitInit?: boolean
   installDeps?: boolean
+  license?: boolean
+  licenseKey?: string
   overwriteDir?: boolean
   template?: string
+  variant?: string
 }
 
 export interface InitArgs {
@@ -66,6 +69,14 @@ static flags = {
       default: true,
       description: 'Install dependencies automatically',
     }),
+    license: Flags.boolean({
+      allowNo: true,
+      description: 'Apply the licensed version of the template (--license) or the free core version (--no-license). Asked when omitted, or core when there is no terminal to ask in.',
+    }),
+    licenseKey: Flags.string({
+      aliases: ['license-key'],
+      description: 'Directus license key, written to directus/.env. Implies --license.',
+    }),
     overwriteDir: Flags.boolean({
       aliases: ['overwrite-dir'],
       allowNo: true,
@@ -74,6 +85,9 @@ static flags = {
     }),
     template: Flags.string({
       description: 'Template name (e.g., simple-cms) or GitHub URL (e.g., https://github.com/directus-labs/starters/tree/main/simple-cms)',
+    }),
+    variant: Flags.string({
+      description: 'Template variant from directus:template.variants (e.g., licensed). Defaults to the core template.',
     }),
   }
 private targetDir = '.'
@@ -227,12 +241,25 @@ private targetDir = '.'
     // Download the template to a temporary directory to read its configuration
     const tempDir = path.join(os.tmpdir(), `directus-template-${Date.now()}`)
     let chosenFrontend = flags.frontend
+    let chosenVariant = flags.variant
+    let needsLicenseKey = false
+    // Scripts and CI have no terminal to answer prompts in
+    const interactive = Boolean(process.stdin.isTTY)
 
     try {
-      await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
-        dir: tempDir,
-        force: true,
-      })
+      try {
+        await downloadTemplate(createGigetString(parseGitHubUrl(template)), {
+          dir: tempDir,
+          force: true,
+        })
+      } catch (error) {
+        // A branch with a slash (bry/my-branch) reads as branch "bry" from a /tree/ URL
+        if (template.includes('/tree/') && !template.includes('ref=')) {
+          throw new Error(`${(error as Error).message}\nIf the branch name has a slash in it, add ?ref=<branch> to the URL.`)
+        }
+
+        throw error
+      }
 
       // Read template configuration
       const templateInfo = readTemplateConfig(tempDir)
@@ -251,6 +278,7 @@ private targetDir = '.'
         })
 
         if (isCancel(frontendResponse)) {
+          fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
           cancel('Project creation cancelled.')
           process.exit(0)
         }
@@ -259,11 +287,96 @@ private targetDir = '.'
       }
 
       flags.frontend = chosenFrontend
+
+      const variantOptions = templateInfo?.variantOptions ?? []
+      const decision = decideVariant({
+        hasLicenseKey: Boolean(flags.licenseKey?.trim()),
+        interactive,
+        license: flags.license,
+        templateRequiresLicense: Boolean(templateInfo?.config.requiresLicense),
+        variant: chosenVariant,
+        variantOptions,
+      })
+
+      const exitWith = (message: string, code: number) => {
+        fs.rmSync(tempDir, {force: true, recursive: true}) // process.exit skips the finally below
+        cancel(message)
+        process.exit(code)
+      }
+
+      switch (decision.kind) {
+        case 'ask-license': {
+          const licensedName = variantOptions.find(v => v.id === decision.licensedVariant)?.name
+          const hasLicense = await confirm({
+            active: `Yes, use ${licensedName}`,
+            inactive: 'No, use the free core tier',
+            initialValue: false,
+            message: 'Do you have a Directus license key?',
+          })
+
+          if (isCancel(hasLicense)) exitWith('Project creation cancelled.', 0)
+          chosenVariant = hasLicense ? decision.licensedVariant : undefined
+          break
+        }
+
+        case 'ask-variant': {
+          const variantResponse = await select({
+            message: 'Which version of the template do you want?',
+            options: [
+              {hint: 'Works without a license', label: templateInfo!.config.name, value: ''},
+              ...variantOptions.map(variant => ({
+                hint: [variant.requiresLicense && 'Requires a Directus license key', variant.description].filter(Boolean).join(' · '),
+                label: variant.name,
+                value: variant.id,
+              })),
+            ],
+          })
+
+          if (isCancel(variantResponse)) exitWith('Project creation cancelled.', 0)
+          chosenVariant = (variantResponse as string) || undefined
+          break
+        }
+
+        case 'error': {
+          exitWith(decision.message, 1)
+          break
+        }
+
+        case 'use': {
+          chosenVariant = decision.variant
+          break
+        }
+      }
+
+      // A starter that needs a license (cms-i18n) needs one for every variant too
+      needsLicenseKey =
+        Boolean(templateInfo?.config.requiresLicense) ||
+        Boolean(chosenVariant && variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
     } finally {
       // Clean up temporary directory
       if (fs.existsSync(tempDir)) {
         fs.rmSync(tempDir, { force: true, recursive: true })
       }
+    }
+
+    let licenseKey = flags.licenseKey?.trim() || undefined
+
+    // init starts Directus and applies the template right away, so the key can't be added afterwards
+    if (needsLicenseKey && !licenseKey && !interactive) {
+      cancel('This version needs a Directus license key. Pass it with --licenseKey.')
+      process.exit(1)
+    } else if (needsLicenseKey && !licenseKey) {
+      const licenseResponse = await password({
+        message: 'Enter your license key. It is added to directus/.env:',
+        validate: value => (value?.trim() ? undefined : 'A license key is required for this version.'),
+      })
+
+      if (isCancel(licenseResponse)) {
+        cancel('Project creation cancelled.')
+        process.exit(0)
+      }
+
+      licenseKey = (licenseResponse as string).trim()
     }
 
     const installDeps = explicitFlags.installDeps
@@ -285,6 +398,7 @@ private targetDir = '.'
           gitInit: initGit,
           installDeps,
           template,
+          variant: chosenVariant,
         },
         lifecycle: 'start',
         runId: this.runId,
@@ -298,8 +412,10 @@ private targetDir = '.'
         frontend: chosenFrontend,
         gitInit: initGit,
         installDeps,
+        licenseKey,
         overwriteDir,
         template,
+        variant: chosenVariant,
       },
 
     })
@@ -316,6 +432,7 @@ private targetDir = '.'
           installDeps,
           overwriteDir,
           template,
+          variant: chosenVariant,
         },
         lifecycle: 'complete',
         runId: this.runId,

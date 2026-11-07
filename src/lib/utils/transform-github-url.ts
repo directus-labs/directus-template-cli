@@ -1,3 +1,5 @@
+import {countRefSegments, getExplicitRef, gigetRefSuffix, safeDecode} from './github-ref.js'
+
 export interface ParsedGitHubUrl {
   owner: string
   ref?: string
@@ -21,16 +23,20 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
   }
 
   const pathParts = parsed.pathname.split('/').filter(Boolean)
-  const [owner, rawRepo, tree, ref, ...subpathParts] = pathParts
+  const [owner, rawRepo, tree, treeRef] = pathParts
   const repo = rawRepo?.replace(/\.git$/, '')
 
   if (!owner || !repo || pathParts.length > 2 && tree !== 'tree') {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
 
-  if (tree === 'tree' && !ref) {
+  if (tree === 'tree' && !treeRef) {
     throw new Error(`Invalid GitHub URL: ${url}`)
   }
+
+  const explicitRef = getExplicitRef(cleaned)
+  const ref = explicitRef || (treeRef ? safeDecode(treeRef) : undefined)
+  const subpathParts = tree === 'tree' ? pathParts.slice(3 + countRefSegments(pathParts.slice(3), explicitRef)) : []
 
   const subpath = subpathParts.length > 0 ? subpathParts.join('/') : undefined
 
@@ -40,6 +46,5 @@ export function parseGitHubUrl(url: string): ParsedGitHubUrl {
 export function transformGitHubUrl(url: string): string {
   const {owner, ref, repo, subpath} = parseGitHubUrl(url)
   const pathPart = subpath ? `/${subpath}` : ''
-  const refPart = ref ? `#${ref}` : ''
-  return `github:${owner}/${repo}${pathPart}${refPart}`
+  return `github:${owner}/${repo}${pathPart}${gigetRefSuffix(ref)}`
 }
