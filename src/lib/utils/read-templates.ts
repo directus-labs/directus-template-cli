@@ -67,20 +67,19 @@ export async function readStarterTemplates(directoryPath: string): Promise<Templ
   const config = readTemplateConfig(directoryPath)?.config
   if (!config) return []
 
-  const entries = [
-    {name: config.name, template: config.template},
-    ...Object.values(config.variants || {}).map(variant => ({name: variant.name, template: variant.template})),
-  ]
+  const templatePaths = [config.template, ...Object.values(config.variants || {}).map(variant => variant.template)]
 
   const templates: Template[] = []
 
-  for (const entry of entries) {
-    if (!entry.template) continue
+  for (const templatePath of templatePaths) {
+    if (!templatePath) continue
 
-    const templateDir = path.join(directoryPath, entry.template)
+    const templateDir = path.join(directoryPath, templatePath)
     if (!fs.existsSync(path.join(templateDir, 'src'))) continue
 
-    templates.push((await readTemplate(templateDir)) ?? {directoryPath: templateDir, templateName: entry.name})
+    // Like any other template, it needs its own package.json with "templateName" to be applied from a URL
+    const template = await readTemplate(templateDir)
+    if (template) templates.push(template)
   }
 
   return templates

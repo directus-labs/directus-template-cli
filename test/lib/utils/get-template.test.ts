@@ -35,7 +35,10 @@ describe('get-template', () => {
         },
       }),
     )
-    for (const dir of ['directus/template/src', 'directus/template-licensed/src']) fs.mkdirSync(path.join(root, dir), {recursive: true})
+    for (const [dir, templateName] of [['directus/template', 'Help Center'], ['directus/template-licensed', 'Help Center — Licensed']]) {
+      fs.mkdirSync(path.join(root, dir, 'src'), {recursive: true})
+      fs.writeFileSync(path.join(root, dir, 'package.json'), JSON.stringify({templateName}))
+    }
 
     const templates = await getInteractiveLocalTemplate(root)
     expect(templates.map(t => t.templateName)).to.deep.equal(['Help Center', 'Help Center — Licensed'])

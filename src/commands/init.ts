@@ -348,10 +348,10 @@ private targetDir = '.'
         }
       }
 
-      // A variant decides for itself; otherwise the template as a whole may need one (cms-i18n)
-      needsLicenseKey = chosenVariant
-        ? Boolean(variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
-        : Boolean(templateInfo?.config.requiresLicense)
+      // A starter that needs a license (cms-i18n) needs one for every variant too
+      needsLicenseKey =
+        Boolean(templateInfo?.config.requiresLicense) ||
+        Boolean(chosenVariant && variantOptions.find(v => v.id === chosenVariant)?.requiresLicense)
     } finally {
       // Clean up temporary directory
       if (fs.existsSync(tempDir)) {

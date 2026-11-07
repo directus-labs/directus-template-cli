@@ -30,6 +30,7 @@ export async function getCommunityTemplates(): Promise<Template[]> {
     const {dir} = await downloadTemplate(COMMUNITY_TEMPLATE_REPO.string, {
       dir: downloadDir,
       force: true,
+      forceClean: true,
     })
 
     return await readAllTemplates(dir)

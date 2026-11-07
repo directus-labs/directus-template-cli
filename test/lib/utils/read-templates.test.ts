@@ -44,7 +44,7 @@ describe('readAllTemplates', () => {
       },
     })
     templateDir(root, 'simple-ecommerce/directus/template', 'Simple eCommerce')
-    templateDir(root, 'simple-ecommerce/directus/template-licensed')
+    templateDir(root, 'simple-ecommerce/directus/template-licensed', 'Simple eCommerce — Licensed')
     write(path.join(root, 'blank', 'package.json'), {'directus:template': {frontends: null, name: 'Blank', template: null}})
 
     const templates = await readAllTemplates(root)
@@ -53,5 +53,21 @@ describe('readAllTemplates', () => {
       ['Simple eCommerce', 'simple-ecommerce/directus/template'],
       ['Simple eCommerce — Licensed', 'simple-ecommerce/directus/template-licensed'],
     ])
+  })
+
+  it('skips starter templates without a templateName, since they can\'t be applied from a URL', async () => {
+    write(path.join(root, 'cms', 'package.json'), {
+      'directus:template': {
+        frontends: {},
+        name: 'CMS',
+        template: './directus/template',
+        variants: {licensed: {name: 'CMS — Licensed', requiresLicense: true, template: './directus/template-licensed'}},
+      },
+    })
+    templateDir(root, 'cms/directus/template', 'CMS')
+    templateDir(root, 'cms/directus/template-licensed')
+
+    const templates = await readAllTemplates(root)
+    expect(templates.map(t => t.templateName)).to.deep.equal(['CMS'])
   })
 })
