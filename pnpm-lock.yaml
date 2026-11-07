@@ -76,8 +76,8 @@ importers:
         specifier: ^15.0.3
         version: 15.0.3(knex@3.1.0)
       '@eslint/compat':
-        specifier: ^2.0.5
-        version: 2.0.5(eslint@10.14.0)
+        specifier: ^2.1.1
+        version: 2.1.1(eslint@10.14.0)
       '@oclif/prettier-config':
         specifier: ^0.2.1
         version: 0.2.1
@@ -373,8 +373,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint/compat@2.0.5':
-    resolution: {integrity: sha512-IbHDbHJfkVNv6xjlET8AIVo/K1NQt7YT4Rp6ok/clyBGcpRx1l6gv0Rq3vBvYfPJIZt6ODf66Zq08FJNDpnzgg==}
+  '@eslint/compat@2.1.1':
+    resolution: {integrity: sha512-rMcy8GSrwNzcISX/BlTDY/GLB4eCopEuy9woIls3To+15OLxykZrxxq+WUcylCPCQ6F4MujjBM1DX5V1aqI3Vw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
       eslint: ^8.40 || 9 || 10
@@ -3992,7 +3992,7 @@ snapshots:
     optionalDependencies:
       eslint: 10.14.0
 
-  '@eslint/compat@2.0.5(eslint@10.14.0)':
+  '@eslint/compat@2.1.1(eslint@10.14.0)':
     dependencies:
       '@eslint/core': 1.2.1
     optionalDependencies:

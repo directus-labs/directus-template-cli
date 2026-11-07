@@ -42,7 +42,7 @@
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
     "@directus/types": "^15.0.3",
-    "@eslint/compat": "^2.0.5",
+    "@eslint/compat": "^2.1.1",
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4.1.18",
     "@types/chai": "^5.2.3",
